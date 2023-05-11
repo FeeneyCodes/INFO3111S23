@@ -21,6 +21,10 @@
 
 #include "cShaderManager/cShaderManager.h"
 
+#include "cVAOManager/cVAOManager.h"
+
+#include "cMeshObject.h"
+
 
 
 //static const struct
@@ -149,7 +153,7 @@ bool Load_Doom_spider_mastermind_PlyFile(std::string filename,
                                  unsigned int &numVerticesLoaded,
                                  unsigned int &numTrianglesLoaded);
 
-
+std::vector< cMeshObject > vecMeshesToDraw;
 
 int main(void)
 {
@@ -194,42 +198,47 @@ int main(void)
 
     // NOTE: OpenGL error checks have been omitted for brevity
 
-    glGenBuffers(1, &vertex_buffer);
-    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
 
 
-    unsigned int numVerticesLoaded = 0;
-    unsigned int numTrianglesLoaded = 0;
+    //unsigned int numVerticesLoaded = 0;
+    //unsigned int numTrianglesLoaded = 0;
 
 //    if (Load_mig29_xyz_rgba_PlyFile( "mig29_xyz_rgba.ply",
 //    if (Load_Mushrooms1_PlyFile( "Mushrooms1 (ASCII format).ply",
 //    if (Load_Doom_spider_mastermind_PlyFile( "assets/models/spider_mastermind.bmd6model.fbx.ascii.ply",
-    if (Load_Doom_spider_mastermind_PlyFile( "assets/models/spider_mastermind.bmd6model.fbx.ascii_Y_up.ply",
-                                     pVertexArray,
-                                     numVerticesLoaded,
-                                     numTrianglesLoaded) )
-    {
-        std::cout << "File loaded OK" << std::endl;
-    }
-    else
-    {
-        std::cout << "Error! ALL IS LOST! FOREVER LOST! Can't load PLY file." << std::endl;
-  //      return 0;
-    }
+  //  if (Load_Doom_spider_mastermind_PlyFile( "assets/models/spider_mastermind.bmd6model.fbx.ascii_Y_up.ply",
+  //                                   pVertexArray,
+  //                                   numVerticesLoaded,
+  //                                   numTrianglesLoaded) )
+  //  {
+  //      std::cout << "File loaded OK" << std::endl;
+  //  }
+  //  else
+  //  {
+  //      std::cout << "Error! ALL IS LOST! FOREVER LOST! Can't load PLY file." << std::endl;
+  ////      return 0;
+  //  }
 
 //    unsigned int numberOfBytes = sizeof(sVertexXYZ_RGB) * 3;
 
 //    unsigned int numberOfVerticesToDraw = numTrianglesLoaded * 3;
-    unsigned int numberOfBytes = sizeof(sVertexXYZ_RGB) * numTrianglesLoaded * 3;
-    
-    glBufferData(GL_ARRAY_BUFFER, 
-                 numberOfBytes,    // Each vertex in bytes
-                 pVertexArray,  // vertices,                  // Pointer to the start of the array
-                 GL_STATIC_DRAW);
 
-    // Note that I can delete the original array if I want to.
-    // The data has been copied from the C++ (application) side into the GPU (video card) RAM
-    delete [] pVertexArray;
+    //glGenBuffers(1, &vertex_buffer);
+    //// Bind assign a "type" of whatever it is (a buffer)
+    //// It will make it the "current" buffer. 
+    //// The one that we are currently "bound" to
+    //glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
+
+    //unsigned int numberOfBytes = sizeof(sVertexXYZ_RGB) * numTrianglesLoaded * 3;
+    //
+    //glBufferData(GL_ARRAY_BUFFER, 
+    //             numberOfBytes,    // Each vertex in bytes
+    //             pVertexArray,  // vertices,                  // Pointer to the start of the array
+    //             GL_STATIC_DRAW);
+
+    //// Note that I can delete the original array if I want to.
+    //// The data has been copied from the C++ (application) side into the GPU (video card) RAM
+    //delete [] pVertexArray;
 
 //
 //    vertex_shader = glCreateShader(GL_VERTEX_SHADER);
@@ -266,6 +275,29 @@ int main(void)
     GLuint shaderProgram = pShaderManager->getIDFromFriendlyName("basicShader");
     glUseProgram(shaderProgram);
 
+    // Load the models into the VAO Manager
+
+    cVAOManager* pModelManger = new cVAOManager();
+
+    sModelDrawInfo spaceShuttleModelInfo;
+    if ( pModelManger->LoadModelIntoVAO("assets/models/spider_mastermind.bmd6model.fbx.ascii_Y_up.ply",
+                                           spaceShuttleModelInfo, shaderProgram))
+    {
+        std::cout << "spider_mastermind loaded OK" << std::endl;
+    }
+
+    sModelDrawInfo mushroomModelInfo;
+    if ( pModelManger->LoadModelIntoVAO("assets/models/Mushrooms1_xyz_normal.ply",
+                                        mushroomModelInfo, shaderProgram))
+    {
+        std::cout << "Mushrooms1_xyz_normal loaded OK" << std::endl;
+    }
+
+    cMeshObject SpiderMesh;
+//    SpiderMesh.meshName = "assets/models/spider_mastermind.bmd6model.fbx.ascii_Y_up.ply";
+    SpiderMesh.meshName = "assets/models/Mushrooms1_xyz_normal.ply";
+
+
     mvp_location = glGetUniformLocation(shaderProgram, "MVP");
 
 
@@ -273,26 +305,26 @@ int main(void)
  //   struct sVertexXYZ_RGB {
 //        float x, y, z;      // vec2 to vec3 
 //        float r, g, b;  };
-    vpos_location = glGetAttribLocation(shaderProgram, "vPos");
-    vcol_location = glGetAttribLocation(shaderProgram, "vCol");
-
-    glEnableVertexAttribArray(vpos_location);
-    glVertexAttribPointer(vpos_location, 
-                          3, 
-                          GL_FLOAT, 
-                          GL_FALSE,
-                          sizeof(sVertexXYZ_RGB),       // sizeof(vertices[0]), 
-                          (void*)offsetof(sVertexXYZ_RGB, x)); // (void*)0);
-
-    glEnableVertexAttribArray(vcol_location);
-    glVertexAttribPointer(vcol_location, 
-                          3, 
-                          GL_FLOAT, 
-                          GL_FALSE,
-                          sizeof(sVertexXYZ_RGB),   // sizeof(vertices[0]), 
-                          (void*)offsetof(sVertexXYZ_RGB, r));
-                          //(void*)(sizeof(float) * 3));
+//    vpos_location = glGetAttribLocation(shaderProgram, "vPos");
+//    vcol_location = glGetAttribLocation(shaderProgram, "vCol");
 //
+//    glEnableVertexAttribArray(vpos_location);
+//    glVertexAttribPointer(vpos_location, 
+//                          3, 
+//                          GL_FLOAT, 
+//                          GL_FALSE,
+//                          sizeof(sVertexXYZ_RGB),       // sizeof(vertices[0]), 
+//                          (void*)offsetof(sVertexXYZ_RGB, x)); // (void*)0);
+//
+//    glEnableVertexAttribArray(vcol_location);
+//    glVertexAttribPointer(vcol_location, 
+//                          3, 
+//                          GL_FLOAT, 
+//                          GL_FALSE,
+//                          sizeof(sVertexXYZ_RGB),   // sizeof(vertices[0]), 
+//                          (void*)offsetof(sVertexXYZ_RGB, r));
+//                          //(void*)(sizeof(float) * 3));
+////
 
 
     while (!glfwWindowShouldClose(window))
@@ -353,9 +385,24 @@ int main(void)
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
         // glDrawArrays(GL_TRIANGLES, 0, 3);
-        unsigned int numberOfVerticesToDraw = numTrianglesLoaded * 3;
-        glDrawArrays(GL_TRIANGLES, 0, numberOfVerticesToDraw);
+//        unsigned int numberOfVerticesToDraw = numTrianglesLoaded * 3;
+//        glDrawArrays(GL_TRIANGLES, 0, numberOfVerticesToDraw);
 
+       // "assets/models/SpaceShuttleOrbiter.ply"
+        sModelDrawInfo modelToDraw;
+        if ( pModelManger->FindDrawInfoByModelName(SpiderMesh.meshName, modelToDraw) )
+        {
+            glBindVertexArray(modelToDraw.VAO_ID);
+
+            glDrawElements(GL_TRIANGLES,
+                           modelToDraw.numberOfIndices,
+                           GL_UNSIGNED_INT,
+                           0);
+
+            // Bind it to nothing
+            glBindVertexArray(0);
+
+        }
 
         glfwSwapBuffers(window);
         glfwPollEvents();

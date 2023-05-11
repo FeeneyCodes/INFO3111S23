@@ -1,22 +1,25 @@
-#version 110
+// Vertex shader
+#version 420
 
 uniform mat4 MVP;
 
-attribute vec3 vCol;		
-attribute vec3 vPos;
+// Coming in from the vertex layout
+in vec3 vCol;		
+in vec3 vPos;
 
-varying vec3 color;
+// Going out to the Fragment shader
+out vec3 color;
 
 void main()
 {
 	vec3 position = vPos;
-	
-//	position.x += 2.0;
-//	position.x *= 0.2;
-//	position.y *= 0.2;
-//	position.z *= 0.2;
-	
+
+//	position.x += 2.0f;
+//	position.x *= 0.2f;
+//	position.y *= 0.2f;
+//	position.z *= 0.2f;
 	
     gl_Position = MVP * vec4(position, 1.0);
     color = vCol;
-}
+	
+}// off to the fragment shader
