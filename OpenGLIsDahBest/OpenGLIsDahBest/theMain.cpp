@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <vector>
 //#include "linmath.h"
 #include <glm/glm.hpp>
@@ -40,18 +41,26 @@ struct sVertexXYZ_RGB
 };
 
 // Google C++ dynamic array
-//sVertexXYZ_RGB* pSexyVertex = new sVertexXYZ_RGB[11582 * 3];
-
+// On the heap
+//sVertexXYZ_RGB* pSexyVertex = new sVertexXYZ_RGB[3];
+//
+//// On the stack
 //sVertexXYZ_RGB pVertexArray[3] =
 //{
 //    //   X      Y     Z     r     g     b
 //    { -0.6f, -0.4f, 0.0f, 1.0f, 0.0f, 0.0f },            // Spawn a vertex shader instance
 //    {  0.6f, -0.4f, 0.0f, 1.0f, 0.0f, 0.0f },
 //    {  0.0f,  0.6f, 0.0f, 1.0f, 0.0f, 0.0f }
+// 
 //};
 
 // Will allocate this in a moment...
 sVertexXYZ_RGB* pVertexArray = NULL;    
+
+
+glm::vec3 g_cameraEye = glm::vec3(0.0, 0.0, -4.0f);
+glm::vec3 g_cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
+glm::vec3 g_upVector = glm::vec3(0.0f, +1.0f, 0.0f);
 
 
 //static const char* vertex_shader_text =
@@ -79,10 +88,48 @@ static void error_callback(int error, const char* description)
     fprintf(stderr, "Error: %s\n", description);
 }
 
+//    void function_name(GLFWwindow* window, int key, int scancode, int action, int mods)
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+    {
         glfwSetWindowShouldClose(window, GLFW_TRUE);
+    }
+
+    const float CAMERA_MOVE_SPEED = 0.1f;
+
+    if ( key == GLFW_KEY_A )    
+    {
+        // Move "left"
+        ::g_cameraEye.x += CAMERA_MOVE_SPEED;
+    }
+    if ( key == GLFW_KEY_D )    
+    {
+        // Move "right"
+        ::g_cameraEye.x -= CAMERA_MOVE_SPEED;
+    }
+
+    if ( key == GLFW_KEY_W )    
+    {
+        // Move "forward"
+        ::g_cameraEye.z += CAMERA_MOVE_SPEED;
+    }
+    if ( key == GLFW_KEY_S )    
+    {
+        // Move "backwards"
+        ::g_cameraEye.z -= CAMERA_MOVE_SPEED;
+    }
+
+    if ( key == GLFW_KEY_Q )    
+    {
+        // Move "down"
+        ::g_cameraEye.y -= CAMERA_MOVE_SPEED;
+    }
+    if ( key == GLFW_KEY_E )    
+    {
+        // Move "up"
+        ::g_cameraEye.y += CAMERA_MOVE_SPEED;
+    }
 }
 
 // Note I'm passing the array by reference so that the pointer
@@ -93,6 +140,11 @@ bool Load_mig29_xyz_rgba_PlyFile(std::string filename,
                                  unsigned int &numTrianglesLoaded);
 
 bool Load_Mushrooms1_PlyFile(std::string filename,
+                                 sVertexXYZ_RGB* &pVertexArray,
+                                 unsigned int &numVerticesLoaded,
+                                 unsigned int &numTrianglesLoaded);
+
+bool Load_Doom_spider_mastermind_PlyFile(std::string filename,
                                  sVertexXYZ_RGB* &pVertexArray,
                                  unsigned int &numVerticesLoaded,
                                  unsigned int &numTrianglesLoaded);
@@ -115,6 +167,12 @@ int main(void)
 //        exit(EXIT_FAILURE);
         return -1;
     }
+
+ //   sVertexXYZ_RGB* pVertexArray = new sVertexXYZ_RGB[3];
+    //int x;  // stack
+    //int* pX = new int();    // thing it points to is on the heap
+
+
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
@@ -144,7 +202,9 @@ int main(void)
     unsigned int numTrianglesLoaded = 0;
 
 //    if (Load_mig29_xyz_rgba_PlyFile( "mig29_xyz_rgba.ply",
-    if (Load_Mushrooms1_PlyFile( "Mushrooms1 (ASCII format).ply",
+//    if (Load_Mushrooms1_PlyFile( "Mushrooms1 (ASCII format).ply",
+//    if (Load_Doom_spider_mastermind_PlyFile( "assets/models/spider_mastermind.bmd6model.fbx.ascii.ply",
+    if (Load_Doom_spider_mastermind_PlyFile( "assets/models/spider_mastermind.bmd6model.fbx.ascii_Y_up.ply",
                                      pVertexArray,
                                      numVerticesLoaded,
                                      numTrianglesLoaded) )
@@ -253,7 +313,7 @@ int main(void)
         m = glm::mat4(1.0f);        // Identity matrix
 //        mat4x4_rotate_Z(m, m, (float)glfwGetTime());
         glm::mat4 matRotateZ = glm::rotate(glm::mat4(1.0f),
-                                           (float)glm::radians(-90.0f),  // glfwGetTime(),
+                                           0.0f,    // (float)glm::radians(-90.0f),  // glfwGetTime(),
                                            glm::vec3(1.0f, 0.0f, 0.0f));
 //        mat4x4_mul(mvp, p, m);
         m = matRotateZ * m;
@@ -268,13 +328,15 @@ int main(void)
 
         v = glm::mat4(1.0f);
 
-        glm::vec3 cameraEye = glm::vec3(0.0, 0.0, -150.0f);
-        glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
-        glm::vec3 upVector = glm::vec3(0.0f, 1.0f, 0.0f);
+        //glm::vec3 cameraEye = glm::vec3(0.0, 0.0, -4.0f);
+        //glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
+        //glm::vec3 upVector = glm::vec3(0.0f, 1.0f, 0.0f);
 
-        v = glm::lookAt(cameraEye,
-                        cameraTarget,
-                        upVector);
+        glm::vec3 newTarget = ::g_cameraEye + glm::vec3(0.0f, 0.0f, 10.0f);
+
+        v = glm::lookAt( ::g_cameraEye,
+                         newTarget,  // ::g_cameraTarget,
+                         ::g_upVector );
 
         mvp = p * v * m;
 
@@ -297,6 +359,16 @@ int main(void)
 
         glfwSwapBuffers(window);
         glfwPollEvents();
+
+
+        std::stringstream ssTitle;
+        ssTitle << "Camera (x,y,z): "
+            << ::g_cameraEye.x << ", "
+            << ::g_cameraEye.y << ", "
+            << ::g_cameraEye.z;
+
+        glfwSetWindowTitle( window, ssTitle.str().c_str() );
+
     }
 
     glfwDestroyWindow(window);
@@ -681,3 +753,147 @@ bool Load_Mushrooms1_PlyFile(std::string filename,
     return true;
 }
 
+
+
+bool Load_Doom_spider_mastermind_PlyFile(std::string filename,
+                                         sVertexXYZ_RGB*& pVertexArray,
+                                         unsigned int& numVerticesLoaded,
+                                         unsigned int& numTrianglesLoaded)
+{
+    std::ifstream plyFile(filename);
+    if ( ! plyFile.is_open()  )
+    {
+        return false;
+    }
+
+
+
+    std::string tempToken;
+    while (plyFile >> tempToken)
+    {
+        if (tempToken == "vertex")
+        {
+            break;  // Get out of the while
+        }
+    }
+    // Read number of vertices
+    plyFile >> numVerticesLoaded;
+
+    while (plyFile >> tempToken)
+    {
+        if (tempToken == "face")
+        {
+            break;  // Get out of the while
+        }
+    }
+    // At this point, we've read the word "face".
+    plyFile >> numTrianglesLoaded;
+
+
+    while (plyFile >> tempToken)
+    {
+        if (tempToken == "end_header")
+        {
+            break;  // Get out of the while
+        }
+    }
+
+    // 0.8062328 1.704445 2.518811 -0.8739801 -0.4150925 -0.2526995 
+    struct sVertexFormatFromFile
+    {
+        float x, y, z;
+        float nx, ny, nz;
+//        float theData[6];
+    };
+    std::vector<sVertexFormatFromFile> vecVertsFromFile;
+
+    for (unsigned int count = 0; count != numVerticesLoaded; count++)
+    {
+        // -0.113944 0.168176 -0.404122 255 255 0 255 
+        sVertexFormatFromFile tempVertexLoaded;
+
+        plyFile >> tempVertexLoaded.x;
+        plyFile >> tempVertexLoaded.y;
+        plyFile >> tempVertexLoaded.z;
+        plyFile >> tempVertexLoaded.nx;
+        plyFile >> tempVertexLoaded.ny;
+        plyFile >> tempVertexLoaded.nx;
+
+
+//        tempVertexLoaded.x += 2.0f;
+// 
+//        tempVertexLoaded.x *= 0.2f;
+//        tempVertexLoaded.y *= 0.2f;
+//        tempVertexLoaded.z *= 0.2f;
+
+
+
+        vecVertsFromFile.push_back(tempVertexLoaded);
+    }
+
+    // Now the triangles.
+    // Technically the vertex indices (index values into the vertex array)
+
+    std::vector<int> vecVertexIndices;
+
+    for ( unsigned int triIndex = 0; triIndex != numTrianglesLoaded; triIndex++ )
+    {
+        // 3 55942 55950 55951
+
+        int discard = 0;
+        plyFile >> discard;                     // 3
+
+        int nextNum = 0;
+        plyFile >> nextNum;                     // 55942
+        vecVertexIndices.push_back(nextNum);
+
+        plyFile >> nextNum;                     // 55950
+        vecVertexIndices.push_back(nextNum);
+
+        plyFile >> nextNum;                     // 55951
+        vecVertexIndices.push_back(nextNum);
+    }
+
+    // convert this into a format the the OpenGL code wants.
+    // Why? Because that's the code that we have and it works...
+//sVertexXYZ_RGB* pSexyVertex = new sVertexXYZ_RGB[3];
+//
+//// On the stack
+//sVertexXYZ_RGB pVertexArray[3] =
+//{
+//    //   X      Y     Z     r     g     b
+//    { -0.6f, -0.4f, 0.0f, 1.0f, 0.0f, 0.0f },            // Spawn a vertex shader instance
+//    {  0.6f, -0.4f, 0.0f, 1.0f, 0.0f, 0.0f },
+//    {  0.0f,  0.6f, 0.0f, 1.0f, 0.0f, 0.0f }
+// 
+//};
+    unsigned int totalVerticesToDraw = numTrianglesLoaded * 3;
+    // Or vecVertexIndices.size()
+    
+    // Allocat this on the heap (dynamically)
+ //   sVertexXYZ_RGB* pVertexArray = new sVertexXYZ_RGB[totalVerticesToDraw]
+    
+    pVertexArray = new sVertexXYZ_RGB[totalVerticesToDraw];
+
+    // Copy the data from the vectors we loaded into this c style array
+    for (unsigned int index = 0; index != vecVertexIndices.size(); index++ )
+    {
+        // Get the vertex at this location...
+        unsigned int vertexIndexINeed = vecVertexIndices[index];
+
+        sVertexFormatFromFile thisVertex = vecVertsFromFile[vertexIndexINeed];
+
+        // To OpenGL
+        // sVertexXYZ_RGB       sVertexFormatFromFile
+        pVertexArray[index].x = thisVertex.x;
+        pVertexArray[index].y = thisVertex.y;
+        pVertexArray[index].z = thisVertex.z;
+        // 
+        pVertexArray[index].r = 1.0f;
+        pVertexArray[index].g = 1.0f;
+        pVertexArray[index].b = 1.0f;        
+
+    }
+
+    return true;
+}
