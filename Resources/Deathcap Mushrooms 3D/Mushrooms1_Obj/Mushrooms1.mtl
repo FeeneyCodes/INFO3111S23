@@ -1,0 +1,11 @@
+# Created with Anim8or 1.00
+# Object "Mushroom1":
+
+newmtl Mushroom1
+Ka 0.173 0.173 0.173
+Kd 0.424 0.424 0.424
+Ks 0.231 0.231 0.231
+Ns 252.6
+map_Kd Mushroom1_Diffuse.jpg
+map_Ks Mushroom1Specular.jpg
+
