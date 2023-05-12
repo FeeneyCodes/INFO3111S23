@@ -138,22 +138,43 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 // Note I'm passing the array by reference so that the pointer
 //  value I create inside the function can be "passed back out".
-bool Load_mig29_xyz_rgba_PlyFile(std::string filename, 
+//property float x
+//property float y
+//property float z
+//property uchar red
+//property uchar green
+//property uchar blue
+//property uchar alpha
+bool Load_mig29_xyz_rgba_PlyFile(std::string filename,
                                  sVertexXYZ_RGB* &pVertexArray,
                                  unsigned int &numVerticesLoaded,
                                  unsigned int &numTrianglesLoaded);
-
+//property float x
+//property float y
+//property float z
+//property float nx
+//property float ny
+//property float nz
+//property float s
+//property float t
 bool Load_Mushrooms1_PlyFile(std::string filename,
                                  sVertexXYZ_RGB* &pVertexArray,
                                  unsigned int &numVerticesLoaded,
                                  unsigned int &numTrianglesLoaded);
 
+//property float x
+//property float y
+//property float z
+//property float nx
+//property float ny
+//property float nz
 bool Load_Doom_spider_mastermind_PlyFile(std::string filename,
                                  sVertexXYZ_RGB* &pVertexArray,
                                  unsigned int &numVerticesLoaded,
                                  unsigned int &numTrianglesLoaded);
 
-std::vector< cMeshObject > vecMeshesToDraw;
+// This is a list of the objects we want to draw in this scene
+std::vector< cMeshObject > g_vecMeshesToDraw;
 
 int main(void)
 {
@@ -279,26 +300,57 @@ int main(void)
 
     cVAOManager* pModelManger = new cVAOManager();
 
-    sModelDrawInfo spaceShuttleModelInfo;
+    sModelDrawInfo modelILoadedInfo;
     if ( pModelManger->LoadModelIntoVAO("assets/models/spider_mastermind.bmd6model.fbx.ascii_Y_up.ply",
-                                           spaceShuttleModelInfo, shaderProgram))
+                                        modelILoadedInfo, shaderProgram))
     {
         std::cout << "spider_mastermind loaded OK" << std::endl;
     }
 
-    sModelDrawInfo mushroomModelInfo;
+    std::cout << "Loaded " << modelILoadedInfo.numberOfTriangles << " triangles" << std::endl;
     if ( pModelManger->LoadModelIntoVAO("assets/models/Mushrooms1_xyz_normal.ply",
-                                        mushroomModelInfo, shaderProgram))
+                                        modelILoadedInfo, shaderProgram))
     {
         std::cout << "Mushrooms1_xyz_normal loaded OK" << std::endl;
     }
 
+    std::cout << "Loaded " << modelILoadedInfo.numberOfTriangles << " triangles" << std::endl;
+
+    pModelManger->LoadModelIntoVAO("assets/models/bun_zipper_xyz_n.ply", modelILoadedInfo, shaderProgram);
+    std::cout << "Loaded " << modelILoadedInfo.numberOfTriangles << " triangles" << std::endl;
+
+    pModelManger->LoadModelIntoVAO("assets/models/mig29_xyz_n.ply", modelILoadedInfo, shaderProgram);
+    std::cout << "Loaded " << modelILoadedInfo.numberOfTriangles << " triangles" << std::endl;
+
+    pModelManger->LoadModelIntoVAO("assets/models/camion jugete_xyz_n.ply", modelILoadedInfo, shaderProgram);
+    std::cout << "Loaded " << modelILoadedInfo.numberOfTriangles << " triangles" << std::endl;
+
     cMeshObject SpiderMesh;
-//    SpiderMesh.meshName = "assets/models/spider_mastermind.bmd6model.fbx.ascii_Y_up.ply";
-    SpiderMesh.meshName = "assets/models/Mushrooms1_xyz_normal.ply";
+    SpiderMesh.meshName = "assets/models/spider_mastermind.bmd6model.fbx.ascii_Y_up.ply";
+    SpiderMesh.colour = glm::vec3(1.0f, 0.0f, 0.0f);
+    SpiderMesh.isWireframe = false;
+    ::g_vecMeshesToDraw.push_back(SpiderMesh);
+
+    cMeshObject airplane1;
+    airplane1.meshName = "assets/models/mig29_xyz_n.ply";
+    airplane1.colour = glm::vec3(0.0f, 1.0f, 0.0f);
+    ::g_vecMeshesToDraw.push_back(airplane1);
+
+    cMeshObject mushRoomMesh;
+    mushRoomMesh.meshName = "assets/models/Mushrooms1_xyz_normal.ply";
+    mushRoomMesh.colour = glm::vec3(0.0f, 0.0f, 1.0f);
+    ::g_vecMeshesToDraw.push_back(mushRoomMesh);
+
+    cMeshObject toyTruck;
+    toyTruck.meshName = "assets/models/camion jugete_xyz_n.ply";
+    toyTruck.colour = glm::vec3(0.0f, 1.0f, 1.0f);
+    toyTruck.position.x = 4.0f;
+    toyTruck.scale = 5.0f;
+    toyTruck.orientation.y = glm::radians(90.0f);
+    ::g_vecMeshesToDraw.push_back(toyTruck);
 
 
-    mvp_location = glGetUniformLocation(shaderProgram, "MVP");
+//    mvp_location = glGetUniformLocation(shaderProgram, "MVP");
 
 
 // Vertex layout specification
@@ -327,31 +379,17 @@ int main(void)
 ////
 
 
+    // When this while exits, your program exits, too
     while (!glfwWindowShouldClose(window))
     {
+
         float ratio;
         int width, height;
-//        mat4x4 m, p, mvp;
-        glm::mat4 m, p, v, mvp;
-
-
         glfwGetFramebufferSize(window, &width, &height);
         ratio = width / (float)height;
-
         glViewport(0, 0, width, height);
-        glClear(GL_COLOR_BUFFER_BIT);
 
-//        mat4x4_identity(m);
-        m = glm::mat4(1.0f);        // Identity matrix
-//        mat4x4_rotate_Z(m, m, (float)glfwGetTime());
-        glm::mat4 matRotateZ = glm::rotate(glm::mat4(1.0f),
-                                           0.0f,    // (float)glm::radians(-90.0f),  // glfwGetTime(),
-                                           glm::vec3(1.0f, 0.0f, 0.0f));
-//        mat4x4_mul(mvp, p, m);
-        m = matRotateZ * m;
-
-
-//        mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
+        glm::mat4 p, v;
 
         p = glm::perspective(0.6f,
                              ratio,
@@ -366,43 +404,109 @@ int main(void)
 
         glm::vec3 newTarget = ::g_cameraEye + glm::vec3(0.0f, 0.0f, 10.0f);
 
-        v = glm::lookAt( ::g_cameraEye,
-                         newTarget,  // ::g_cameraTarget,
-                         ::g_upVector );
-
-        mvp = p * v * m;
-
-//        glUseProgram(program);
-//        glUniformMatrix4fv(mvp_location, 1, GL_FALSE, (const GLfloat*)mvp);
-        glUniformMatrix4fv(mvp_location, 1, GL_FALSE, glm::value_ptr(mvp));
+        v = glm::lookAt(::g_cameraEye,
+                        newTarget,  // ::g_cameraTarget,
+                        ::g_upVector);
 
 
-        // uniform vec3 colorOverrideRGB;
-        GLint colorOverrideRGB_UL = glGetUniformLocation(shaderProgram, "colorOverrideRGB");
-        glUniform3f(colorOverrideRGB_UL, 1.0f, 1.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
 
-        // GL_POINT, GL_LINE, and GL_FILL
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-        // glDrawArrays(GL_TRIANGLES, 0, 3);
-//        unsigned int numberOfVerticesToDraw = numTrianglesLoaded * 3;
-//        glDrawArrays(GL_TRIANGLES, 0, numberOfVerticesToDraw);
-
-       // "assets/models/SpaceShuttleOrbiter.ply"
-        sModelDrawInfo modelToDraw;
-        if ( pModelManger->FindDrawInfoByModelName(SpiderMesh.meshName, modelToDraw) )
+        // Draw all the stuff in the vector
+        for (std::vector< cMeshObject >::iterator itMesh = ::g_vecMeshesToDraw.begin();
+             itMesh != ::g_vecMeshesToDraw.end(); itMesh++)
         {
-            glBindVertexArray(modelToDraw.VAO_ID);
+            // Copy the mesh (for ease of reading)
+            cMeshObject currentMesh = *itMesh;
 
-            glDrawElements(GL_TRIANGLES,
-                           modelToDraw.numberOfIndices,
-                           GL_UNSIGNED_INT,
-                           0);
 
-            // Bind it to nothing
-            glBindVertexArray(0);
+    //        mat4x4 m, p, mvp;
+            glm::mat4 m, mvp;
 
-        }
+    //        mat4x4_identity(m);
+            m = glm::mat4(1.0f);        // Identity matrix
+    //        mat4x4_rotate_Z(m, m, (float)glfwGetTime());
+            glm::mat4 matRotateZ = glm::rotate(glm::mat4(1.0f),
+                                               0.0f,    // (float)glm::radians(-90.0f),  // glfwGetTime(),
+                                               glm::vec3(1.0f, 0.0f, 0.0f));
+    //        mat4x4_mul(mvp, p, m);
+            m = matRotateZ * m;
+
+
+    //        mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
+
+
+//            mvp = p * v * m;
+//            uniform mat4x4 matModel;			// M
+//            uniform mat4x4 matView;				// V
+//            uniform mat4x4 matProjection;		// P
+            GLint matModel_UL = glGetUniformLocation(shaderProgram, "matModel");
+            GLint matView_UL = glGetUniformLocation(shaderProgram, "matView");
+            GLint matProjection_UL = glGetUniformLocation(shaderProgram, "matProjection");
+            glUniformMatrix4fv(matModel_UL, 1, GL_FALSE, glm::value_ptr(m));
+            glUniformMatrix4fv(matView_UL, 1, GL_FALSE, glm::value_ptr(v));
+            glUniformMatrix4fv(matProjection_UL, 1, GL_FALSE, glm::value_ptr(p));
+
+
+    //        glUseProgram(program);
+    //        glUniformMatrix4fv(mvp_location, 1, GL_FALSE, (const GLfloat*)mvp);
+//            mvp_location = glGetUniformLocation(shaderProgram, "MVP");
+//            glUniformMatrix4fv(mvp_location, 1, GL_FALSE, glm::value_ptr(mvp));
+
+
+            // uniform vec3 colorOverrideRGB;
+            GLint colorOverrideRGB_UL = glGetUniformLocation(shaderProgram, "colorOverrideRGB");
+//            glUniform3f(colorOverrideRGB_UL, 1.0f, 0.0f, 0.0f);
+            glUniform3f(colorOverrideRGB_UL, 
+                        currentMesh.colour.r, 
+                        currentMesh.colour.g,
+                        currentMesh.colour.b);
+
+            //uniform vec3 positionOffset;
+            GLint positionOffset_UL = glGetUniformLocation(shaderProgram, "positionOffset");
+            glUniform3f(positionOffset_UL,
+                        currentMesh.position.x,     // 4
+                        currentMesh.position.y,     // 0 
+                        currentMesh.position.z);    // 0
+
+            //uniform float scale;
+            GLint scale_UL = glGetUniformLocation(shaderProgram, "scale");
+            glUniform1f(scale_UL,
+                        currentMesh.scale);
+
+
+            // GL_POINT, GL_LINE, and GL_FILL
+            if ( currentMesh.isWireframe )
+            {
+                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+            }
+            else
+            {
+                glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            }
+
+            // glDrawArrays(GL_TRIANGLES, 0, 3);
+    //        unsigned int numberOfVerticesToDraw = numTrianglesLoaded * 3;
+    //        glDrawArrays(GL_TRIANGLES, 0, numberOfVerticesToDraw);
+
+           // "assets/models/SpaceShuttleOrbiter.ply"
+            sModelDrawInfo modelToDraw;
+            if ( pModelManger->FindDrawInfoByModelName(currentMesh.meshName, modelToDraw) )
+            {
+                glBindVertexArray(modelToDraw.VAO_ID);
+
+                glDrawElements(GL_TRIANGLES,
+                               modelToDraw.numberOfIndices,
+                               GL_UNSIGNED_INT,
+                               (void*)0);
+
+                // Bind it to nothing
+                glBindVertexArray(0);
+
+            }
+
+        }//for (std::vector< cMeshObject >
+
 
         glfwSwapBuffers(window);
         glfwPollEvents();

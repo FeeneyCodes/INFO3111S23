@@ -1,10 +1,13 @@
 ply 
-format ascii  1.0
+format ascii 1.0
 element vertex 3
 property float x
 property float y
 property float z
+element face 1
+property list uchar int vertex_indices
 end_header
 -0.6f -0.4f 0.0f
 0.6f -0.4f 0.0f
 0.f 0.6f 0.0f
+3 0 1 2 
