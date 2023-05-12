@@ -22,7 +22,9 @@ void main()
 // mvp = p * v * m;
 	
 	mat4 matMVP = matProjection * matView * matModel;
+	
     gl_Position = matMVP * vec4(position, 1.0);
+	
     color = vCol;
 	
 }// off to the fragment shader

@@ -389,24 +389,28 @@ int main(void)
         ratio = width / (float)height;
         glViewport(0, 0, width, height);
 
-        glm::mat4 p, v;
+    //        mat4x4 m, p, mvp;
+    //    glm::mat4 m, mvp;
+        glm::mat4 mModel = glm::mat4(1.0f);
+        glm::mat4 mProjection = glm::mat4(1.0f);
+        glm::mat4 mView = glm::mat4(1.0f);
 
-        p = glm::perspective(0.6f,
-                             ratio,
-                             0.1f,          // Near plane
-                             1000.0f);      // Far plane
+        mProjection = glm::perspective(0.6f,
+                                         ratio,
+                                         0.1f,          // Near plane
+                                         1000.0f);      // Far plane
 
-        v = glm::mat4(1.0f);
+        mView = glm::mat4(1.0f);
 
         //glm::vec3 cameraEye = glm::vec3(0.0, 0.0, -4.0f);
         //glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
         //glm::vec3 upVector = glm::vec3(0.0f, 1.0f, 0.0f);
 
-        glm::vec3 newTarget = ::g_cameraEye + glm::vec3(0.0f, 0.0f, 10.0f);
+//        glm::vec3 newTarget = ::g_cameraEye + glm::vec3(0.0f, 0.0f, 10.0f);
 
-        v = glm::lookAt(::g_cameraEye,
-                        newTarget,  // ::g_cameraTarget,
-                        ::g_upVector);
+        mView = glm::lookAt(::g_cameraEye,
+                            ::g_cameraTarget,  // newTarget
+                            ::g_upVector);
 
 
         glClear(GL_COLOR_BUFFER_BIT);
@@ -420,17 +424,15 @@ int main(void)
             cMeshObject currentMesh = *itMesh;
 
 
-    //        mat4x4 m, p, mvp;
-            glm::mat4 m, mvp;
-
     //        mat4x4_identity(m);
-            m = glm::mat4(1.0f);        // Identity matrix
+            mModel = glm::mat4(1.0f);        // Identity matrix
+
     //        mat4x4_rotate_Z(m, m, (float)glfwGetTime());
-            glm::mat4 matRotateZ = glm::rotate(glm::mat4(1.0f),
+            glm::mat4 mRotateZ = glm::rotate(glm::mat4(1.0f),
                                                0.0f,    // (float)glm::radians(-90.0f),  // glfwGetTime(),
                                                glm::vec3(1.0f, 0.0f, 0.0f));
     //        mat4x4_mul(mvp, p, m);
-            m = matRotateZ * m;
+            mModel = mRotateZ * mModel;
 
 
     //        mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
@@ -443,9 +445,9 @@ int main(void)
             GLint matModel_UL = glGetUniformLocation(shaderProgram, "matModel");
             GLint matView_UL = glGetUniformLocation(shaderProgram, "matView");
             GLint matProjection_UL = glGetUniformLocation(shaderProgram, "matProjection");
-            glUniformMatrix4fv(matModel_UL, 1, GL_FALSE, glm::value_ptr(m));
-            glUniformMatrix4fv(matView_UL, 1, GL_FALSE, glm::value_ptr(v));
-            glUniformMatrix4fv(matProjection_UL, 1, GL_FALSE, glm::value_ptr(p));
+            glUniformMatrix4fv(matModel_UL, 1, GL_FALSE, glm::value_ptr(mModel));
+            glUniformMatrix4fv(matView_UL, 1, GL_FALSE, glm::value_ptr(mView));
+            glUniformMatrix4fv(matProjection_UL, 1, GL_FALSE, glm::value_ptr(mProjection));
 
 
     //        glUseProgram(program);
@@ -528,9 +530,6 @@ int main(void)
 //    exit(EXIT_SUCCESS);
     return 0;
 }
-
-
-
 
 
 bool Load_mig29_xyz_rgba_PlyFile(std::string filename,
