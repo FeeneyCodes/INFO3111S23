@@ -92,6 +92,11 @@ static void error_callback(int error, const char* description)
     fprintf(stderr, "Error: %s\n", description);
 }
 
+// This is a list of the objects we want to draw in this scene
+std::vector< cMeshObject > g_vecMeshesToDraw;
+unsigned int g_selectedMeshIndex = 2;
+
+
 //    void function_name(GLFWwindow* window, int key, int scancode, int action, int mods)
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -102,38 +107,106 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
     const float CAMERA_MOVE_SPEED = 0.1f;
 
-    if ( key == GLFW_KEY_A )    
+    if ( mods == GLFW_MOD_SHIFT )
     {
+        // Shift ONLY is down
+    }
+
+    // Note this is a bit mask 
+    // 0001 0010 0100 
+    // 0111 &
+    // 0110
+    // ----
+    // 0000
+    if ( (mods & GLFW_MOD_SHIFT) == GLFW_MOD_SHIFT )
+    {
+        // Shift is down and maybe other keys as well
+    }
+
+
+    //if ( key == GLFW_KEY_A )    
+    //{
+    //    // Move "left"
+    //    ::g_cameraEye.x += CAMERA_MOVE_SPEED;
+    //}
+    //if ( key == GLFW_KEY_D )    
+    //{
+    //    // Move "right"
+    //    ::g_cameraEye.x -= CAMERA_MOVE_SPEED;
+    //}
+
+    //if ( key == GLFW_KEY_W )    
+    //{
+    //    // Move "forward"
+    //    ::g_cameraEye.z += CAMERA_MOVE_SPEED;
+    //}
+    //if ( key == GLFW_KEY_S )    
+    //{
+    //    // Move "backwards"
+    //    ::g_cameraEye.z -= CAMERA_MOVE_SPEED;
+    //}
+
+    //if ( key == GLFW_KEY_Q )    
+    //{
+    //    // Move "down"
+    //    ::g_cameraEye.y -= CAMERA_MOVE_SPEED;
+    //}
+    //if ( key == GLFW_KEY_E )    
+    //{
+    //    // Move "up"
+    //    ::g_cameraEye.y += CAMERA_MOVE_SPEED;
+    //}
+}
+
+void handleKeyboardInput(GLFWwindow* window)
+{
+    const float CAMERA_MOVE_SPEED = 0.1f;
+
+    if ( glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) )
+    {
+        if ( glfwGetKey(window, GLFW_KEY_A) )
+        {
+            // Move "left"
+            ::g_vecMeshesToDraw[::g_selectedMeshIndex].orientation.x += 0.01f;
+        }
+        else
+        {
         // Move "left"
         ::g_cameraEye.x += CAMERA_MOVE_SPEED;
+        }
     }
-    if ( key == GLFW_KEY_D )    
+//    if ( glfwGetKey(window, GLFW_KEY_A) )
+//    {
+//    }
+    if (glfwGetKey(window, GLFW_KEY_D) )
     {
         // Move "right"
         ::g_cameraEye.x -= CAMERA_MOVE_SPEED;
     }
 
-    if ( key == GLFW_KEY_W )    
+    if (glfwGetKey(window, GLFW_KEY_W) )
     {
         // Move "forward"
         ::g_cameraEye.z += CAMERA_MOVE_SPEED;
     }
-    if ( key == GLFW_KEY_S )    
+    if (glfwGetKey(window, GLFW_KEY_S) )
     {
         // Move "backwards"
         ::g_cameraEye.z -= CAMERA_MOVE_SPEED;
     }
 
-    if ( key == GLFW_KEY_Q )    
+    if (glfwGetKey(window, GLFW_KEY_Q) )
     {
         // Move "down"
         ::g_cameraEye.y -= CAMERA_MOVE_SPEED;
     }
-    if ( key == GLFW_KEY_E )    
+    if (glfwGetKey(window, GLFW_KEY_E) )
     {
         // Move "up"
         ::g_cameraEye.y += CAMERA_MOVE_SPEED;
     }
+
+    return;
 }
 
 // Note I'm passing the array by reference so that the pointer
@@ -173,8 +246,6 @@ bool Load_Doom_spider_mastermind_PlyFile(std::string filename,
                                  unsigned int &numVerticesLoaded,
                                  unsigned int &numTrianglesLoaded);
 
-// This is a list of the objects we want to draw in this scene
-std::vector< cMeshObject > g_vecMeshesToDraw;
 
 int main(void)
 {
@@ -325,20 +396,36 @@ int main(void)
     pModelManger->LoadModelIntoVAO("assets/models/camion jugete_xyz_n.ply", modelILoadedInfo, shaderProgram);
     std::cout << "Loaded " << modelILoadedInfo.numberOfTriangles << " triangles" << std::endl;
 
+    pModelManger->LoadModelIntoVAO("assets/models/FractalTerrainFromMeshLab_xyz_n.ply", modelILoadedInfo, shaderProgram);
+    std::cout << "Loaded " << modelILoadedInfo.numberOfTriangles << " triangles" << std::endl;
+
+    cMeshObject terrainMesh;
+    terrainMesh.meshName = "assets/models/FractalTerrainFromMeshLab_xyz_n.ply";
+    terrainMesh.colour = glm::vec3(0.8f, 0.8f, 0.8f);
+    terrainMesh.isWireframe = true;
+    terrainMesh.position = glm::vec3(0.0f, -25.0f, 0.0f);
+    ::g_vecMeshesToDraw.push_back(terrainMesh);
+
     cMeshObject SpiderMesh;
     SpiderMesh.meshName = "assets/models/spider_mastermind.bmd6model.fbx.ascii_Y_up.ply";
     SpiderMesh.colour = glm::vec3(1.0f, 0.0f, 0.0f);
     SpiderMesh.isWireframe = false;
+    SpiderMesh.position = glm::vec3(4.0f, -15.0f, 0.0f);
     ::g_vecMeshesToDraw.push_back(SpiderMesh);
 
     cMeshObject airplane1;
     airplane1.meshName = "assets/models/mig29_xyz_n.ply";
     airplane1.colour = glm::vec3(0.0f, 1.0f, 0.0f);
+    airplane1.position = glm::vec3(0.0f, 10.0f, 0.0f);
+    airplane1.scale = 25.0f;
     ::g_vecMeshesToDraw.push_back(airplane1);
 
     cMeshObject mushRoomMesh;
     mushRoomMesh.meshName = "assets/models/Mushrooms1_xyz_normal.ply";
     mushRoomMesh.colour = glm::vec3(0.0f, 0.0f, 1.0f);
+    mushRoomMesh.position = glm::vec3(0.0f, 0.0f, 0.0f);
+    mushRoomMesh.scale = 0.1f;
+    mushRoomMesh.orientation.x = -90.0f;         // Note it's being converted into radians
     ::g_vecMeshesToDraw.push_back(mushRoomMesh);
 
     cMeshObject toyTruck;
@@ -347,8 +434,16 @@ int main(void)
     toyTruck.position.x = 4.0f;
     toyTruck.scale = 5.0f;
     toyTruck.orientation.y = glm::radians(90.0f);
+    toyTruck.position = glm::vec3(-8.0f, -1.0f, -5.0f);
     ::g_vecMeshesToDraw.push_back(toyTruck);
 
+    cMeshObject toyTruck2;
+    toyTruck2.meshName = "assets/models/camion jugete_xyz_n.ply";
+    toyTruck2.colour = glm::vec3(1.0f, 1.0f, 0.0f);
+    toyTruck2.position.x = -4.0f;
+    toyTruck2.scale = 8.0f;
+    toyTruck2.orientation.x = glm::radians(135.0f);
+    ::g_vecMeshesToDraw.push_back(toyTruck2);
 
 //    mvp_location = glGetUniformLocation(shaderProgram, "MVP");
 
@@ -377,6 +472,8 @@ int main(void)
 //                          (void*)offsetof(sVertexXYZ_RGB, r));
 //                          //(void*)(sizeof(float) * 3));
 ////
+
+    float heyHeyILoveMath = 0.0f;
 
 
     // When this while exits, your program exits, too
@@ -412,8 +509,8 @@ int main(void)
                             ::g_cameraTarget,  // newTarget
                             ::g_upVector);
 
-
-        glClear(GL_COLOR_BUFFER_BIT);
+        // Adding clearing the "depth" buffer 
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
         // Draw all the stuff in the vector
@@ -427,12 +524,41 @@ int main(void)
     //        mat4x4_identity(m);
             mModel = glm::mat4(1.0f);        // Identity matrix
 
-    //        mat4x4_rotate_Z(m, m, (float)glfwGetTime());
-            glm::mat4 mRotateZ = glm::rotate(glm::mat4(1.0f),
-                                               0.0f,    // (float)glm::radians(-90.0f),  // glfwGetTime(),
+//            glm::mat4 matTranslate = glm::translate(glm::mat4(1.0f),
+//                                                    glm::vec3(heyHeyILoveMath, 0.0, 0.0f) );
+            glm::mat4 matTranslate = glm::translate(glm::mat4(1.0f),
+                                                    currentMesh.position );
+
+
+            glm::mat4 matRotateX = glm::rotate(glm::mat4(1.0f),
+                                               glm::radians( currentMesh.orientation. x),
                                                glm::vec3(1.0f, 0.0f, 0.0f));
-    //        mat4x4_mul(mvp, p, m);
-            mModel = mRotateZ * mModel;
+
+            glm::mat4 matRotateY = glm::rotate(glm::mat4(1.0f),
+                                               glm::radians(currentMesh.orientation.y),
+                                               glm::vec3(0.0f, 1.0f, 0.0f));
+
+            glm::mat4 matRotateZ = glm::rotate(glm::mat4(1.0f),
+                                               glm::radians(currentMesh.orientation.z),
+                                               glm::vec3(0.0f, 0.0f, 1.0f));
+
+            glm::mat4 matScale = glm::scale(glm::mat4(1.0f),
+                                            glm::vec3(currentMesh.scale, currentMesh.scale, currentMesh.scale));
+
+            mModel = matTranslate * mModel; // Math order is the last thing
+
+            mModel = mModel * matRotateX;
+            mModel = mModel * matRotateY;
+            mModel = mModel * matRotateZ;
+
+            mModel = mModel * matScale; // Math order is 1st thing
+
+    //        mat4x4_rotate_Z(m, m, (float)glfwGetTime());
+    //        glm::mat4 mRotateZ = glm::rotate(glm::mat4(1.0f),
+    //                                         (float) glfwGetTime(),
+    //                                         glm::vec3(0.0f, 0.0f, 1.0f));
+    ////        mat4x4_mul(mvp, p, m);
+    //        mModel = mRotateZ * mModel;
 
 
     //        mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
@@ -511,8 +637,10 @@ int main(void)
 
 
         glfwSwapBuffers(window);
-        glfwPollEvents();
+        glfwPollEvents();       // Checks keyboard, mouse, joystick, etc.
 
+        // Handle asyn keyboard inputs
+        handleKeyboardInput(window);
 
         std::stringstream ssTitle;
         ssTitle << "Camera (x,y,z): "

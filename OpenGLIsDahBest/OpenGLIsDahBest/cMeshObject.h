@@ -18,7 +18,7 @@ public:
 	std::string meshName;
 
 	glm::vec3 position;
-	glm::vec3 orientation;
+	glm::vec3 orientation;		// Angle around each axis.  0,90,0
 	glm::vec3 colour;
 	float scale;
 	bool isWireframe;
