@@ -25,7 +25,7 @@
 
 #include "cMeshObject.h"
 
-
+#include "../AssimpFileLoaderHelper/AssimpFileLoaderHelper.h"
 
 //static const struct
 //{
@@ -67,25 +67,6 @@ glm::vec3 g_cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
 glm::vec3 g_upVector = glm::vec3(0.0f, +1.0f, 0.0f);
 
 
-//static const char* vertex_shader_text =
-//"#version 110\n"
-//"uniform mat4 MVP;\n"
-//"attribute vec3 vCol;\n"
-//"attribute vec2 vPos;\n"
-//"varying vec3 color;\n"
-//"void main()\n"
-//"{\n"
-//"    gl_Position = MVP * vec4(vPos.x, vPos.y, 0.0, 1.0);\n"
-//"    color = vCol;\n"
-//"}\n";
-
-//static const char* fragment_shader_text =
-//"#version 110\n"
-//"varying vec3 color;\n"
-//"void main()\n"
-//"{\n"
-//"    gl_FragColor = vec4(color, 1.0);\n"
-//"}\n";
 
 static void error_callback(int error, const char* description)
 {
@@ -249,12 +230,9 @@ bool Load_Doom_spider_mastermind_PlyFile(std::string filename,
 
 int main(void)
 {
-    GLFWwindow* window;
-    GLuint vertex_buffer;
-//    GLuint vertex_shader;
-//    GLuint fragment_shader;
-//    GLuint program;
-    GLint mvp_location, vpos_location, vcol_location;
+    GLFWwindow* window = NULL;
+    GLint vpos_location = 0;
+    GLint vcol_location = 0;
 
     glfwSetErrorCallback(error_callback);
 
@@ -263,10 +241,6 @@ int main(void)
 //        exit(EXIT_FAILURE);
         return -1;
     }
-
- //   sVertexXYZ_RGB* pVertexArray = new sVertexXYZ_RGB[3];
-    //int x;  // stack
-    //int* pX = new int();    // thing it points to is on the heap
 
 
 
@@ -290,62 +264,15 @@ int main(void)
 
     // NOTE: OpenGL error checks have been omitted for brevity
 
+    // How does it know about the functions?
+    // These are from the AssimpFileLoaderHelper .lib
+    fnAssimpFileLoaderHelper("Yo!");
+
+    // Because it's "exported" we can see it. 
+    cAssimpHelper myHelper;
+    myHelper.LetsDoThis("Hey");
 
 
-    //unsigned int numVerticesLoaded = 0;
-    //unsigned int numTrianglesLoaded = 0;
-
-//    if (Load_mig29_xyz_rgba_PlyFile( "mig29_xyz_rgba.ply",
-//    if (Load_Mushrooms1_PlyFile( "Mushrooms1 (ASCII format).ply",
-//    if (Load_Doom_spider_mastermind_PlyFile( "assets/models/spider_mastermind.bmd6model.fbx.ascii.ply",
-  //  if (Load_Doom_spider_mastermind_PlyFile( "assets/models/spider_mastermind.bmd6model.fbx.ascii_Y_up.ply",
-  //                                   pVertexArray,
-  //                                   numVerticesLoaded,
-  //                                   numTrianglesLoaded) )
-  //  {
-  //      std::cout << "File loaded OK" << std::endl;
-  //  }
-  //  else
-  //  {
-  //      std::cout << "Error! ALL IS LOST! FOREVER LOST! Can't load PLY file." << std::endl;
-  ////      return 0;
-  //  }
-
-//    unsigned int numberOfBytes = sizeof(sVertexXYZ_RGB) * 3;
-
-//    unsigned int numberOfVerticesToDraw = numTrianglesLoaded * 3;
-
-    //glGenBuffers(1, &vertex_buffer);
-    //// Bind assign a "type" of whatever it is (a buffer)
-    //// It will make it the "current" buffer. 
-    //// The one that we are currently "bound" to
-    //glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
-
-    //unsigned int numberOfBytes = sizeof(sVertexXYZ_RGB) * numTrianglesLoaded * 3;
-    //
-    //glBufferData(GL_ARRAY_BUFFER, 
-    //             numberOfBytes,    // Each vertex in bytes
-    //             pVertexArray,  // vertices,                  // Pointer to the start of the array
-    //             GL_STATIC_DRAW);
-
-    //// Note that I can delete the original array if I want to.
-    //// The data has been copied from the C++ (application) side into the GPU (video card) RAM
-    //delete [] pVertexArray;
-
-//
-//    vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-//    glShaderSource(vertex_shader, 1, &vertex_shader_text, NULL);
-//    glCompileShader(vertex_shader);
-//
-//    fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-//    glShaderSource(fragment_shader, 1, &fragment_shader_text, NULL);
-//    glCompileShader(fragment_shader);
-//
-//    program = glCreateProgram();
-//    glAttachShader(program, vertex_shader);
-//    glAttachShader(program, fragment_shader);
-//    glLinkProgram(program);
-// 
     cShaderManager* pShaderManager = new cShaderManager();
 
     cShaderManager::cShader vertexShader;
@@ -448,30 +375,6 @@ int main(void)
 //    mvp_location = glGetUniformLocation(shaderProgram, "MVP");
 
 
-// Vertex layout specification
- //   struct sVertexXYZ_RGB {
-//        float x, y, z;      // vec2 to vec3 
-//        float r, g, b;  };
-//    vpos_location = glGetAttribLocation(shaderProgram, "vPos");
-//    vcol_location = glGetAttribLocation(shaderProgram, "vCol");
-//
-//    glEnableVertexAttribArray(vpos_location);
-//    glVertexAttribPointer(vpos_location, 
-//                          3, 
-//                          GL_FLOAT, 
-//                          GL_FALSE,
-//                          sizeof(sVertexXYZ_RGB),       // sizeof(vertices[0]), 
-//                          (void*)offsetof(sVertexXYZ_RGB, x)); // (void*)0);
-//
-//    glEnableVertexAttribArray(vcol_location);
-//    glVertexAttribPointer(vcol_location, 
-//                          3, 
-//                          GL_FLOAT, 
-//                          GL_FALSE,
-//                          sizeof(sVertexXYZ_RGB),   // sizeof(vertices[0]), 
-//                          (void*)offsetof(sVertexXYZ_RGB, r));
-//                          //(void*)(sizeof(float) * 3));
-////
 
     float heyHeyILoveMath = 0.0f;
 
