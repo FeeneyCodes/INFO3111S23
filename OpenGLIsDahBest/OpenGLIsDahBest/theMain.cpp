@@ -326,17 +326,31 @@ int main(void)
     pModelManger->LoadModelIntoVAO("assets/models/FractalTerrainFromMeshLab_xyz_n.ply", modelILoadedInfo, shaderProgram);
     std::cout << "Loaded " << modelILoadedInfo.numberOfTriangles << " triangles" << std::endl;
 
+    pModelManger->LoadModelIntoVAO("assets/models/Apartment Building_26_xyz_n.ply", modelILoadedInfo, shaderProgram);
+    std::cout << "Loaded " << modelILoadedInfo.numberOfTriangles << " triangles" << std::endl;
+
+    cMeshObject appartmentBuildingMesh;
+    appartmentBuildingMesh.meshName = "assets/models/Apartment Building_26_xyz_n.ply";
+    appartmentBuildingMesh.colour = glm::vec3(0.8f, 0.8f, 0.8f);
+//    appartmentBuildingMesh.isWireframe = true;
+    appartmentBuildingMesh.scale = 1.0f;
+    appartmentBuildingMesh.position = glm::vec3(15.0f, 0.0f, 0.0f);
+    ::g_vecMeshesToDraw.push_back(appartmentBuildingMesh);
+    //std::vector< cMeshObject > g_vecMeshesToDraw;
+//    appartmentBuildingMesh.colour = glm::vec3(0.2f, 0.4f, 0.3f);
+
+
     cMeshObject terrainMesh;
     terrainMesh.meshName = "assets/models/FractalTerrainFromMeshLab_xyz_n.ply";
     terrainMesh.colour = glm::vec3(0.8f, 0.8f, 0.8f);
-    terrainMesh.isWireframe = true;
-    terrainMesh.position = glm::vec3(0.0f, -25.0f, 0.0f);
+//    terrainMesh.isWireframe = true;
+    terrainMesh.position = glm::vec3(0.0f, -250.0f, 0.0f);
     ::g_vecMeshesToDraw.push_back(terrainMesh);
 
     cMeshObject SpiderMesh;
     SpiderMesh.meshName = "assets/models/spider_mastermind.bmd6model.fbx.ascii_Y_up.ply";
     SpiderMesh.colour = glm::vec3(1.0f, 0.0f, 0.0f);
-    SpiderMesh.isWireframe = false;
+//    SpiderMesh.isWireframe = false;
     SpiderMesh.position = glm::vec3(4.0f, -15.0f, 0.0f);
     ::g_vecMeshesToDraw.push_back(SpiderMesh);
 
@@ -414,6 +428,8 @@ int main(void)
 
         // Adding clearing the "depth" buffer 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        // Turn on "depth buffer" testing
+        glEnable(GL_DEPTH_TEST);
 
 
         // Draw all the stuff in the vector

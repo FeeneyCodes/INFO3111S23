@@ -11,10 +11,15 @@
 // This is also called the 'vertex layout'. 
 // This means that if the shader vertex layout changed, this
 //  vertex structure will also need to change (usually). 
+// in vec3 vCol;
+// in vec3 vPos;
+// in vec3 vNormal;
 struct sVert
 {
 	float x, y, z;		// added "z"
 	float r, g, b;
+	// Now with more normals!
+	float nx, ny, nz;
 };
 
 

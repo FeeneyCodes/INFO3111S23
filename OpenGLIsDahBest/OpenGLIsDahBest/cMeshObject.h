@@ -12,7 +12,7 @@ public:
 		this->colour = glm::vec3(1.0f, 1.0f, 1.0f);
 		this->orientation = glm::vec3(0.0f, 0.0f, 0.0f);
 		this->position = glm::vec3(0.0f, 0.0f, 0.0f);
-		this->isWireframe = true;
+		this->isWireframe = false;
 		this->scale = 1.0f;
 	};
 	std::string meshName;

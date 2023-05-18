@@ -105,19 +105,26 @@ bool cVAOManager::LoadModelIntoVAO(
 
 	GLint vpos_location = glGetAttribLocation(shaderProgramID, "vPos");	// program
 	GLint vcol_location = glGetAttribLocation(shaderProgramID, "vCol");	// program;
+	GLint vNormal_location = glGetAttribLocation(shaderProgramID, "vNormal");	// program;
 
 	// Set the vertex attributes for this shader
 	glEnableVertexAttribArray(vpos_location);	// vPos
 	glVertexAttribPointer( vpos_location, 3,		// vPos
 						   GL_FLOAT, GL_FALSE,
-						   sizeof(float) * 6, 
-						   ( void* )0);
+						   sizeof(sVert), 
+						   ( void* ) offsetof( sVert, x ) );
 
 	glEnableVertexAttribArray(vcol_location);	// vCol
 	glVertexAttribPointer( vcol_location, 3,		// vCol
 						   GL_FLOAT, GL_FALSE,
-						   sizeof(float) * 6, 
-						   ( void* )( sizeof(float) * 3 ));
+						  sizeof(sVert),
+						   ( void* ) offsetof(sVert, r));
+
+	glEnableVertexAttribArray(vNormal_location);	// vNormal
+	glVertexAttribPointer(vNormal_location, 3,		// vNormal
+						   GL_FLOAT, GL_FALSE,
+						   sizeof(sVert),
+						   ( void* ) offsetof(sVert, nx));
 
 	// Now that all the parts are set up, set the VAO to zero
 	glBindVertexArray(0);
@@ -127,6 +134,7 @@ bool cVAOManager::LoadModelIntoVAO(
 
 	glDisableVertexAttribArray(vpos_location);
 	glDisableVertexAttribArray(vcol_location);
+	glDisableVertexAttribArray(vNormal_location);
 
 
 	// Store the draw information into the map
@@ -229,6 +237,7 @@ bool cVAOManager::m_LoadTheModel(std::string fileName,
 		
 		thePlyFile >> tempVert.normal.x >> tempVert.normal.y >> tempVert.normal.z;
 
+//		tempVert.pos *= 0.01f;
 //		tempVert.pos.x *= 10.0f;
 //		tempVert.pos.y *= 10.0f;
 //		tempVert.pos.z *= 10.0f;
@@ -266,6 +275,11 @@ bool cVAOManager::m_LoadTheModel(std::string fileName,
 		drawInfo.pVertices[index].r = 1.0f;
 		drawInfo.pVertices[index].g = 1.0f;
 		drawInfo.pVertices[index].b = 1.0f;
+
+		drawInfo.pVertices[index].nx = vecTempPlyVerts[index].normal.x;
+		drawInfo.pVertices[index].ny = vecTempPlyVerts[index].normal.y;
+		drawInfo.pVertices[index].nz = vecTempPlyVerts[index].normal.z;
+
 	}// for ( unsigned int index...
 
 
