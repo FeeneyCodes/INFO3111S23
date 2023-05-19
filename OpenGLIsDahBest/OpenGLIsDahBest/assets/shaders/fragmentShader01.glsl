@@ -28,15 +28,17 @@ struct sLight
 					// 2 = directional light
 	vec4 param2;	// x = 0 for off, 1 for on
 };
+// Size of array MUST be known at compile time
+const int NUMBEROFLIGHTS = 10;
+uniform sLight theLights[NUMBEROFLIGHTS];
 
 const int POINT_LIGHT = 0;					// Default.
 const int SPOT_LIGHT_TYPE = 1;
 const int DIRECTIONAL_LIGHT_TYPE = 2;
 
-const int NUMBEROFLIGHTS = 1;
-sLight theLights[NUMBEROFLIGHTS];
 
-vec3 myOneLightPos = vec3(5.0f, 15.0f, 0.0f);
+
+//vec3 myOneLightPos = vec3(-5.0f, 15.0f, 0.0f);
 
 // Just like C and C++, the compiler compiled from top to bottom
 vec4 calcualteLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal, 
@@ -55,16 +57,29 @@ void main()
 	finalOutputColour = vec4( fVertexPosWorld.xyz, 1.0f );
 	
 	// Calculate how much light has hit this vertex. 
-	vec3 lightVector = myOneLightPos.xyz - fVertexPosWorld.xyz;
-	float distanceToLight = length(lightVector);
+//	vec3 lightVector = theLights[0].position.xyz - fVertexPosWorld.xyz;
+//	float distanceToLight = length(lightVector);
+	// 1 -> 1
+	// 10 -> 0.1
+	// 100 -> 0.01
+//	
+//	float brightness = (1.0f/(distanceToLight));
+//	
+//	brightness *= y_attenuation;
+//	
+//	brightness *= 10.0f;
+//	
+//	finalOutputColour.rgba = vec4((colorOverrideRGB * brightness), 1.0);
 	
-	float brightness = (1.0f/distanceToLight);
+	vec4 objectSpecular = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	
-	brightness *= 10.0f;
+	finalOutputColour = calcualteLightContrib(colorOverrideRGB.rgb,
+	                                          fNormal.xyz, 
+											  fVertexPosWorld.xyz, 
+											  objectSpecular );
 	
-	finalOutputColour.rgba = vec4((colorOverrideRGB * brightness), 1.0);
-	
-	
+	// Later for transparency.
+	finalOutputColour.w = 1.0f;
 }
 
 
@@ -150,10 +165,14 @@ vec4 calcualteLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal,
 			                   * vertexSpecular.rgb;	//* theLights[lightIndex].Specular.rgb
 					   
 		// Attenuation
+		// 1->2  --> dimmer by 2x
+		// 1->2  --> dimmer by 4x
+		// 1->10 --> dimmer by 10x
+		// 1->10 --> dimmer by 100x
 		float attenuation = 1.0f / 
 				( theLights[index].atten.x + 										
 				  theLights[index].atten.y * distanceToLight +						
-				  theLights[index].atten.z * distanceToLight*distanceToLight );  	
+				  theLights[index].atten.z * distanceToLight * distanceToLight );  	
 				  
 		// total light contribution is Diffuse + Specular
 		lightDiffuseContrib *= attenuation;

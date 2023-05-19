@@ -14,6 +14,9 @@
     <Filter Include="VAOManager">
       <UniqueIdentifier>{ce6a8d83-8313-4ea0-aafd-5d72e7702a4a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="LightManager">
+      <UniqueIdentifier>{8fce6fde-bc71-46ca-be7b-6dbb909814c0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="theMain.cpp">
@@ -31,6 +34,12 @@
     <ClCompile Include="cVAOManager\cVAOManager.cpp">
       <Filter>VAOManager</Filter>
     </ClCompile>
+    <ClCompile Include="cLightManager.cpp">
+      <Filter>LightManager</Filter>
+    </ClCompile>
+    <ClCompile Include="IOHandlers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cShaderManager\cShaderManager.h">
@@ -43,6 +52,9 @@
       <Filter>VAOManager</Filter>
     </ClInclude>
     <ClInclude Include="cMeshObject.h" />
+    <ClInclude Include="cLightManager.h">
+      <Filter>LightManager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\fragmentShader01.glsl">

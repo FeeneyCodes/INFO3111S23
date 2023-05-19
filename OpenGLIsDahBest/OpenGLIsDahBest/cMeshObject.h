@@ -22,5 +22,8 @@ public:
 	glm::vec3 colour;
 	float scale;
 	bool isWireframe;
+
+	std::string friendlyName;
+	unsigned int ID;
 	//...
 };

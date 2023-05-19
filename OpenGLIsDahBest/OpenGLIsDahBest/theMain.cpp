@@ -22,6 +22,7 @@
 #include "cShaderManager/cShaderManager.h"
 
 #include "cVAOManager/cVAOManager.h"
+#include "cLightManager.h"
 
 #include "cMeshObject.h"
 
@@ -78,129 +79,8 @@ std::vector< cMeshObject > g_vecMeshesToDraw;
 unsigned int g_selectedMeshIndex = 2;
 
 
-//    void function_name(GLFWwindow* window, int key, int scancode, int action, int mods)
-static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-    {
-        glfwSetWindowShouldClose(window, GLFW_TRUE);
-    }
+cLightManager* g_pTheLights = NULL;
 
-    const float CAMERA_MOVE_SPEED = 0.1f;
-
-    if ( mods == GLFW_MOD_SHIFT )
-    {
-        // Shift ONLY is down
-    }
-
-    // Note this is a bit mask 
-    // 0001 0010 0100 
-    // 0111 &
-    // 0110
-    // ----
-    // 0000
-    if ( (mods & GLFW_MOD_SHIFT) == GLFW_MOD_SHIFT )
-    {
-        // Shift is down and maybe other keys as well
-    }
-
-
-    //if ( key == GLFW_KEY_A )    
-    //{
-    //    // Move "left"
-    //    ::g_cameraEye.x += CAMERA_MOVE_SPEED;
-    //}
-    //if ( key == GLFW_KEY_D )    
-    //{
-    //    // Move "right"
-    //    ::g_cameraEye.x -= CAMERA_MOVE_SPEED;
-    //}
-
-    //if ( key == GLFW_KEY_W )    
-    //{
-    //    // Move "forward"
-    //    ::g_cameraEye.z += CAMERA_MOVE_SPEED;
-    //}
-    //if ( key == GLFW_KEY_S )    
-    //{
-    //    // Move "backwards"
-    //    ::g_cameraEye.z -= CAMERA_MOVE_SPEED;
-    //}
-
-    //if ( key == GLFW_KEY_Q )    
-    //{
-    //    // Move "down"
-    //    ::g_cameraEye.y -= CAMERA_MOVE_SPEED;
-    //}
-    //if ( key == GLFW_KEY_E )    
-    //{
-    //    // Move "up"
-    //    ::g_cameraEye.y += CAMERA_MOVE_SPEED;
-    //}
-}
-
-bool isShiftDown(GLFWwindow* window)
-{
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-    {
-        return true;
-    }
-    
-    if (glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS)
-    {
-        return true;
-    }
-    return false;
-}
-
-void handleKeyboardInput(GLFWwindow* window)
-{
-    const float CAMERA_MOVE_SPEED = 0.1f;
-
-    if (isShiftDown(window))
-    {
-
-    }
-    else
-    {
-        // Do camera stuff
-        if (glfwGetKey(window, GLFW_KEY_A))
-        {
-            // Move "left"
-                ::g_cameraEye.x += CAMERA_MOVE_SPEED;
-        }
-
-        if (glfwGetKey(window, GLFW_KEY_D))
-        {
-            // Move "right"
-            ::g_cameraEye.x -= CAMERA_MOVE_SPEED;
-        }
-
-        if (glfwGetKey(window, GLFW_KEY_W))
-        {
-            // Move "forward"
-            ::g_cameraEye.z += CAMERA_MOVE_SPEED;
-        }
-        if (glfwGetKey(window, GLFW_KEY_S))
-        {
-            // Move "backwards"
-            ::g_cameraEye.z -= CAMERA_MOVE_SPEED;
-        }
-
-        if (glfwGetKey(window, GLFW_KEY_Q))
-        {
-            // Move "down"
-            ::g_cameraEye.y -= CAMERA_MOVE_SPEED;
-        }
-        if (glfwGetKey(window, GLFW_KEY_E))
-        {
-            // Move "up"
-            ::g_cameraEye.y += CAMERA_MOVE_SPEED;
-        }
-    }//if (isShiftDown(window)
-
-    return;
-}
 
 // Note I'm passing the array by reference so that the pointer
 //  value I create inside the function can be "passed back out".
@@ -238,6 +118,23 @@ bool Load_Doom_spider_mastermind_PlyFile(std::string filename,
                                  sVertexXYZ_RGB* &pVertexArray,
                                  unsigned int &numVerticesLoaded,
                                  unsigned int &numTrianglesLoaded);
+
+
+// Returns NULL (or 0) if not found
+// Up to about 30-40 items, the linear search will be faster because of cache issues
+cMeshObject* pFindObjectByFriendlyName(std::string theName)
+{
+    for (unsigned int index = 0; index != ::g_vecMeshesToDraw.size(); index++ )
+    {
+        if ( ::g_vecMeshesToDraw[index].friendlyName == theName )
+        {
+            // Found it!
+            return &(::g_vecMeshesToDraw[index]);
+        }
+    }
+    // didn't find it
+    return NULL;
+}
 
 
 int main(void)
@@ -340,7 +237,20 @@ int main(void)
     pModelManger->LoadModelIntoVAO("assets/models/Apartment Building_26_xyz_n.ply", modelILoadedInfo, shaderProgram);
     std::cout << "Loaded " << modelILoadedInfo.numberOfTriangles << " triangles" << std::endl;
 
-    cMeshObject appartmentBuildingMesh;
+    pModelManger->LoadModelIntoVAO("assets/models/Smooth_UV_Sphere_xyz_n.ply", modelILoadedInfo, shaderProgram);
+    std::cout << "Loaded " << modelILoadedInfo.numberOfTriangles << " triangles" << std::endl;
+
+   cMeshObject smallSphere;
+   smallSphere.meshName = "assets/models/Smooth_UV_Sphere_xyz_n.ply";
+   smallSphere.colour = glm::vec3(1.0f, 1.0f, 0.0f);
+   smallSphere.isWireframe = true;
+   smallSphere.scale = 1.0f;
+   smallSphere.friendlyName = "small_sphere";
+    ::g_vecMeshesToDraw.push_back(smallSphere);
+    //std::vector< cMeshObject > g_vecMeshesToDraw;
+//    appartmentBuildingMesh.colour = glm::vec3(0.2f, 0.4f, 0.3f);
+
+   cMeshObject appartmentBuildingMesh;
     appartmentBuildingMesh.meshName = "assets/models/Apartment Building_26_xyz_n.ply";
     appartmentBuildingMesh.colour = glm::vec3(0.8f, 0.8f, 0.8f);
 //    appartmentBuildingMesh.isWireframe = true;
@@ -355,14 +265,14 @@ int main(void)
     terrainMesh.meshName = "assets/models/FractalTerrainFromMeshLab_xyz_n.ply";
     terrainMesh.colour = glm::vec3(0.8f, 0.8f, 0.8f);
 //    terrainMesh.isWireframe = true;
-    terrainMesh.position = glm::vec3(0.0f, -250.0f, 0.0f);
+    terrainMesh.position = glm::vec3(0.0f, -200.0f, 0.0f);
     ::g_vecMeshesToDraw.push_back(terrainMesh);
 
     cMeshObject SpiderMesh;
     SpiderMesh.meshName = "assets/models/spider_mastermind.bmd6model.fbx.ascii_Y_up.ply";
     SpiderMesh.colour = glm::vec3(1.0f, 0.0f, 0.0f);
 //    SpiderMesh.isWireframe = false;
-    SpiderMesh.position = glm::vec3(4.0f, -15.0f, 0.0f);
+    SpiderMesh.position = glm::vec3(-25.0f, 0.0f, 0.0f);
     ::g_vecMeshesToDraw.push_back(SpiderMesh);
 
     cMeshObject airplane1;
@@ -399,6 +309,25 @@ int main(void)
 
 //    mvp_location = glGetUniformLocation(shaderProgram, "MVP");
 
+
+    ::g_pTheLights = new cLightManager();
+    ::g_pTheLights->LoadUniformLocationsFromShader(shaderProgram);
+
+    ::g_pTheLights->myLights[0].position = glm::vec4(-5.0f, 15.0f, 0.0f, 1.0f);
+    ::g_pTheLights->myLights[0].diffuse = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);    // light colour
+    float shininess = 1.0f;
+    ::g_pTheLights->myLights[0].specular = glm::vec4(1.0f, 1.0f, 1.0f, shininess);    // light colour
+
+    // To change the "brightness" or the "throw" of the light
+    ::g_pTheLights->myLights[0].atten.x = 1.0f;     // Constant;
+    ::g_pTheLights->myLights[0].atten.y = 0.2f;     // Linear attenuation  
+    ::g_pTheLights->myLights[0].atten.z = 0.01f;    // quadratic attenuation  
+
+    //::g_pTheLights->myLights[0].direction 
+
+    ::g_pTheLights->myLights[0].param1.x = 0.0f;    // 0 = Point light
+
+    ::g_pTheLights->myLights[0].param2.x = 1.0f;    // 1 = on, 0 is off
 
 
     float heyHeyILoveMath = 0.0f;
@@ -442,6 +371,15 @@ int main(void)
         // Turn on "depth buffer" testing
         glEnable(GL_DEPTH_TEST);
 
+        // Update all the light stuff
+        ::g_pTheLights->UpdateLightInfoToShader(shaderProgram);
+
+        // Place the sphere where the light #0 was
+        cMeshObject* pTheSphere = pFindObjectByFriendlyName("small_sphere");
+        if ( pTheSphere )
+        {
+            pTheSphere->position = glm::vec3(::g_pTheLights->myLights[0].position);
+        }
 
         // Draw all the stuff in the vector
         for (std::vector< cMeshObject >::iterator itMesh = ::g_vecMeshesToDraw.begin();
@@ -449,6 +387,7 @@ int main(void)
         {
             // Copy the mesh (for ease of reading)
             cMeshObject currentMesh = *itMesh;
+
 
 
     //        mat4x4_identity(m);
@@ -576,11 +515,20 @@ int main(void)
         ssTitle << "Camera (x,y,z): "
             << ::g_cameraEye.x << ", "
             << ::g_cameraEye.y << ", "
-            << ::g_cameraEye.z;
+            << ::g_cameraEye.z
+            << " Light[0]: "
+            << "(xyz: " << ::g_pTheLights->myLights[0].position.x
+            << ", " << ::g_pTheLights->myLights[0].position.y
+            << ", " << ::g_pTheLights->myLights[0].position.z << ") "
+            << " l_atten: " << ::g_pTheLights->myLights[0].atten.y
+            << " q_atten: " << ::g_pTheLights->myLights[0].atten.z;
+
 
         glfwSetWindowTitle( window, ssTitle.str().c_str() );
 
     }
+
+    delete ::g_pTheLights;
 
     glfwDestroyWindow(window);
 
