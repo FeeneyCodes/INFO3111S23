@@ -1,52 +1,32 @@
 #include "AssimpFileLoaderHelper.h"
 
-#include <iostream>
 
-
-//#include <assimp/Importer.hpp>      // C++ importer interface
-//#include <assimp/scene.h>           // Output data structure
-//#include <assimp/postprocess.h>     // Post processing flags
-
+// We include the ACTUAL header here, since the compiler needs
+//  to know how large the class really is in order to create one. 
+#include "cAssimpHelper_Imp.h"
 
 cAssimpHelper::cAssimpHelper()
 {
+    // Create the implementation class...
+    this->m_pImp = new cAssimpHelper_Imp();
 }
 
 cAssimpHelper::~cAssimpHelper()
 {
+    // Delete the implementation class
+    delete this->m_pImp;
 
 }
 
-void cAssimpHelper::LetsDoThis(std::string message)
+bool cAssimpHelper::Load3DModelFile(std::string filename)
 {
-//	std::cout << "cAssimpHelper::LetsDoThis() says: " << std::endl;
-//	std::cout << message << std::endl;
-//	return;
-
-
-    //bool DoTheImportThing(const std::string & pFile)
-    //{
-    //  // Create an instance of the Importer class
-    //    Assimp::Importer importer;
-    //    // And have it read the given file with some example postprocessing
-    //    // Usually - if speed is not the most important aspect for you - you'll 
-    //    // propably to request more postprocessing than we do in this example.
-    //    const aiScene* scene = importer.ReadFile(pFile,
-    //                                             aiProcess_CalcTangentSpace |
-    //                                             aiProcess_Triangulate |
-    //                                             aiProcess_JoinIdenticalVertices |
-    //                                             aiProcess_SortByPType);
-
-    //                                       // If the import failed, report it
-    //    if (!scene)
-    //    {
-    //        DoTheErrorLogging(importer.GetErrorString());
-    //        return false;
-    //    }
-    //    // Now we can access the file's contents. 
-    //    DoTheSceneProcessing(scene);
-    //    // We're done. Everything will be cleaned up by the importer destructor
-    //    return true;
-    //}
-
+    return this->m_pImp->Load3DModelFile(filename);
 }
+
+void cAssimpHelper::SetBasePath(std::string basepath_no_end_slash)
+{
+    this->m_pImp->SetBasePath(basepath_no_end_slash);
+    return;
+}
+
+

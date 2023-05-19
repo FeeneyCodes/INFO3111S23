@@ -18,12 +18,21 @@
     <ClInclude Include="AssimpFileLoaderHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="cAssimpHelper_Imp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cAssimpHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssimpFileLoaderHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="cAssimpHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cAssimpHelper_Imp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

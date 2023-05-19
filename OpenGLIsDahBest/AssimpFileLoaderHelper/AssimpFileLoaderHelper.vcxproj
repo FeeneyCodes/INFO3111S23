@@ -156,9 +156,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="AssimpFileLoaderHelper.h" />
+    <ClInclude Include="cAssimpHelper.h" />
+    <ClInclude Include="cAssimpHelper_Imp.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssimpFileLoaderHelper.cpp" />
+    <ClCompile Include="cAssimpHelper_Imp.cpp" />
     <ClCompile Include="cAssimpHelper.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -1,0 +1,41 @@
+Same situation here - I'm listening to music, so I'll type what I'm doing in this document. 
+
+Unlike PLY, most file formats allow much more information to be stored, like scenes, cameras, and multiple meshes. 
+
+I'm using the droid/robot model, since it's typical. 
+Note it's separated into many, many different mesh parts. 
+
+If we were using PLY, we'd have to combine them all, and output it as one mesh, or export each part as a separate ply file. 
+There's 2 issues with that:
+- With 1 file, we couldn't really do anything with it, at least without an animation rig added (which is not something we're going to look at in this class)
+- We could load all the separate meshes, but we'd have to be sure that they are placed relative to each other when drawn. 
+
+With the 2nd option (separate parts) you might think we can do neat things like move the arms separately or something, but there's a snag there, too: the parts are all located in "model space" relative to where they are supposed to be when NOT moving. 
+
+Another way to think of this is: if we wanted to "move" and arm, say, then how would we do that? Move the position? Rotate around the "joint" of the arm? OK, but where is this? 
+
+See, when we export it in "model space" (for the entire model), the origin ISN'T at the joint location, so if we translate (move) or rotate, it's going to rotate it around the main robots origin - which isn't at a good place for the arm to move or rotate. 
+
+TO get around this, we'd have to reposition all the parts relative to the joints we are using. Like if one part of the arm was to pivot around its end, we'd have to move that part so that the end of the arm was at the origin - NOT where it is in the model above. 
+
+Anyway, for now, I'm going to export the entire thing as an FBX model, then combine the model and export the whole things as one PLY Mesh. This will test the loader to see if it "sees" the separate meshes when loaded. 
+
+OK, it looks like it exported the entire PLY file, not just the parts. Let's try that again.
+
+Here's what I mean: this one "arm" is really 3 separate parts. 
+But that's not all - note that the origin for all 3 parts is really the origin of the main (or entire) robot model. 
+So if we, say, rotated just the 'hand' part, it would rotate around the entire model origin, not just around the 'wrist'.
+To get around this, the standard way is to "rig" the model with a separate set of matrix values and weights. 
+
+FYI: I'm naming these this way so I can remember what part was connected to what other part (of the arm). 
+It looks like the artist saved them in numerical order.
+
+OK, it looks like I got all the separate parts. 
+
+Ah, yeah. The assimp CMake thing is set up so that it updates this file depending on where you've 'built' it (or 'CMake'd' it). 
+Or something like that. I'm going to look in the folder I set in CMake when I set assimp up and find this specific file. 
+
+I'm fairly certain these are identical, but I should check...
+OK they are the same.
+
+This is under "contrib", so I'm suspecting it's the zip file header stuff. 
