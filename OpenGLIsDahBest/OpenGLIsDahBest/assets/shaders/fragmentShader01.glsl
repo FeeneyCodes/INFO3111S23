@@ -52,10 +52,10 @@ void main()
 	
 	
 //	finalOutputColour = calcualteLightContrib(...._)
-
+//
 //	finalOutputColour = vec4( fNormal.xyz, 1.0f );
-	finalOutputColour = vec4( fVertexPosWorld.xyz, 1.0f );
-	
+//	finalOutputColour = vec4( fVertexPosWorld.xyz, 1.0f );
+//	
 	// Calculate how much light has hit this vertex. 
 //	vec3 lightVector = theLights[0].position.xyz - fVertexPosWorld.xyz;
 //	float distanceToLight = length(lightVector);
@@ -120,7 +120,7 @@ vec4 calcualteLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal,
 			float dotProduct = dot( -theLights[index].direction.xyz,  
 									   normalize(norm.xyz) );	// -1 to 1
 
-			dotProduct = max( 0.0f, dotProduct );		// 0 to 1
+//			dotProduct = max( 0.0f, dotProduct );		// 0 to 1
 			
 			lightContrib *= dotProduct;		
 			
