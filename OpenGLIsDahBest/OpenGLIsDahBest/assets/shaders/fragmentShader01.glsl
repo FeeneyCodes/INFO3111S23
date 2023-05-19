@@ -58,9 +58,11 @@ void main()
 	vec3 lightVector = myOneLightPos.xyz - fVertexPosWorld.xyz;
 	float distanceToLight = length(lightVector);
 	
-	float brightness = (1.0f/ (distanceToLight);
+	float brightness = (1.0f/distanceToLight);
 	
-	finalOutputColour.rgba = vec4(colorOverrideRGB * brightness, 1.0);
+	brightness *= 10.0f;
+	
+	finalOutputColour.rgba = vec4((colorOverrideRGB * brightness), 1.0);
 	
 	
 }

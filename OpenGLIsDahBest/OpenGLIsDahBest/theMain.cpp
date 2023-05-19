@@ -25,7 +25,7 @@
 
 #include "cMeshObject.h"
 
-#include "../AssimpFileLoaderHelper/AssimpFileLoaderHelper.h"
+//#include "../AssimpFileLoaderHelper/AssimpFileLoaderHelper.h"
 
 //static const struct
 //{
@@ -139,53 +139,65 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
     //}
 }
 
+bool isShiftDown(GLFWwindow* window)
+{
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+    {
+        return true;
+    }
+    
+    if (glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS)
+    {
+        return true;
+    }
+    return false;
+}
+
 void handleKeyboardInput(GLFWwindow* window)
 {
     const float CAMERA_MOVE_SPEED = 0.1f;
 
-    if ( glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) )
+    if (isShiftDown(window))
     {
-        if ( glfwGetKey(window, GLFW_KEY_A) )
+
+    }
+    else
+    {
+        // Do camera stuff
+        if (glfwGetKey(window, GLFW_KEY_A))
         {
             // Move "left"
-            ::g_vecMeshesToDraw[::g_selectedMeshIndex].orientation.x += 0.01f;
+                ::g_cameraEye.x += CAMERA_MOVE_SPEED;
         }
-        else
+
+        if (glfwGetKey(window, GLFW_KEY_D))
         {
-        // Move "left"
-        ::g_cameraEye.x += CAMERA_MOVE_SPEED;
+            // Move "right"
+            ::g_cameraEye.x -= CAMERA_MOVE_SPEED;
         }
-    }
-//    if ( glfwGetKey(window, GLFW_KEY_A) )
-//    {
-//    }
-    if (glfwGetKey(window, GLFW_KEY_D) )
-    {
-        // Move "right"
-        ::g_cameraEye.x -= CAMERA_MOVE_SPEED;
-    }
 
-    if (glfwGetKey(window, GLFW_KEY_W) )
-    {
-        // Move "forward"
-        ::g_cameraEye.z += CAMERA_MOVE_SPEED;
-    }
-    if (glfwGetKey(window, GLFW_KEY_S) )
-    {
-        // Move "backwards"
-        ::g_cameraEye.z -= CAMERA_MOVE_SPEED;
-    }
+        if (glfwGetKey(window, GLFW_KEY_W))
+        {
+            // Move "forward"
+            ::g_cameraEye.z += CAMERA_MOVE_SPEED;
+        }
+        if (glfwGetKey(window, GLFW_KEY_S))
+        {
+            // Move "backwards"
+            ::g_cameraEye.z -= CAMERA_MOVE_SPEED;
+        }
 
-    if (glfwGetKey(window, GLFW_KEY_Q) )
-    {
-        // Move "down"
-        ::g_cameraEye.y -= CAMERA_MOVE_SPEED;
-    }
-    if (glfwGetKey(window, GLFW_KEY_E) )
-    {
-        // Move "up"
-        ::g_cameraEye.y += CAMERA_MOVE_SPEED;
-    }
+        if (glfwGetKey(window, GLFW_KEY_Q))
+        {
+            // Move "down"
+            ::g_cameraEye.y -= CAMERA_MOVE_SPEED;
+        }
+        if (glfwGetKey(window, GLFW_KEY_E))
+        {
+            // Move "up"
+            ::g_cameraEye.y += CAMERA_MOVE_SPEED;
+        }
+    }//if (isShiftDown(window)
 
     return;
 }
@@ -266,11 +278,10 @@ int main(void)
 
     // How does it know about the functions?
     // These are from the AssimpFileLoaderHelper .lib
-    fnAssimpFileLoaderHelper("Yo!");
+//    fnAssimpFileLoaderHelper("Yo!");
 
     // Because it's "exported" we can see it. 
-    cAssimpHelper myHelper;
-    myHelper.LetsDoThis("Hey");
+//    cAssimpHelper myHelper;
 
 
     cShaderManager* pShaderManager = new cShaderManager();
