@@ -21,7 +21,12 @@ cAssimpHelper_Imp::~cAssimpHelper_Imp()
 
 bool cAssimpHelper_Imp::Load3DModelFile(std::string filename)
 {
-    std::string filename_and_path = this->m_basePath_no_end_slash + '/' + filename;
+    std::string filename_and_path = filename;
+
+    if (this->m_basePath_no_end_slash != "")
+    {
+        filename_and_path = this->m_basePath_no_end_slash + '/' + filename;
+    }
 
     // This is from the assimp help documentation
     // Create an instance of the Importer class
@@ -29,19 +34,19 @@ bool cAssimpHelper_Imp::Load3DModelFile(std::string filename)
     // And have it read the given file with some example postprocessing
     // Usually - if speed is not the most important aspect for you - you'll 
     // propably to request more postprocessing than we do in this example.
-    //const aiScene* scene = importer.ReadFile(filename_and_path.c_str(),
-    //                                         aiProcess_CalcTangentSpace |
-    //                                         aiProcess_Triangulate |
-    //                                         aiProcess_JoinIdenticalVertices |
-    //                                         aiProcess_SortByPType);
+    const aiScene* scene = importer.ReadFile(filename_and_path.c_str(),
+                                             aiProcess_CalcTangentSpace |
+                                             aiProcess_Triangulate |
+                                             aiProcess_JoinIdenticalVertices |
+                                             aiProcess_SortByPType);
 
-    //                                   // If the import failed, report it
- /*   if (!scene)
+                                       // If the import failed, report it
+    if (!scene)
     {
         std::string errorString(importer.GetErrorString());
         this->m_AppendErrorString(errorString);
         return false;
-    }*/
+    }
     // Now we can access the file's contents. 
 //    DoTheSceneProcessing(scene);
     // We're done. Everything will be cleaned up by the importer destructor

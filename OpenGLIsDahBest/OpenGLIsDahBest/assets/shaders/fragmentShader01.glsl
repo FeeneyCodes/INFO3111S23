@@ -10,6 +10,7 @@ in vec4 fVertexPosWorld;
 out vec4 finalOutputColour;	// to the screen
 
 uniform vec3 colorOverrideRGB;
+uniform bool bDontLight;
 
 // Location of the camera (or eye)
 uniform vec3 eyeLocation;
@@ -70,6 +71,13 @@ void main()
 //	brightness *= 10.0f;
 //	
 //	finalOutputColour.rgba = vec4((colorOverrideRGB * brightness), 1.0);
+
+	if ( bDontLight )
+	{
+		finalOutputColour.rgb = colorOverrideRGB.rgb;
+		finalOutputColour.w = 1.0f;
+		return;
+	}
 	
 	vec4 objectSpecular = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	
@@ -120,7 +128,7 @@ vec4 calcualteLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal,
 			float dotProduct = dot( -theLights[index].direction.xyz,  
 									   normalize(norm.xyz) );	// -1 to 1
 
-//			dotProduct = max( 0.0f, dotProduct );		// 0 to 1
+			dotProduct = max( 0.0f, dotProduct );		// 0 to 1
 			
 			lightContrib *= dotProduct;		
 			

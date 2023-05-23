@@ -40,6 +40,9 @@
     <ClCompile Include="IOHandlers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="cLightHelper.cpp">
+      <Filter>LightManager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cShaderManager\cShaderManager.h">
@@ -53,6 +56,9 @@
     </ClInclude>
     <ClInclude Include="cMeshObject.h" />
     <ClInclude Include="cLightManager.h">
+      <Filter>LightManager</Filter>
+    </ClInclude>
+    <ClInclude Include="cLightHelper.h">
       <Filter>LightManager</Filter>
     </ClInclude>
   </ItemGroup>

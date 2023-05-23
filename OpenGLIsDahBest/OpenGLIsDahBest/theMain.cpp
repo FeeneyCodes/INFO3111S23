@@ -26,6 +26,8 @@
 
 #include "cMeshObject.h"
 
+#include "cLightHelper.h"
+
 //#include "../AssimpFileLoaderHelper/AssimpFileLoaderHelper.h"
 
 //static const struct
@@ -80,6 +82,7 @@ unsigned int g_selectedMeshIndex = 2;
 
 
 cLightManager* g_pTheLights = NULL;
+bool g_bShowDebugLightSpheres = true;
 
 
 // Note I'm passing the array by reference so that the pointer
@@ -240,13 +243,51 @@ int main(void)
     pModelManger->LoadModelIntoVAO("assets/models/Smooth_UV_Sphere_xyz_n.ply", modelILoadedInfo, shaderProgram);
     std::cout << "Loaded " << modelILoadedInfo.numberOfTriangles << " triangles" << std::endl;
 
-   cMeshObject smallSphere;
-   smallSphere.meshName = "assets/models/Smooth_UV_Sphere_xyz_n.ply";
-   smallSphere.colour = glm::vec3(1.0f, 1.0f, 0.0f);
-   smallSphere.isWireframe = true;
-   smallSphere.scale = 1.0f;
-   smallSphere.friendlyName = "small_sphere";
-    ::g_vecMeshesToDraw.push_back(smallSphere);
+    cMeshObject smallSphereLightCentre;
+    smallSphereLightCentre.meshName = "assets/models/Smooth_UV_Sphere_xyz_n.ply";
+    smallSphereLightCentre.colour = glm::vec3(1.0f, 1.0f, 1.0f);
+    smallSphereLightCentre.isWireframe = true;
+    smallSphereLightCentre.scale = 0.25f;
+    smallSphereLightCentre.friendlyName = "lightCentre";
+    smallSphereLightCentre.bDontLight = true;
+    ::g_vecMeshesToDraw.push_back(smallSphereLightCentre);
+
+    cMeshObject smallSphere90PercentBrightness;
+    smallSphere90PercentBrightness.meshName = "assets/models/Smooth_UV_Sphere_xyz_n.ply";
+    smallSphere90PercentBrightness.colour = glm::vec3(0.5f, 0.5f, 0.0f);
+    smallSphere90PercentBrightness.isWireframe = true;
+    smallSphere90PercentBrightness.scale = 2.0f;
+    smallSphere90PercentBrightness.friendlyName = "90Percent";
+    smallSphere90PercentBrightness.bDontLight = true;
+    ::g_vecMeshesToDraw.push_back(smallSphere90PercentBrightness);
+
+    cMeshObject smallSphere50PercentBrightness;
+    smallSphere50PercentBrightness.meshName = "assets/models/Smooth_UV_Sphere_xyz_n.ply";
+    smallSphere50PercentBrightness.colour = glm::vec3(0.0f, 0.5f, 0.5f);
+    smallSphere50PercentBrightness.isWireframe = true;
+    smallSphere50PercentBrightness.scale = 3.0f;
+    smallSphere50PercentBrightness.friendlyName = "50Percent";
+    smallSphere50PercentBrightness.bDontLight = true;
+    ::g_vecMeshesToDraw.push_back(smallSphere50PercentBrightness);
+
+    cMeshObject smallSphere25PercentBrightness;
+    smallSphere25PercentBrightness.meshName = "assets/models/Smooth_UV_Sphere_xyz_n.ply";
+    smallSphere25PercentBrightness.colour = glm::vec3(0.0f, 0.5f, 0.0f);
+    smallSphere25PercentBrightness.isWireframe = true;
+    smallSphere25PercentBrightness.scale = 4.0f;
+    smallSphere25PercentBrightness.friendlyName = "25Percent";
+    smallSphere25PercentBrightness.bDontLight = true;
+    ::g_vecMeshesToDraw.push_back(smallSphere25PercentBrightness);
+
+    cMeshObject smallSphere05PercentBrightness;
+    smallSphere05PercentBrightness.meshName = "assets/models/Smooth_UV_Sphere_xyz_n.ply";
+    smallSphere05PercentBrightness.colour = glm::vec3(0.5f, 0.0f, 0.5f);
+    smallSphere05PercentBrightness.isWireframe = true;
+    smallSphere05PercentBrightness.scale = 5.0f;
+    smallSphere05PercentBrightness.friendlyName = "5Percent";
+    smallSphere05PercentBrightness.bDontLight = true;
+    ::g_vecMeshesToDraw.push_back(smallSphere05PercentBrightness);
+
     //std::vector< cMeshObject > g_vecMeshesToDraw;
 //    appartmentBuildingMesh.colour = glm::vec3(0.2f, 0.4f, 0.3f);
 
@@ -265,7 +306,7 @@ int main(void)
     terrainMesh.meshName = "assets/models/FractalTerrainFromMeshLab_xyz_n.ply";
     terrainMesh.colour = glm::vec3(0.8f, 0.8f, 0.8f);
 //    terrainMesh.isWireframe = true;
-    terrainMesh.position = glm::vec3(0.0f, -200.0f, 0.0f);
+    terrainMesh.position = glm::vec3(0.0f, -210.0f, 0.0f);
     ::g_vecMeshesToDraw.push_back(terrainMesh);
 
     cMeshObject SpiderMesh;
@@ -374,12 +415,78 @@ int main(void)
         // Update all the light stuff
         ::g_pTheLights->UpdateLightInfoToShader(shaderProgram);
 
-        // Place the sphere where the light #0 was
-        cMeshObject* pTheSphere = pFindObjectByFriendlyName("small_sphere");
-        if ( pTheSphere )
+        if ( g_bShowDebugLightSpheres )
         {
-            pTheSphere->position = glm::vec3(::g_pTheLights->myLights[0].position);
+
         }
+
+        // Place the sphere where the light #0 was90Percent
+        {
+            cLightHelper myLightHelper;
+
+            cMeshObject* plightCentre = pFindObjectByFriendlyName("lightCentre");
+            if ( plightCentre)
+            {
+                plightCentre->position = glm::vec3(::g_pTheLights->myLights[0].position);
+            }
+
+            cMeshObject* p90Percent = pFindObjectByFriendlyName("90Percent");
+            if ( p90Percent)
+            {
+                p90Percent->position = glm::vec3(::g_pTheLights->myLights[0].position);
+                // 
+                float distance = myLightHelper.calcApproxDistFromAtten(0.9f,        // Target 90% brightness
+                                                      0.001f,      // Within 0.001 of that value
+                                                      100000.0f,    // Give up if I get this far away
+                                                      ::g_pTheLights->myLights[0].atten.x,
+                                                      ::g_pTheLights->myLights[0].atten.y,
+                                                      ::g_pTheLights->myLights[0].atten.z);
+                p90Percent->scale = distance;
+            }
+
+            cMeshObject* p50Percent = pFindObjectByFriendlyName("50Percent");
+            if (p50Percent)
+            {
+                p50Percent->position = glm::vec3(::g_pTheLights->myLights[0].position);
+                // 
+                float distance = myLightHelper.calcApproxDistFromAtten(0.5f,        // Target 50% brightness
+                                                                       0.001f,      // Within 0.001 of that value
+                                                                       100000.0f,    // Give up if I get this far away
+                                                                       ::g_pTheLights->myLights[0].atten.x,
+                                                                       ::g_pTheLights->myLights[0].atten.y,
+                                                                       ::g_pTheLights->myLights[0].atten.z);
+                p50Percent->scale = distance;
+            }
+
+            cMeshObject* p25Percent = pFindObjectByFriendlyName("25Percent");
+            if (p25Percent)
+            {
+                p25Percent->position = glm::vec3(::g_pTheLights->myLights[0].position);
+
+                float distance = myLightHelper.calcApproxDistFromAtten(0.25f,        // Target 50% brightness
+                                                                       0.001f,      // Within 0.001 of that value
+                                                                       100000.0f,    // Give up if I get this far away
+                                                                       ::g_pTheLights->myLights[0].atten.x,
+                                                                       ::g_pTheLights->myLights[0].atten.y,
+                                                                       ::g_pTheLights->myLights[0].atten.z);
+                p25Percent->scale = distance;
+            }
+
+            cMeshObject* p5Percent = pFindObjectByFriendlyName("5Percent");
+            if (p5Percent)
+            {
+                p5Percent->position = glm::vec3(::g_pTheLights->myLights[0].position);
+
+                float distance = myLightHelper.calcApproxDistFromAtten(0.05f,        // Target 50% brightness
+                                                                       0.001f,      // Within 0.001 of that value
+                                                                       100000.0f,    // Give up if I get this far away
+                                                                       ::g_pTheLights->myLights[0].atten.x,
+                                                                       ::g_pTheLights->myLights[0].atten.y,
+                                                                       ::g_pTheLights->myLights[0].atten.z);
+                p5Percent->scale = distance;
+            }
+
+        }// END OF: Place the sphere where the light #0 was90Percent
 
         // Draw all the stuff in the vector
         for (std::vector< cMeshObject >::iterator itMesh = ::g_vecMeshesToDraw.begin();
@@ -388,7 +495,10 @@ int main(void)
             // Copy the mesh (for ease of reading)
             cMeshObject currentMesh = *itMesh;
 
-
+            if ( ! currentMesh.bIsVisible )
+            {
+                continue;
+            }
 
     //        mat4x4_identity(m);
             mModel = glm::mat4(1.0f);        // Identity matrix
@@ -458,6 +568,20 @@ int main(void)
                         currentMesh.colour.r, 
                         currentMesh.colour.g,
                         currentMesh.colour.b);
+
+            // Is this a "debug object" (i.e. not lit)
+            //uniform bool bDontLight;
+            GLint bDontLight_UL = glGetUniformLocation(shaderProgram, "bDontLight");
+            if ( currentMesh.bDontLight )
+            {
+                glUniform1f(bDontLight_UL, (float)GL_TRUE);
+            }
+            else
+            {
+                glUniform1f(bDontLight_UL, (float)GL_FALSE);
+            }
+
+
 
             //uniform vec3 positionOffset;
             GLint positionOffset_UL = glGetUniformLocation(shaderProgram, "positionOffset");

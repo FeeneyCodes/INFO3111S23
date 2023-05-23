@@ -20,7 +20,7 @@ public:
 	bool Load3DModelFile(std::string filename);
 	void SetBasePath(std::string basepath_no_end_slash);
 
-	std::string getLastError(bool bAndClearErrors /*=true*/);
+	std::string getLastError(bool bAndClearErrors = true);
 
 
 private:

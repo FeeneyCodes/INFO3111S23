@@ -29,4 +29,9 @@ void cAssimpHelper::SetBasePath(std::string basepath_no_end_slash)
     return;
 }
 
+std::string cAssimpHelper::getLastError(bool bAndClearErrors /*=true*/)
+{
+    return this->m_pImp->getLastError();
+}
+
 
