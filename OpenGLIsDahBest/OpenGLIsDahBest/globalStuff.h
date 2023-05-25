@@ -20,3 +20,4 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
 void handleKeyboardInput(GLFWwindow* window);
 
+extern unsigned int g_SelectedLightIndex;

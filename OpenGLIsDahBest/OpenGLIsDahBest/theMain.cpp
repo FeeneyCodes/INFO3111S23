@@ -66,10 +66,10 @@ sVertexXYZ_RGB* pVertexArray = NULL;
 
 
 glm::vec3 g_cameraEye = glm::vec3(0.0, 0.0, -4.0f);
-glm::vec3 g_cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
+glm::vec3 g_cameraTarget = glm::vec3(0.0f, 25.0f, 0.0f);
 glm::vec3 g_upVector = glm::vec3(0.0f, +1.0f, 0.0f);
 
-
+void ChangeLightSphereVisibility(bool bIsOn);
 
 static void error_callback(int error, const char* description)
 {
@@ -168,6 +168,7 @@ int main(void)
         return -1;
     }
 
+    // More for "typing" style stuff
     glfwSetKeyCallback(window, key_callback);
 
     glfwMakeContextCurrent(window);
@@ -237,7 +238,8 @@ int main(void)
     pModelManger->LoadModelIntoVAO("assets/models/FractalTerrainFromMeshLab_xyz_n.ply", modelILoadedInfo, shaderProgram);
     std::cout << "Loaded " << modelILoadedInfo.numberOfTriangles << " triangles" << std::endl;
 
-    pModelManger->LoadModelIntoVAO("assets/models/Apartment Building_26_xyz_n.ply", modelILoadedInfo, shaderProgram);
+//    pModelManger->LoadModelIntoVAO("assets/models/Apartment Building_26_xyz_n.ply", modelILoadedInfo, shaderProgram);
+    pModelManger->LoadModelIntoVAO("assets/models/Apartment Building_26_xyz_n (flat shaded export).ply", modelILoadedInfo, shaderProgram);
     std::cout << "Loaded " << modelILoadedInfo.numberOfTriangles << " triangles" << std::endl;
 
     pModelManger->LoadModelIntoVAO("assets/models/Smooth_UV_Sphere_xyz_n.ply", modelILoadedInfo, shaderProgram);
@@ -292,7 +294,8 @@ int main(void)
 //    appartmentBuildingMesh.colour = glm::vec3(0.2f, 0.4f, 0.3f);
 
    cMeshObject appartmentBuildingMesh;
-    appartmentBuildingMesh.meshName = "assets/models/Apartment Building_26_xyz_n.ply";
+//.    appartmentBuildingMesh.meshName = "assets/models/Apartment Building_26_xyz_n.ply";
+    appartmentBuildingMesh.meshName = "assets/models/Apartment Building_26_xyz_n (flat shaded export).ply";
     appartmentBuildingMesh.colour = glm::vec3(0.8f, 0.8f, 0.8f);
 //    appartmentBuildingMesh.isWireframe = true;
     appartmentBuildingMesh.scale = 1.0f;
@@ -311,6 +314,7 @@ int main(void)
 
     cMeshObject SpiderMesh;
     SpiderMesh.meshName = "assets/models/spider_mastermind.bmd6model.fbx.ascii_Y_up.ply";
+    SpiderMesh.friendlyName = "Mr. Spider";
     SpiderMesh.colour = glm::vec3(1.0f, 0.0f, 0.0f);
 //    SpiderMesh.isWireframe = false;
     SpiderMesh.position = glm::vec3(-25.0f, 0.0f, 0.0f);
@@ -371,6 +375,37 @@ int main(void)
     ::g_pTheLights->myLights[0].param2.x = 1.0f;    // 1 = on, 0 is off
 
 
+    // Light #1 
+    ::g_pTheLights->myLights[1].position = glm::vec4(0.0f, 50.0f, 25.0f, 1.0f);
+    ::g_pTheLights->myLights[1].diffuse = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);    // light colour
+    ::g_pTheLights->myLights[1].specular = glm::vec4(1.0f, 1.0f, 1.0f, shininess);    // light colour
+
+    // To change the "brightness" or the "throw" of the light
+    ::g_pTheLights->myLights[1].atten.x = 1.0f;     // Constant;
+    ::g_pTheLights->myLights[1].atten.y = 0.01f;     // Linear attenuation  
+    ::g_pTheLights->myLights[1].atten.z = 0.001f;    // quadratic attenuation  
+
+    //vec4 param1;	// x = lightType, y = inner angle, z = outer angle, w = TBD
+    //            // 0 = pointlight
+    //            // 1 = spot light
+                // 2 = directional light
+    ::g_pTheLights->myLights[1].param1.x = 1.0f;    // Spot light
+    ::g_pTheLights->myLights[1].param1.y = 2.0f;    // 5 degrees
+    ::g_pTheLights->myLights[1].param1.z = 4.0f;    // 10 degrees
+
+    ::g_pTheLights->myLights[1].TurnOn();
+ 
+    // Look at the spider with a spot light
+    cMeshObject* pSpider = pFindObjectByFriendlyName("Mr. Spider");
+    // Direction is normalized vector from light to target
+    glm::vec3 rayToTarget = glm::vec3(::g_pTheLights->myLights[1].position) - pSpider->position;
+    // Normlize makes the ray 1 unit long
+    rayToTarget = glm::normalize(rayToTarget);  // Also can divide by length of ray
+
+    // The direction is 4 floats because I used vec4 because the registers are all vec4s.
+    ::g_pTheLights->myLights[1].direction = glm::vec4(rayToTarget, 1.0f);
+
+
     float heyHeyILoveMath = 0.0f;
 
 
@@ -403,12 +438,37 @@ int main(void)
 
 //        glm::vec3 newTarget = ::g_cameraEye + glm::vec3(0.0f, 0.0f, 10.0f);
 
+        // Look at the spider
+        cMeshObject* pSpider = pFindObjectByFriendlyName("Mr. Spider");
+        pSpider->position.z -= 0.01f;
+
+
+        // Look at the spider with a spot light
+        // Direction is normalized vector from light to target
+        glm::vec3 rayToTarget = pSpider->position - glm::vec3(::g_pTheLights->myLights[1].position);
+        // Normlize makes the ray 1 unit long
+        rayToTarget = glm::normalize(rayToTarget);  // Also can divide by length of ray
+
+        // The direction is 4 floats because I used vec4 because the registers are all vec4s.
+        ::g_pTheLights->myLights[1].direction = glm::vec4(rayToTarget, 1.0f);
+
+
+
+
+
+        ::g_cameraTarget = pSpider->position;
+
         mView = glm::lookAt(::g_cameraEye,
                             ::g_cameraTarget,  // newTarget
                             ::g_upVector);
 
         // Adding clearing the "depth" buffer 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // Change the screen clear colour
+        // 100, 149, 237 (cornflower blue)
+        glClearColor(100.0f/255.0f, 149.0f/255.0f, 237.0f/255.0f, 1.0f);
+
         // Turn on "depth buffer" testing
         glEnable(GL_DEPTH_TEST);
 
@@ -427,62 +487,62 @@ int main(void)
             cMeshObject* plightCentre = pFindObjectByFriendlyName("lightCentre");
             if ( plightCentre)
             {
-                plightCentre->position = glm::vec3(::g_pTheLights->myLights[0].position);
+                plightCentre->position = glm::vec3(::g_pTheLights->myLights[::g_SelectedLightIndex].position);
             }
 
             cMeshObject* p90Percent = pFindObjectByFriendlyName("90Percent");
             if ( p90Percent)
             {
-                p90Percent->position = glm::vec3(::g_pTheLights->myLights[0].position);
+                p90Percent->position = glm::vec3(::g_pTheLights->myLights[::g_SelectedLightIndex].position);
                 // 
                 float distance = myLightHelper.calcApproxDistFromAtten(0.9f,        // Target 90% brightness
                                                       0.001f,      // Within 0.001 of that value
                                                       100000.0f,    // Give up if I get this far away
-                                                      ::g_pTheLights->myLights[0].atten.x,
-                                                      ::g_pTheLights->myLights[0].atten.y,
-                                                      ::g_pTheLights->myLights[0].atten.z);
+                                                      ::g_pTheLights->myLights[::g_SelectedLightIndex].atten.x,
+                                                      ::g_pTheLights->myLights[::g_SelectedLightIndex].atten.y,
+                                                      ::g_pTheLights->myLights[::g_SelectedLightIndex].atten.z);
                 p90Percent->scale = distance;
             }
 
             cMeshObject* p50Percent = pFindObjectByFriendlyName("50Percent");
             if (p50Percent)
             {
-                p50Percent->position = glm::vec3(::g_pTheLights->myLights[0].position);
+                p50Percent->position = glm::vec3(::g_pTheLights->myLights[::g_SelectedLightIndex].position);
                 // 
                 float distance = myLightHelper.calcApproxDistFromAtten(0.5f,        // Target 50% brightness
                                                                        0.001f,      // Within 0.001 of that value
                                                                        100000.0f,    // Give up if I get this far away
-                                                                       ::g_pTheLights->myLights[0].atten.x,
-                                                                       ::g_pTheLights->myLights[0].atten.y,
-                                                                       ::g_pTheLights->myLights[0].atten.z);
+                                                                       ::g_pTheLights->myLights[::g_SelectedLightIndex].atten.x,
+                                                                       ::g_pTheLights->myLights[::g_SelectedLightIndex].atten.y,
+                                                                       ::g_pTheLights->myLights[::g_SelectedLightIndex].atten.z);
                 p50Percent->scale = distance;
             }
 
             cMeshObject* p25Percent = pFindObjectByFriendlyName("25Percent");
             if (p25Percent)
             {
-                p25Percent->position = glm::vec3(::g_pTheLights->myLights[0].position);
+                p25Percent->position = glm::vec3(::g_pTheLights->myLights[::g_SelectedLightIndex].position);
 
                 float distance = myLightHelper.calcApproxDistFromAtten(0.25f,        // Target 50% brightness
                                                                        0.001f,      // Within 0.001 of that value
                                                                        100000.0f,    // Give up if I get this far away
-                                                                       ::g_pTheLights->myLights[0].atten.x,
-                                                                       ::g_pTheLights->myLights[0].atten.y,
-                                                                       ::g_pTheLights->myLights[0].atten.z);
+                                                                       ::g_pTheLights->myLights[::g_SelectedLightIndex].atten.x,
+                                                                       ::g_pTheLights->myLights[::g_SelectedLightIndex].atten.y,
+                                                                       ::g_pTheLights->myLights[::g_SelectedLightIndex].atten.z);
                 p25Percent->scale = distance;
             }
 
             cMeshObject* p5Percent = pFindObjectByFriendlyName("5Percent");
             if (p5Percent)
             {
-                p5Percent->position = glm::vec3(::g_pTheLights->myLights[0].position);
+                p5Percent->position = glm::vec3(::g_pTheLights->myLights[::g_SelectedLightIndex].position);
 
                 float distance = myLightHelper.calcApproxDistFromAtten(0.05f,        // Target 50% brightness
                                                                        0.001f,      // Within 0.001 of that value
                                                                        100000.0f,    // Give up if I get this far away
-                                                                       ::g_pTheLights->myLights[0].atten.x,
-                                                                       ::g_pTheLights->myLights[0].atten.y,
-                                                                       ::g_pTheLights->myLights[0].atten.z);
+                                                                       ::g_pTheLights->myLights[::g_SelectedLightIndex].atten.x,
+                                                                       ::g_pTheLights->myLights[::g_SelectedLightIndex].atten.y,
+                                                                       ::g_pTheLights->myLights[::g_SelectedLightIndex].atten.z);
                 p5Percent->scale = distance;
             }
 
@@ -495,8 +555,10 @@ int main(void)
             // Copy the mesh (for ease of reading)
             cMeshObject currentMesh = *itMesh;
 
+
             if ( ! currentMesh.bIsVisible )
             {
+                // Skip rest of rendering
                 continue;
             }
 
@@ -635,12 +697,14 @@ int main(void)
         // Handle asyn keyboard inputs
         handleKeyboardInput(window);
 
+        ChangeLightSphereVisibility(::g_bShowDebugLightSpheres);
+
         std::stringstream ssTitle;
         ssTitle << "Camera (x,y,z): "
             << ::g_cameraEye.x << ", "
             << ::g_cameraEye.y << ", "
             << ::g_cameraEye.z
-            << " Light[0]: "
+            << " Light[" << g_SelectedLightIndex << "] "
             << "(xyz: " << ::g_pTheLights->myLights[0].position.x
             << ", " << ::g_pTheLights->myLights[0].position.y
             << ", " << ::g_pTheLights->myLights[0].position.z << ") "
@@ -1177,3 +1241,25 @@ bool Load_Doom_spider_mastermind_PlyFile(std::string filename,
 
     return true;
 }
+
+
+void ChangeLightSphereVisibility(bool bIsOn)
+{
+    cMeshObject* plightCentre = pFindObjectByFriendlyName("lightCentre");
+    plightCentre->bIsVisible = bIsOn;
+
+    cMeshObject* p90Percent = pFindObjectByFriendlyName("90Percent");
+    p90Percent->bIsVisible = bIsOn;
+
+    cMeshObject* p50Percent = pFindObjectByFriendlyName("50Percent");
+    p50Percent->bIsVisible = bIsOn;
+
+    cMeshObject* p25Percent = pFindObjectByFriendlyName("25Percent");
+    p25Percent->bIsVisible = bIsOn;
+
+    cMeshObject* p5Percent = pFindObjectByFriendlyName("5Percent");
+    p5Percent->bIsVisible = bIsOn;
+
+    return;
+}
+

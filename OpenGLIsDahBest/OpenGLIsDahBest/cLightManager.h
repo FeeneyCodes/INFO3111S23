@@ -20,9 +20,15 @@ struct sLight
 	glm::vec4 param2;	// x = 0 for off, 1 for on
 
 	void SetLinearAttenuation(float newLinear);
-	void TurnOff(void);
-	void TurnOn(void);
+	void TurnOff(void)
+	{
+		this->param2.x = 0.0f;
+	}
 
+	void TurnOn(void)
+	{
+		this->param2.x = 1.0f;
+	}
 	// Here's the uniform locations for these lights
 	// i.e. the register locations inside the shader
 	int position_UL = -1;
