@@ -20,7 +20,15 @@ cAssimpHelper::~cAssimpHelper()
 
 bool cAssimpHelper::Load3DModelFile(std::string filename)
 {
-    return this->m_pImp->Load3DModelFile(filename);
+    sPostProcessFlags postProcessOptionsDefaults;
+    return this->m_pImp->Load3DModelFile(filename, postProcessOptionsDefaults);
+
+}
+
+
+bool cAssimpHelper::Load3DModelFile(std::string filename, sPostProcessFlags postProcessOptions)
+{
+    return this->m_pImp->Load3DModelFile(filename, postProcessOptions);
 }
 
 void cAssimpHelper::SetBasePath(std::string basepath_no_end_slash)

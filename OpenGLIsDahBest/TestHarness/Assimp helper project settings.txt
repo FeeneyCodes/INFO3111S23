@@ -1,0 +1,6 @@
+Linker, additional dependancies:
+
+$(OutDir)AssimpFileLoaderHelper.lib
+
+Evaluated value:
+C:\z_FS\3111_3D\2023\COURSE_GIT\INFO3111S23\OpenGLIsDahBest\x64\Release\AssimpFileLoaderHelper.lib

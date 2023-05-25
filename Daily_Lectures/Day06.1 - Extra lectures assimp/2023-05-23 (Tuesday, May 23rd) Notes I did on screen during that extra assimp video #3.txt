@@ -1,0 +1,9 @@
+Notes from assimp coding, video #3 (Tuesday, May 23rd, 2023)
+
+Here’s the original code form the assimp documentation. 
+In that, the importer.ReadFile has these flags. 
+
+Here’s what happens when I load the star wars robot. 
+OK, I’ll flesh out all these flags first. 
+These are just the flags from assimp, but are bools, which might make things easier for you? (I hope?)
+ 

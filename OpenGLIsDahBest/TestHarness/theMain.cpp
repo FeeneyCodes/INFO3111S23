@@ -6,7 +6,10 @@ int main()
 {
 	cAssimpHelper* pHelper = new cAssimpHelper();
 
-	if ( ! pHelper->Load3DModelFile("bun_zipper.ply") )
+	cAssimpHelper::sPostProcessFlags loadFlags;
+//	if ( ! pHelper->Load3DModelFile("models/bun_zipper.ply", loadFlags) )
+	if ( ! pHelper->Load3DModelFile("models/Sketchfab_2017_12_19_11_31_59 (exported).fbx", loadFlags) )
+//	if ( ! pHelper->Load3DModelFile("models/Sketchfab_2017_12_19_11_31_59.blend", loadFlags) )
 	{
 		std::cout << "Error:" << pHelper->getLastError();
 	}
