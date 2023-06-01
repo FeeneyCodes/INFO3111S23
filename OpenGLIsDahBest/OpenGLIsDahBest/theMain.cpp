@@ -65,8 +65,8 @@ struct sVertexXYZ_RGB
 sVertexXYZ_RGB* pVertexArray = NULL;    
 
 
-glm::vec3 g_cameraEye = glm::vec3(0.0, 0.0, -4.0f);
-glm::vec3 g_cameraTarget = glm::vec3(0.0f, 25.0f, 0.0f);
+glm::vec3 g_cameraEye = glm::vec3(0.0, 5.0, 12.0f);
+glm::vec3 g_cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
 glm::vec3 g_upVector = glm::vec3(0.0f, +1.0f, 0.0f);
 
 void ChangeLightSphereVisibility(bool bIsOn);
@@ -77,7 +77,8 @@ static void error_callback(int error, const char* description)
 }
 
 // This is a list of the objects we want to draw in this scene
-std::vector< cMeshObject > g_vecMeshesToDraw;
+std::vector< cMeshObject > g_vecMeshesToDraw;       // From this...
+//std::vector< cMeshObject* > g_p_vecMeshesToDraw;    // ...to this
 unsigned int g_selectedMeshIndex = 2;
 
 
@@ -248,27 +249,50 @@ int main(void)
     pModelManger->LoadModelIntoVAO("assets/models/Battlestar_Galactica_Res_0_(444,087 faces)_xyz_n.ply", modelILoadedInfo, shaderProgram);
     std::cout << "Loaded " << modelILoadedInfo.numberOfTriangles << " triangles" << std::endl;
 
+    pModelManger->LoadModelIntoVAO("assets/models/SpaceShuttleOrbiter_xyz_n_small.ply", modelILoadedInfo, shaderProgram);
+    std::cout << "Loaded " << modelILoadedInfo.numberOfTriangles << " triangles" << std::endl;
+
+
+
+
+
+
+    cMeshObject spaceShuttle;
+    spaceShuttle.meshName = "assets/models/SpaceShuttleOrbiter_xyz_n_small.ply";
+    spaceShuttle.diffuseColour = glm::vec3(0.0f, 1.0f, 1.0f);
+
+    spaceShuttle.specularColourRGB = glm::vec3(1.0f, 1.0f, 1.0f);
+    spaceShuttle.specularPower_or_shininess = 1000.0f;
+    spaceShuttle.position.x = 30.0f;
+    spaceShuttle.scale = 1.0f;
+//    spaceShuttle.isWireframe = true;
+//    spaceShuttle.bDontLight = true;
+    spaceShuttle.friendlyName = "Space Shuttle";
+    ::g_vecMeshesToDraw.push_back(spaceShuttle);
+
+
+
     cMeshObject smallSphereLightCentre;
     smallSphereLightCentre.meshName = "assets/models/Smooth_UV_Sphere_xyz_n.ply";
-    smallSphereLightCentre.colour = glm::vec3(1.0f, 1.0f, 1.0f);
+    smallSphereLightCentre.diffuseColour = glm::vec3(1.0f, 1.0f, 1.0f);
     smallSphereLightCentre.isWireframe = true;
     smallSphereLightCentre.scale = 0.25f;
     smallSphereLightCentre.friendlyName = "lightCentre";
     smallSphereLightCentre.bDontLight = true;
     ::g_vecMeshesToDraw.push_back(smallSphereLightCentre);
 
-    cMeshObject Galactica;
-    Galactica.meshName = "assets/models/Battlestar_Galactica_Res_0_(444,087 faces)_xyz_n.ply";
-    Galactica.colour = glm::vec3(0.4f, 0.4f, 0.5f);
-    Galactica.isWireframe = true;
-    Galactica.friendlyName = "Galactica";
-    Galactica.bDontLight = true;
-    Galactica.orientation.x = -90.0f;
-    ::g_vecMeshesToDraw.push_back(Galactica);
+    //cMeshObject Galactica;
+    //Galactica.meshName = "assets/models/Battlestar_Galactica_Res_0_(444,087 faces)_xyz_n.ply";
+    //Galactica.colour = glm::vec3(0.4f, 0.4f, 0.5f);
+    //Galactica.isWireframe = true;
+    //Galactica.friendlyName = "Galactica";
+    //Galactica.bDontLight = true;
+    //Galactica.orientation.x = -90.0f;
+    //::g_vecMeshesToDraw.push_back(Galactica);
 
     cMeshObject smallSphere90PercentBrightness;
     smallSphere90PercentBrightness.meshName = "assets/models/Smooth_UV_Sphere_xyz_n.ply";
-    smallSphere90PercentBrightness.colour = glm::vec3(0.5f, 0.5f, 0.0f);
+    smallSphere90PercentBrightness.diffuseColour = glm::vec3(0.5f, 0.5f, 0.0f);
     smallSphere90PercentBrightness.isWireframe = true;
     smallSphere90PercentBrightness.scale = 2.0f;
     smallSphere90PercentBrightness.friendlyName = "90Percent";
@@ -277,7 +301,7 @@ int main(void)
 
     cMeshObject smallSphere50PercentBrightness;
     smallSphere50PercentBrightness.meshName = "assets/models/Smooth_UV_Sphere_xyz_n.ply";
-    smallSphere50PercentBrightness.colour = glm::vec3(0.0f, 0.5f, 0.5f);
+    smallSphere50PercentBrightness.diffuseColour = glm::vec3(0.0f, 0.5f, 0.5f);
     smallSphere50PercentBrightness.isWireframe = true;
     smallSphere50PercentBrightness.scale = 3.0f;
     smallSphere50PercentBrightness.friendlyName = "50Percent";
@@ -286,7 +310,7 @@ int main(void)
 
     cMeshObject smallSphere25PercentBrightness;
     smallSphere25PercentBrightness.meshName = "assets/models/Smooth_UV_Sphere_xyz_n.ply";
-    smallSphere25PercentBrightness.colour = glm::vec3(0.0f, 0.5f, 0.0f);
+    smallSphere25PercentBrightness.diffuseColour = glm::vec3(0.0f, 0.5f, 0.0f);
     smallSphere25PercentBrightness.isWireframe = true;
     smallSphere25PercentBrightness.scale = 4.0f;
     smallSphere25PercentBrightness.friendlyName = "25Percent";
@@ -295,7 +319,7 @@ int main(void)
 
     cMeshObject smallSphere05PercentBrightness;
     smallSphere05PercentBrightness.meshName = "assets/models/Smooth_UV_Sphere_xyz_n.ply";
-    smallSphere05PercentBrightness.colour = glm::vec3(0.5f, 0.0f, 0.5f);
+    smallSphere05PercentBrightness.diffuseColour = glm::vec3(0.5f, 0.0f, 0.5f);
     smallSphere05PercentBrightness.isWireframe = true;
     smallSphere05PercentBrightness.scale = 5.0f;
     smallSphere05PercentBrightness.friendlyName = "5Percent";
@@ -308,10 +332,10 @@ int main(void)
    cMeshObject appartmentBuildingMesh;
 //.    appartmentBuildingMesh.meshName = "assets/models/Apartment Building_26_xyz_n.ply";
     appartmentBuildingMesh.meshName = "assets/models/Apartment Building_26_xyz_n (flat shaded export).ply";
-    appartmentBuildingMesh.colour = glm::vec3(0.8f, 0.8f, 0.8f);
+    appartmentBuildingMesh.diffuseColour = glm::vec3(0.8f, 0.8f, 0.8f);
 //    appartmentBuildingMesh.isWireframe = true;
     appartmentBuildingMesh.scale = 1.0f;
-    appartmentBuildingMesh.position = glm::vec3(15.0f, 0.0f, 0.0f);
+    appartmentBuildingMesh.position = glm::vec3(-50.0f, 0.0f, 0.0f);
     ::g_vecMeshesToDraw.push_back(appartmentBuildingMesh);
     //std::vector< cMeshObject > g_vecMeshesToDraw;
 //    appartmentBuildingMesh.colour = glm::vec3(0.2f, 0.4f, 0.3f);
@@ -319,37 +343,30 @@ int main(void)
 
     cMeshObject terrainMesh;
     terrainMesh.meshName = "assets/models/FractalTerrainFromMeshLab_xyz_n.ply";
-    terrainMesh.colour = glm::vec3(0.8f, 0.8f, 0.8f);
+    terrainMesh.diffuseColour = glm::vec3(0.8f, 0.8f, 0.8f);
 //    terrainMesh.isWireframe = true;
-    terrainMesh.position = glm::vec3(0.0f, -210.0f, 0.0f);
+    terrainMesh.position = glm::vec3(0.0f, -230.0f, 0.0f);
     ::g_vecMeshesToDraw.push_back(terrainMesh);
 
-    cMeshObject SpiderMesh;
-    SpiderMesh.meshName = "assets/models/spider_mastermind.bmd6model.fbx.ascii_Y_up.ply";
-    SpiderMesh.friendlyName = "Mr. Spider";
-    SpiderMesh.colour = glm::vec3(1.0f, 0.0f, 0.0f);
-//    SpiderMesh.isWireframe = false;
-    SpiderMesh.position = glm::vec3(-25.0f, 0.0f, 0.0f);
-    ::g_vecMeshesToDraw.push_back(SpiderMesh);
 
     cMeshObject airplane1;
     airplane1.meshName = "assets/models/mig29_xyz_n.ply";
-    airplane1.colour = glm::vec3(0.0f, 1.0f, 0.0f);
-    airplane1.position = glm::vec3(0.0f, 10.0f, 0.0f);
+    airplane1.diffuseColour = glm::vec3(0.0f, 1.0f, 0.0f);
+    airplane1.position = glm::vec3(50.0f, 10.0f, 0.0f);
     airplane1.scale = 25.0f;
     ::g_vecMeshesToDraw.push_back(airplane1);
 
     cMeshObject mushRoomMesh;
     mushRoomMesh.meshName = "assets/models/Mushrooms1_xyz_normal.ply";
-    mushRoomMesh.colour = glm::vec3(0.0f, 0.0f, 1.0f);
-    mushRoomMesh.position = glm::vec3(0.0f, 0.0f, 0.0f);
+    mushRoomMesh.diffuseColour = glm::vec3(0.0f, 0.0f, 1.0f);
+    mushRoomMesh.position = glm::vec3(10.0f, -10.0f, 10.0f);
     mushRoomMesh.scale = 0.1f;
     mushRoomMesh.orientation.x = -90.0f;         // Note it's being converted into radians
     ::g_vecMeshesToDraw.push_back(mushRoomMesh);
 
     cMeshObject toyTruck;
     toyTruck.meshName = "assets/models/camion jugete_xyz_n.ply";
-    toyTruck.colour = glm::vec3(0.0f, 1.0f, 1.0f);
+    toyTruck.diffuseColour = glm::vec3(0.0f, 1.0f, 1.0f);
     toyTruck.position.x = 4.0f;
     toyTruck.scale = 5.0f;
     toyTruck.orientation.y = glm::radians(90.0f);
@@ -358,11 +375,38 @@ int main(void)
 
     cMeshObject toyTruck2;
     toyTruck2.meshName = "assets/models/camion jugete_xyz_n.ply";
-    toyTruck2.colour = glm::vec3(1.0f, 1.0f, 0.0f);
+    toyTruck2.diffuseColour = glm::vec3(1.0f, 1.0f, 1.0f);
     toyTruck2.position.x = -4.0f;
     toyTruck2.scale = 8.0f;
     toyTruck2.orientation.x = glm::radians(135.0f);
     ::g_vecMeshesToDraw.push_back(toyTruck2);
+
+    toyTruck2.diffuseColour = glm::vec3(1.0f, 0.0f, 0.0f);
+
+
+    cMeshObject SpiderMesh;
+    SpiderMesh.meshName = "assets/models/spider_mastermind.bmd6model.fbx.ascii_Y_up.ply";
+    SpiderMesh.friendlyName = "Mr. Spider";
+    SpiderMesh.diffuseColour = glm::vec3(1.0f, 0.0f, 0.0f);
+    SpiderMesh.specularColourRGB = glm::vec3(1.0f, 1.0f, 1.0f);
+    SpiderMesh.specularPower_or_shininess = 100.0f;
+
+    SpiderMesh.alphaTransparency = 0.5f;
+
+//    SpiderMesh.isWireframe = false;
+    SpiderMesh.position = glm::vec3(-5.0f, 0.0f, 0.0f);
+    ::g_vecMeshesToDraw.push_back(SpiderMesh);
+
+    cMeshObject SpiderMesh2;
+    SpiderMesh2.meshName = "assets/models/spider_mastermind.bmd6model.fbx.ascii_Y_up.ply";
+    SpiderMesh2.friendlyName = "Mr. Spider";
+    SpiderMesh2.diffuseColour = glm::vec3(0.0f, 1.0f, 0.0f);
+    SpiderMesh2.specularColourRGB = glm::vec3(1.0f, 1.0f, 1.0f);
+    SpiderMesh2.specularPower_or_shininess = 100.0f;
+    SpiderMesh2.alphaTransparency = 0.5f;
+    SpiderMesh2.position = glm::vec3(20.0f, -10.0f, 0.0f);
+    ::g_vecMeshesToDraw.push_back(SpiderMesh2);
+
 
 //    mvp_location = glGetUniformLocation(shaderProgram, "MVP");
 
@@ -370,7 +414,8 @@ int main(void)
     ::g_pTheLights = new cLightManager();
     ::g_pTheLights->LoadUniformLocationsFromShader(shaderProgram);
 
-    ::g_pTheLights->myLights[0].position = glm::vec4(-5.0f, 15.0f, 0.0f, 1.0f);
+//    ::g_pTheLights->myLights[0].position = glm::vec4(-5.0f, 15.0f, 0.0f, 1.0f);
+    ::g_pTheLights->myLights[0].position = glm::vec4(2.4f, 4.0f, 10.6f, 1.0f);
     ::g_pTheLights->myLights[0].diffuse = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);    // light colour
     float shininess = 1.0f;
     ::g_pTheLights->myLights[0].specular = glm::vec4(1.0f, 1.0f, 1.0f, shininess);    // light colour
@@ -420,7 +465,7 @@ int main(void)
 
     float heyHeyILoveMath = 0.0f;
     
-    float HACK_FAR_CLIPPING_PLANE = 1000.0f;
+   // float HACK_FAR_CLIPPING_PLANE = 1000.0f;
 
     // When this while exits, your program exits, too
     while (!glfwWindowShouldClose(window))
@@ -441,10 +486,10 @@ int main(void)
         mProjection = glm::perspective(0.6f,
                                          ratio,
                                          1.0f,          // Near plane
-//                                         1000.0f);      // Far plane
-                                         HACK_FAR_CLIPPING_PLANE);      // Far plane
+                                         1000.0f);      // Far plane
+//                                         HACK_FAR_CLIPPING_PLANE);      // Far plane
 
-        HACK_FAR_CLIPPING_PLANE += 1.0f;
+//        HACK_FAR_CLIPPING_PLANE += 1.0f;
 
         mView = glm::mat4(1.0f);
 
@@ -456,7 +501,7 @@ int main(void)
 
         // Look at the spider
         cMeshObject* pSpider = pFindObjectByFriendlyName("Mr. Spider");
-        pSpider->position.z -= 0.01f;
+//        pSpider->position.z -= 0.01f;
 
 
         // Look at the spider with a spot light
@@ -469,14 +514,23 @@ int main(void)
         ::g_pTheLights->myLights[1].direction = glm::vec4(rayToTarget, 1.0f);
 
 
+        // Turn on "alpha transparency"
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 
 
-        ::g_cameraTarget = pSpider->position;
+//        ::g_cameraTarget = pSpider->position;
 
         mView = glm::lookAt(::g_cameraEye,
                             ::g_cameraTarget,  // newTarget
                             ::g_upVector);
+
+        // Update the camera 'eye' location in the shader
+        // uniform vec3 eyeLocation;
+        GLint eyeLocation_UniformLocation = glGetUniformLocation(shaderProgram, "eyeLocation");
+        glUniform3f(eyeLocation_UniformLocation,
+                    ::g_cameraEye.x, ::g_cameraEye.y, ::g_cameraEye.z);
 
         // Adding clearing the "depth" buffer 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -580,6 +634,7 @@ int main(void)
 
     //        mat4x4_identity(m);
             mModel = glm::mat4(1.0f);        // Identity matrix
+     //       glm::mat4 mModelRotationOnly = glm::mat4(1.0f);        // Identity matrix
 
 //            glm::mat4 matTranslate = glm::translate(glm::mat4(1.0f),
 //                                                    glm::vec3(heyHeyILoveMath, 0.0, 0.0f) );
@@ -608,29 +663,26 @@ int main(void)
             mModel = mModel * matRotateY;
             mModel = mModel * matRotateZ;
 
-            mModel = mModel * matScale; // Math order is 1st thing
+//            mModelRotationOnly = mModelRotationOnly * matRotateX;
+//            mModelRotationOnly = mModelRotationOnly * matRotateY;
+//            mModelRotationOnly = mModelRotationOnly * matRotateZ;
 
-    //        mat4x4_rotate_Z(m, m, (float)glfwGetTime());
-    //        glm::mat4 mRotateZ = glm::rotate(glm::mat4(1.0f),
-    //                                         (float) glfwGetTime(),
-    //                                         glm::vec3(0.0f, 0.0f, 1.0f));
-    ////        mat4x4_mul(mvp, p, m);
-    //        mModel = mRotateZ * mModel;
+            mModel = mModel * matScale; // Math order is 1st thing\
 
 
-    //        mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
 
-
-//            mvp = p * v * m;
-//            uniform mat4x4 matModel;			// M
-//            uniform mat4x4 matView;				// V
-//            uniform mat4x4 matProjection;		// P
             GLint matModel_UL = glGetUniformLocation(shaderProgram, "matModel");
             GLint matView_UL = glGetUniformLocation(shaderProgram, "matView");
             GLint matProjection_UL = glGetUniformLocation(shaderProgram, "matProjection");
             glUniformMatrix4fv(matModel_UL, 1, GL_FALSE, glm::value_ptr(mModel));
             glUniformMatrix4fv(matView_UL, 1, GL_FALSE, glm::value_ptr(mView));
             glUniformMatrix4fv(matProjection_UL, 1, GL_FALSE, glm::value_ptr(mProjection));
+
+            // Calculate inverse transpose of 4x4 matrix
+            //uniform mat4x4 matModel_InvTrans;
+            glm::mat4 matModl_IT = glm::inverse(glm::transpose(mModel));
+            GLint matModel_InvTrans_UL = glGetUniformLocation(shaderProgram, "matModel_InvTrans");
+            glUniformMatrix4fv(matModel_InvTrans_UL, 1, GL_FALSE, glm::value_ptr(matModl_IT));
 
 
     //        glUseProgram(program);
@@ -640,13 +692,25 @@ int main(void)
 
 
             // uniform vec3 colorOverrideRGB;
-            GLint colorOverrideRGB_UL = glGetUniformLocation(shaderProgram, "colorOverrideRGB");
+            GLint diffuseColor_OverrideRGB_UL = glGetUniformLocation(shaderProgram, "diffuseColor_OverrideRGB");
 //            glUniform3f(colorOverrideRGB_UL, 1.0f, 0.0f, 0.0f);
-            glUniform3f(colorOverrideRGB_UL, 
-                        currentMesh.colour.r, 
-                        currentMesh.colour.g,
-                        currentMesh.colour.b);
+            glUniform3f(diffuseColor_OverrideRGB_UL,
+                        currentMesh.diffuseColour.r,
+                        currentMesh.diffuseColour.g,
+                        currentMesh.diffuseColour.b);
 
+            GLint specularColourRGB_Power_UL = glGetUniformLocation(shaderProgram, "specularColourRGB_Power");
+            glUniform4f(specularColourRGB_Power_UL,
+                        currentMesh.specularColourRGB.r,
+                        currentMesh.specularColourRGB.g,
+                        currentMesh.specularColourRGB.b,
+                        currentMesh.specularPower_or_shininess);    // Snininess
+
+
+            //uniform float alphaTransparency;
+            GLint alphaTransparency_UL = glGetUniformLocation(shaderProgram, "alphaTransparency");
+            glUniform1f(alphaTransparency_UL, currentMesh.alphaTransparency);
+            
             // Is this a "debug object" (i.e. not lit)
             //uniform bool bDontLight;
             GLint bDontLight_UL = glGetUniformLocation(shaderProgram, "bDontLight");

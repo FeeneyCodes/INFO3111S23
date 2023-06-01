@@ -4,6 +4,11 @@
 uniform mat4x4 matModel;			// M : where's my model at?
 uniform mat4x4 matView;				// V : where's the camera at?
 uniform mat4x4 matProjection;		// P : what's the screen doing?
+// For lighting - only impacts the normal 
+uniform mat4x4 matModel_InvTrans;	// Inverse transpose of the model matrix
+									// Used only for the normal, and strips out
+									// and scaling and translation, leaves only rotation
+
 //uniform mat4 MVP;
 
 // Coming in from the vertex layout
@@ -33,6 +38,9 @@ void main()
     gl_Position = matMVP * vec4(position, 1.0);
 	
     color = vCol;
-	fNormal = vNormal;
+	// Note that the mat4 x vec4 is needed,
+	// mat4 * vec4 --> vec4
+	//	then the results have to be changed to a vec3
+	fNormal = ( matModel_InvTrans * vec4(vNormal, 1.0) ).xyz;
 	
 }// off to the fragment shader

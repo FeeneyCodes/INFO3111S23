@@ -7,9 +7,16 @@ in vec3 fNormal;
 in vec4 fVertexPosWorld;
 
 // Out to the screen (or back buffer)
+// RGB, A  (a for "alpha")
 out vec4 finalOutputColour;	// to the screen
 
-uniform vec3 colorOverrideRGB;
+uniform vec3 diffuseColor_OverrideRGB;		// was: ColorOverride
+uniform vec4 specularColourRGB_Power;// = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+				// RGB is colour of the highlight
+				// Power is the specular power or shininess
+
+uniform float alphaTransparency;
+
 uniform bool bDontLight;
 
 // Location of the camera (or eye)
@@ -74,20 +81,21 @@ void main()
 
 	if ( bDontLight )
 	{
-		finalOutputColour.rgb = colorOverrideRGB.rgb;
+		finalOutputColour.rgb = diffuseColor_OverrideRGB.rgb;
 		finalOutputColour.w = 1.0f;
 		return;
 	}
 	
-	vec4 objectSpecular = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+//	vec4 objectSpecular = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	
-	finalOutputColour = calcualteLightContrib(colorOverrideRGB.rgb,
+	finalOutputColour = calcualteLightContrib(diffuseColor_OverrideRGB.rgb,
 	                                          fNormal.xyz, 
 											  fVertexPosWorld.xyz, 
-											  objectSpecular );
+											  specularColourRGB_Power );
 	
 	// Later for transparency.
-	finalOutputColour.w = 1.0f;
+//	finalOutputColour.w = 1.0f;
+	finalOutputColour.w = alphaTransparency;
 }
 
 

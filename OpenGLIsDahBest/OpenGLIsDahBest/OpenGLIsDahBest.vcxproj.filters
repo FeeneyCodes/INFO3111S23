@@ -17,6 +17,9 @@
     <Filter Include="LightManager">
       <UniqueIdentifier>{8fce6fde-bc71-46ca-be7b-6dbb909814c0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="MeshObject">
+      <UniqueIdentifier>{af7d0e20-d649-4863-a10c-e7c0fcce90bd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="theMain.cpp">
@@ -43,6 +46,9 @@
     <ClCompile Include="cLightHelper.cpp">
       <Filter>LightManager</Filter>
     </ClCompile>
+    <ClCompile Include="cMeshObject.cpp">
+      <Filter>MeshObject</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cShaderManager\cShaderManager.h">
@@ -54,12 +60,14 @@
     <ClInclude Include="cVAOManager\cVAOManager.h">
       <Filter>VAOManager</Filter>
     </ClInclude>
-    <ClInclude Include="cMeshObject.h" />
     <ClInclude Include="cLightManager.h">
       <Filter>LightManager</Filter>
     </ClInclude>
     <ClInclude Include="cLightHelper.h">
       <Filter>LightManager</Filter>
+    </ClInclude>
+    <ClInclude Include="cMeshObject.h">
+      <Filter>MeshObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
