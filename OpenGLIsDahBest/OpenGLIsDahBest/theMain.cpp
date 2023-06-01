@@ -245,6 +245,9 @@ int main(void)
     pModelManger->LoadModelIntoVAO("assets/models/Smooth_UV_Sphere_xyz_n.ply", modelILoadedInfo, shaderProgram);
     std::cout << "Loaded " << modelILoadedInfo.numberOfTriangles << " triangles" << std::endl;
 
+    pModelManger->LoadModelIntoVAO("assets/models/Battlestar_Galactica_Res_0_(444,087 faces)_xyz_n.ply", modelILoadedInfo, shaderProgram);
+    std::cout << "Loaded " << modelILoadedInfo.numberOfTriangles << " triangles" << std::endl;
+
     cMeshObject smallSphereLightCentre;
     smallSphereLightCentre.meshName = "assets/models/Smooth_UV_Sphere_xyz_n.ply";
     smallSphereLightCentre.colour = glm::vec3(1.0f, 1.0f, 1.0f);
@@ -253,6 +256,15 @@ int main(void)
     smallSphereLightCentre.friendlyName = "lightCentre";
     smallSphereLightCentre.bDontLight = true;
     ::g_vecMeshesToDraw.push_back(smallSphereLightCentre);
+
+    cMeshObject Galactica;
+    Galactica.meshName = "assets/models/Battlestar_Galactica_Res_0_(444,087 faces)_xyz_n.ply";
+    Galactica.colour = glm::vec3(0.4f, 0.4f, 0.5f);
+    Galactica.isWireframe = true;
+    Galactica.friendlyName = "Galactica";
+    Galactica.bDontLight = true;
+    Galactica.orientation.x = -90.0f;
+    ::g_vecMeshesToDraw.push_back(Galactica);
 
     cMeshObject smallSphere90PercentBrightness;
     smallSphere90PercentBrightness.meshName = "assets/models/Smooth_UV_Sphere_xyz_n.ply";
@@ -407,7 +419,8 @@ int main(void)
 
 
     float heyHeyILoveMath = 0.0f;
-
+    
+    float HACK_FAR_CLIPPING_PLANE = 1000.0f;
 
     // When this while exits, your program exits, too
     while (!glfwWindowShouldClose(window))
@@ -427,8 +440,11 @@ int main(void)
 
         mProjection = glm::perspective(0.6f,
                                          ratio,
-                                         0.1f,          // Near plane
-                                         1000.0f);      // Far plane
+                                         1.0f,          // Near plane
+//                                         1000.0f);      // Far plane
+                                         HACK_FAR_CLIPPING_PLANE);      // Far plane
+
+        HACK_FAR_CLIPPING_PLANE += 1.0f;
 
         mView = glm::mat4(1.0f);
 
@@ -467,7 +483,7 @@ int main(void)
 
         // Change the screen clear colour
         // 100, 149, 237 (cornflower blue)
-        glClearColor(100.0f/255.0f, 149.0f/255.0f, 237.0f/255.0f, 1.0f);
+     //   glClearColor(100.0f/255.0f, 149.0f/255.0f, 237.0f/255.0f, 1.0f);
 
         // Turn on "depth buffer" testing
         glEnable(GL_DEPTH_TEST);
