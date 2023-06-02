@@ -42,4 +42,23 @@ public:
 	//	in order to do that, it needs to know how bit the cMeshObject is...
 	// ...and so on... never ending. How sad for the compiler. 
 //	std::vector< cMeshObject > vecChildMeshes;
+
+	struct sMeshState
+	{
+		float scale;
+		bool bDontLight;
+		bool isWireFrame;
+		bool bIsVisible;
+		glm::vec3 position;
+		glm::vec3 diffuseColour;
+		float alphaTransparency;
+
+		// Saves the above from mesh...
+		void SaveState(cMeshObject* pTheMesh);
+		// Loads the above to the mesh...
+		void RestoreState(cMeshObject* pTheMesh);
+	};
+
 };
+
+

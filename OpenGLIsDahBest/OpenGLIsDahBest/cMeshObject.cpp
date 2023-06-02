@@ -39,3 +39,23 @@ cMeshObject::cMeshObject()
 //	this->scale = 1.0f;
 //	this->bIsVisible = true;
 //};
+
+void cMeshObject::sMeshState::SaveState(cMeshObject* pTheMesh)
+{
+	this->scale = pTheMesh->scale;
+	this->bDontLight = pTheMesh->bDontLight;
+	this->isWireFrame = pTheMesh->isWireframe;
+	this->position = pTheMesh->position;
+	this->diffuseColour = pTheMesh->diffuseColour;
+	this->alphaTransparency = pTheMesh->alphaTransparency;
+}
+// Loads the above to the mesh...
+void cMeshObject::sMeshState::RestoreState(cMeshObject* pTheMesh)
+{
+	pTheMesh->scale = this->scale;
+	pTheMesh->bDontLight = this->bDontLight;
+	pTheMesh->isWireframe = this->isWireFrame;
+	pTheMesh->position = this->position;
+	pTheMesh->diffuseColour = this->diffuseColour;
+	pTheMesh->alphaTransparency = this->alphaTransparency;
+}

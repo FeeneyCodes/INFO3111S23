@@ -49,6 +49,12 @@
     <ClCompile Include="cMeshObject.cpp">
       <Filter>MeshObject</Filter>
     </ClCompile>
+    <ClCompile Include="loadModels.cpp">
+      <Filter>MeshObject</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cShaderManager\cShaderManager.h">

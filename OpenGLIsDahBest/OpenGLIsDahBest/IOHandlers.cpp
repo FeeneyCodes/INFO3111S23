@@ -2,13 +2,17 @@
 
 #include "cLightManager.h"
 
+#include "cMeshObject.h"
+#include <string>
+
 extern cLightManager* g_pTheLights;// = NULL;
 
 extern bool g_bShowDebugLightSpheres;// = true;
 
 unsigned int g_SelectedLightIndex = 0;
 
-
+// Defined in theMain.cpp
+cMeshObject* pFindObjectByFriendlyName(std::string theName);
 
 
 //    void function_name(GLFWwindow* window, int key, int scancode, int action, int mods)

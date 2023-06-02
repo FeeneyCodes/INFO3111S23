@@ -82,7 +82,8 @@ void main()
 	if ( bDontLight )
 	{
 		finalOutputColour.rgb = diffuseColor_OverrideRGB.rgb;
-		finalOutputColour.w = 1.0f;
+//		finalOutputColour.w = 1.0f;
+		finalOutputColour.w = alphaTransparency;
 		return;
 	}
 	

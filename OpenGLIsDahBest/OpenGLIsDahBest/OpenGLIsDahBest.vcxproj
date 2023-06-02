@@ -145,8 +145,10 @@
     <ClCompile Include="cShaderManager\cShader.cpp" />
     <ClCompile Include="cShaderManager\cShaderManager.cpp" />
     <ClCompile Include="cVAOManager\cVAOManager.cpp" />
+    <ClCompile Include="DrawObject.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="IOHandlers.cpp" />
+    <ClCompile Include="loadModels.cpp" />
     <ClCompile Include="theMain.cpp" />
   </ItemGroup>
   <ItemGroup>
