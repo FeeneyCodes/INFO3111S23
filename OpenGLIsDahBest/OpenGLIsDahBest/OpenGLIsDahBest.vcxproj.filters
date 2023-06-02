@@ -20,6 +20,9 @@
     <Filter Include="MeshObject">
       <UniqueIdentifier>{af7d0e20-d649-4863-a10c-e7c0fcce90bd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="FlyCamera">
+      <UniqueIdentifier>{79175b90-301b-4366-97ed-d4c1fc8c0d3f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="theMain.cpp">
@@ -55,6 +58,9 @@
     <ClCompile Include="DrawObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="cFlyCamera.cpp">
+      <Filter>FlyCamera</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cShaderManager\cShaderManager.h">
@@ -74,6 +80,9 @@
     </ClInclude>
     <ClInclude Include="cMeshObject.h">
       <Filter>MeshObject</Filter>
+    </ClInclude>
+    <ClInclude Include="cFlyCamera.h">
+      <Filter>FlyCamera</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
