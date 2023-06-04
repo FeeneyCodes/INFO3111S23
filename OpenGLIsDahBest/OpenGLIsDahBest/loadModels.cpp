@@ -18,16 +18,28 @@ bool LoadModels(cVAOManager* pModelManger, GLuint shaderProgram,
 
     std::vector<std::string> vecModelsToLoad;
 
-    vecModelsToLoad.push_back("assets/models/spider_mastermind.bmd6model.fbx.ascii_Y_up.ply");
-    vecModelsToLoad.push_back("assets/models/Mushrooms1_xyz_normal.ply");
-    vecModelsToLoad.push_back("assets/models/bun_zipper_xyz_n.ply");
-    vecModelsToLoad.push_back("assets/models/mig29_xyz_n.ply");
-    vecModelsToLoad.push_back("assets/models/camion jugete_xyz_n.ply");
-    vecModelsToLoad.push_back("assets/models/FractalTerrainFromMeshLab_xyz_n.ply");
-    vecModelsToLoad.push_back("assets/models/Apartment Building_26_xyz_n (flat shaded export).ply");
-    vecModelsToLoad.push_back("assets/models/Smooth_UV_Sphere_xyz_n.ply");
-    vecModelsToLoad.push_back("assets/models/Battlestar_Galactica_Res_0_(444,087 faces)_xyz_n.ply");
-    vecModelsToLoad.push_back("assets/models/SpaceShuttleOrbiter_xyz_n_small.ply");
+    //vecModelsToLoad.push_back("assets/models/spider_mastermind.bmd6model.fbx.ascii_Y_up.ply");
+    //vecModelsToLoad.push_back("assets/models/Mushrooms1_xyz_normal.ply");
+    //vecModelsToLoad.push_back("assets/models/bun_zipper_xyz_n.ply");
+    //vecModelsToLoad.push_back("assets/models/mig29_xyz_n.ply");
+    //vecModelsToLoad.push_back("assets/models/camion jugete_xyz_n.ply");
+    //vecModelsToLoad.push_back("assets/models/FractalTerrainFromMeshLab_xyz_n.ply");
+    //vecModelsToLoad.push_back("assets/models/Apartment Building_26_xyz_n (flat shaded export).ply");
+    //vecModelsToLoad.push_back("assets/models/Smooth_UV_Sphere_xyz_n.ply");
+    //vecModelsToLoad.push_back("assets/models/Battlestar_Galactica_Res_0_(444,087 faces)_xyz_n.ply");
+    //vecModelsToLoad.push_back("assets/models/SpaceShuttleOrbiter_xyz_n_small.ply");
+
+    // These models have UV (texture) coordinates
+    vecModelsToLoad.push_back("assets/models/spider_mastermind.bmd6model.fbx.ascii_Y_up_UVs.ply");
+    vecModelsToLoad.push_back("assets/models/Smooth_UV_Sphere_xyz_n_uv.ply");
+    vecModelsToLoad.push_back("assets/models/Mushrooms1_xyz_n_UVs.ply");
+    vecModelsToLoad.push_back("assets/models/camion jugete_xyz_n_UV.ply");
+    vecModelsToLoad.push_back("assets/models/FractalTerrainFromMeshLab_xyz_n_UV.ply");
+    vecModelsToLoad.push_back("assets/models/Apartment Building_26_xyz_n_UV (flat shaded export).ply");
+    vecModelsToLoad.push_back("assets/models/bun_zipper_xyz_n_UV.ply");
+    vecModelsToLoad.push_back("assets/models/mig29_xyz_n_UV.ply");
+    vecModelsToLoad.push_back("assets/models/SpaceShuttleOrbiter_smallxyz_n_UV.ply");
+    vecModelsToLoad.push_back("assets/models/Battlestar_Galactica_x10_(blender_export)_xyz_n_uv.ply");
 
     for ( std::string modelName : vecModelsToLoad )
     {
@@ -60,23 +72,12 @@ bool LoadModels(cVAOManager* pModelManger, GLuint shaderProgram,
 
 
 
-    cMeshObject* pSpaceShuttle = new cMeshObject();
-    pSpaceShuttle->meshName = "assets/models/SpaceShuttleOrbiter_xyz_n_small.ply";
-    pSpaceShuttle->diffuseColour = glm::vec3(0.0f, 1.0f, 1.0f);
-
-    pSpaceShuttle->specularColourRGB = glm::vec3(1.0f, 1.0f, 1.0f);
-    pSpaceShuttle->specularPower_or_shininess = 1000.0f;
-    pSpaceShuttle->position.x = 30.0f;
-    pSpaceShuttle->scale = 1.0f;
-    //    pSpaceShuttle->isWireframe = true;
-    //    pSpaceShuttle->bDontLight = true;
-    pSpaceShuttle->friendlyName = "Space Shuttle";
-    vec_pMeshesToDraw.push_back(pSpaceShuttle);
 
     // Since we are using pointers, we can handle the debug objects differently.
     // Now we can re-use this same object and draw the sphere over and over, changing it slightly.
     cMeshObject* pDebugSphere = new cMeshObject();
-    pDebugSphere->meshName = "assets/models/Smooth_UV_Sphere_xyz_n.ply";
+//    pDebugSphere->meshName = "assets/models/Smooth_UV_Sphere_xyz_n.ply";
+    pDebugSphere->meshName = "assets/models/Smooth_UV_Sphere_xyz_n_uv.ply";
     pDebugSphere->diffuseColour = glm::vec3(1.0f, 1.0f, 1.0f);
     pDebugSphere->isWireframe = true;
     pDebugSphere->friendlyName = "DebugSphere";
@@ -85,85 +86,44 @@ bool LoadModels(cVAOManager* pModelManger, GLuint shaderProgram,
     vec_pMeshesToDraw.push_back(pDebugSphere);
 
 
-//    cMeshObject pSmallSphereLightCentre;
-//    smallSphereLightCentre.meshName = "assets/models/Smooth_UV_Sphere_xyz_n.ply";
-//    smallSphereLightCentre.diffuseColour = glm::vec3(1.0f, 1.0f, 1.0f);
-//    smallSphereLightCentre.isWireframe = true;
-//    smallSphereLightCentre.scale = 0.25f;
-//    smallSphereLightCentre.friendlyName = "lightCentre";
-//    smallSphereLightCentre.bDontLight = true;
-//    ::vec_pMeshesToDraw.push_back(smallSphereLightCentre);
-//
-//    cMeshObject smallSphere90PercentBrightness;
-//    smallSphere90PercentBrightness.meshName = "assets/models/Smooth_UV_Sphere_xyz_n.ply";
-//    smallSphere90PercentBrightness.diffuseColour = glm::vec3(0.5f, 0.5f, 0.0f);
-//    smallSphere90PercentBrightness.isWireframe = true;
-//    smallSphere90PercentBrightness.scale = 2.0f;
-//    smallSphere90PercentBrightness.friendlyName = "90Percent";
-//    smallSphere90PercentBrightness.bDontLight = true;
-//    ::vec_pMeshesToDraw.push_back(smallSphere90PercentBrightness);
-//
-//    cMeshObject smallSphere50PercentBrightness;
-//    smallSphere50PercentBrightness.meshName = "assets/models/Smooth_UV_Sphere_xyz_n.ply";
-//    smallSphere50PercentBrightness.diffuseColour = glm::vec3(0.0f, 0.5f, 0.5f);
-//    smallSphere50PercentBrightness.isWireframe = true;
-//    smallSphere50PercentBrightness.scale = 3.0f;
-//    smallSphere50PercentBrightness.friendlyName = "50Percent";
-//    smallSphere50PercentBrightness.bDontLight = true;
-//    ::vec_pMeshesToDraw.push_back(smallSphere50PercentBrightness);
-//
-//    cMeshObject smallSphere25PercentBrightness;
-//    smallSphere25PercentBrightness.meshName = "assets/models/Smooth_UV_Sphere_xyz_n.ply";
-//    smallSphere25PercentBrightness.diffuseColour = glm::vec3(0.0f, 0.5f, 0.0f);
-//    smallSphere25PercentBrightness.isWireframe = true;
-//    smallSphere25PercentBrightness.scale = 4.0f;
-//    smallSphere25PercentBrightness.friendlyName = "25Percent";
-//    smallSphere25PercentBrightness.bDontLight = true;
-//    ::vec_pMeshesToDraw.push_back(smallSphere25PercentBrightness);
-//
-//    cMeshObject smallSphere05PercentBrightness;
-//    smallSphere05PercentBrightness.meshName = "assets/models/Smooth_UV_Sphere_xyz_n.ply";
-//    smallSphere05PercentBrightness.diffuseColour = glm::vec3(0.5f, 0.0f, 0.5f);
-//    smallSphere05PercentBrightness.isWireframe = true;
-//    smallSphere05PercentBrightness.scale = 5.0f;
-//    smallSphere05PercentBrightness.friendlyName = "5Percent";
-//    smallSphere05PercentBrightness.bDontLight = true;
-//    ::vec_pMeshesToDraw.push_back(smallSphere05PercentBrightness);
+    cMeshObject* pSpiderMesh1 = new cMeshObject();
+    pSpiderMesh1->meshName = "assets/models/spider_mastermind.bmd6model.fbx.ascii_Y_up_UVs.ply";
+//    pSpiderMesh1->meshName = "assets/models/spider_mastermind.bmd6model.fbx.ascii_Y_up.ply";
+    pSpiderMesh1->friendlyName = "Mr. Spider";
+    pSpiderMesh1->diffuseColour = glm::vec3(1.0f, 0.0f, 0.0f);
+    pSpiderMesh1->specularColourRGB = glm::vec3(1.0f, 1.0f, 1.0f);
+    pSpiderMesh1->specularPower_or_shininess = 100.0f;
 
+//    pSpiderMesh1->alphaTransparency = 0.5f;
 
-    cMeshObject* pAppartmentBuildingMesh = new cMeshObject();
-    pAppartmentBuildingMesh->meshName = "assets/models/Apartment Building_26_xyz_n (flat shaded export).ply";
-    pAppartmentBuildingMesh->diffuseColour = glm::vec3(0.8f, 0.8f, 0.8f);
-    pAppartmentBuildingMesh->scale = 1.0f;
-    pAppartmentBuildingMesh->position = glm::vec3(-50.0f, 0.0f, 0.0f);
-    vec_pMeshesToDraw.push_back(pAppartmentBuildingMesh);
+    //    SpiderMesh.isWireframe = false;
+    pSpiderMesh1->position = glm::vec3(-5.0f, 0.0f, 0.0f);
+    vec_pMeshesToDraw.push_back(pSpiderMesh1);
 
-
-    cMeshObject* pTerrainMesh = new cMeshObject();
-    pTerrainMesh->meshName = "assets/models/FractalTerrainFromMeshLab_xyz_n.ply";
-    pTerrainMesh->diffuseColour = glm::vec3(0.8f, 0.8f, 0.8f);
-    //    terrainMesh.isWireframe = true;
-    pTerrainMesh->position = glm::vec3(0.0f, -230.0f, 0.0f);
-    vec_pMeshesToDraw.push_back(pTerrainMesh);
-
-
-    cMeshObject* pAirplane1 = new cMeshObject();
-    pAirplane1->meshName = "assets/models/mig29_xyz_n.ply";
-    pAirplane1->diffuseColour = glm::vec3(0.0f, 1.0f, 0.0f);
-    pAirplane1->position = glm::vec3(50.0f, 10.0f, 0.0f);
-    pAirplane1->scale = 25.0f;
-    vec_pMeshesToDraw.push_back(pAirplane1);
+    cMeshObject* pSpiderMesh2 = new cMeshObject();
+    pSpiderMesh2->meshName = "assets/models/spider_mastermind.bmd6model.fbx.ascii_Y_up_UVs.ply";
+//    pSpiderMesh2->meshName = "assets/models/spider_mastermind.bmd6model.fbx.ascii_Y_up.ply";
+    pSpiderMesh2->friendlyName = "Mrs. Spider";
+    pSpiderMesh2->diffuseColour = glm::vec3(0.0f, 1.0f, 0.0f);
+    pSpiderMesh2->specularColourRGB = glm::vec3(1.0f, 1.0f, 1.0f);
+    pSpiderMesh2->specularPower_or_shininess = 100.0f;
+//    pSpiderMesh2->alphaTransparency = 0.5f;
+    pSpiderMesh2->position = glm::vec3(20.0f, -10.0f, 0.0f);
+    vec_pMeshesToDraw.push_back(pSpiderMesh2);
 
     cMeshObject* pMushRoomMesh = new cMeshObject();
-    pMushRoomMesh->meshName = "assets/models/Mushrooms1_xyz_normal.ply";
+    pMushRoomMesh->meshName = "assets/models/Mushrooms1_xyz_n_UVs.ply";
     pMushRoomMesh->diffuseColour = glm::vec3(0.0f, 0.0f, 1.0f);
+    pMushRoomMesh->specularColourRGB = glm::vec3(1.0f, 1.0f, 1.0f);
+    pMushRoomMesh->specularPower_or_shininess = 10.0f;
     pMushRoomMesh->position = glm::vec3(10.0f, -10.0f, 10.0f);
-    pMushRoomMesh->scale = 0.1f;
+    pMushRoomMesh->scale = 0.25f;
     pMushRoomMesh->orientation.x = -90.0f;         // Note it's being converted into radians
     vec_pMeshesToDraw.push_back(pMushRoomMesh);
 
+
     cMeshObject* pToyTruck = new cMeshObject();
-    pToyTruck->meshName = "assets/models/camion jugete_xyz_n.ply";
+    pToyTruck->meshName = "assets/models/camion jugete_xyz_n_UV.ply";
     pToyTruck->diffuseColour = glm::vec3(0.0f, 1.0f, 1.0f);
     pToyTruck->position.x = 4.0f;
     pToyTruck->scale = 5.0f;
@@ -172,47 +132,90 @@ bool LoadModels(cVAOManager* pModelManger, GLuint shaderProgram,
     vec_pMeshesToDraw.push_back(pToyTruck);
 
     cMeshObject* pToyTruck2 = new cMeshObject();
-    pToyTruck2->meshName = "assets/models/camion jugete_xyz_n.ply";
+    pToyTruck2->meshName = "assets/models/camion jugete_xyz_n_UV.ply";
     pToyTruck2->diffuseColour = glm::vec3(1.0f, 1.0f, 1.0f);
     pToyTruck2->position.x = -4.0f;
     pToyTruck2->scale = 8.0f;
     pToyTruck2->orientation.x = glm::radians(135.0f);
     vec_pMeshesToDraw.push_back(pToyTruck2);
 
+    cMeshObject* pTerrainMesh = new cMeshObject();
+    pTerrainMesh->meshName = "assets/models/FractalTerrainFromMeshLab_xyz_n_UV.ply";
+    pTerrainMesh->diffuseColour = glm::vec3(0.8f, 0.8f, 0.8f);
+    //    terrainMesh.isWireframe = true;
+    // There's a large mountain right at -z location, blocking the camera, 
+    //  so I'm rotating it out of the way.
+//    pTerrainMesh->orientation.y = 90.0f;     
+    // The original model is 2560x2560 (x-z axis)
+    pTerrainMesh->scale = 1.0f;
+    // It's shifted 100 in the +z direction rather than having the 
+    //  centre of the terrain being under the camera (so it goes off in the distance
+    //  away from where the camera starts)
+    pTerrainMesh->position = glm::vec3(0.0f, -100.0f, -650.0f);
+    vec_pMeshesToDraw.push_back(pTerrainMesh);
+
+
+    cMeshObject* pAppartmentBuildingMesh = new cMeshObject();
+    pAppartmentBuildingMesh->meshName = "assets/models/Apartment Building_26_xyz_n_UV (flat shaded export).ply";
+    pAppartmentBuildingMesh->diffuseColour = glm::vec3(0.8f, 0.8f, 0.8f);
+    pAppartmentBuildingMesh->scale = 1.0f;
+    pAppartmentBuildingMesh->position = glm::vec3(-50.0f, 0.0f, 0.0f);
+    vec_pMeshesToDraw.push_back(pAppartmentBuildingMesh);
+
+
+    cMeshObject* pBunny01 = new cMeshObject();
+    pBunny01->meshName = "assets/models/bun_zipper_xyz_n_UV.ply";
+    pBunny01->diffuseColour = glm::vec3(1.0f, 1.0f, 0.0f);
+    pBunny01->position = glm::vec3(-5.0f, -3.0f, 5.0f);
+    pBunny01->scale = 25.0f;
+    vec_pMeshesToDraw.push_back(pBunny01);
+
+
+    cMeshObject* pAirplane1 = new cMeshObject();
+    pAirplane1->meshName = "assets/models/mig29_xyz_n_UV.ply";
+    pAirplane1->diffuseColour = glm::vec3(61.0f/255.0f, 85.0f/255.0f, 184.0f/255.0f);
+    pAirplane1->specularColourRGB = glm::vec3(1.0f, 1.0f, 1.0f);
+    pAirplane1->specularPower_or_shininess = 10.0f;
+    pAirplane1->position = glm::vec3(10.0f, 0.0f, -5.0f);
+    pAirplane1->orientation.x = -90.0f;
+    pAirplane1->orientation.z = 180.0f;
+    pAirplane1->scale = 10.0f;
+    vec_pMeshesToDraw.push_back(pAirplane1);
+
+
+    cMeshObject* pSpaceShuttle = new cMeshObject();
+    pSpaceShuttle->meshName = "assets/models/SpaceShuttleOrbiter_smallxyz_n_UV.ply";
+    pSpaceShuttle->diffuseColour = glm::vec3(0.0f, 1.0f, 1.0f);
+
+    pSpaceShuttle->specularColourRGB = glm::vec3(1.0f, 1.0f, 1.0f);
+    pSpaceShuttle->specularPower_or_shininess = 1000.0f;
+    pSpaceShuttle->position = glm::vec3(15.0f, 2.5, 0.0f);
+    pSpaceShuttle->scale = 1.0f;
+    //    pSpaceShuttle->isWireframe = true;
+    //    pSpaceShuttle->bDontLight = true;
+    pSpaceShuttle->friendlyName = "Space Shuttle";
+    vec_pMeshesToDraw.push_back(pSpaceShuttle);
+
+
+    cMeshObject* pGalactica = new cMeshObject();
+    pGalactica->meshName = "assets/models/Battlestar_Galactica_x10_(blender_export)_xyz_n_uv.ply";
+    pGalactica->diffuseColour = glm::vec3(0.4f, 0.4f, 0.5f);
+    pGalactica->friendlyName = "Galactica";
+    pGalactica->orientation.y = 180.0f;
+    pGalactica->position = glm::vec3(0.0f, 800.0f, -6000.0f);
+    //pGalactica->isWireframe = true;
+    //pGalactica->bDontLight = true;
+    vec_pMeshesToDraw.push_back(pGalactica);
+
+
+
+
+
+
 //    toyTruck2.diffuseColour = glm::vec3(1.0f, 0.0f, 0.0f);
 
 
-    cMeshObject* pSpiderMesh1 = new cMeshObject();
-    pSpiderMesh1->meshName = "assets/models/spider_mastermind.bmd6model.fbx.ascii_Y_up.ply";
-    pSpiderMesh1->friendlyName = "Mr. Spider";
-    pSpiderMesh1->diffuseColour = glm::vec3(1.0f, 0.0f, 0.0f);
-    pSpiderMesh1->specularColourRGB = glm::vec3(1.0f, 1.0f, 1.0f);
-    pSpiderMesh1->specularPower_or_shininess = 100.0f;
 
-    pSpiderMesh1->alphaTransparency = 0.5f;
-
-    //    SpiderMesh.isWireframe = false;
-    pSpiderMesh1->position = glm::vec3(-5.0f, 0.0f, 0.0f);
-    vec_pMeshesToDraw.push_back(pSpiderMesh1);
-
-    cMeshObject* pSpiderMesh2 = new cMeshObject();
-    pSpiderMesh2->meshName = "assets/models/spider_mastermind.bmd6model.fbx.ascii_Y_up.ply";
-    pSpiderMesh2->friendlyName = "Mrs. Spider";
-    pSpiderMesh2->diffuseColour = glm::vec3(0.0f, 1.0f, 0.0f);
-    pSpiderMesh2->specularColourRGB = glm::vec3(1.0f, 1.0f, 1.0f);
-    pSpiderMesh2->specularPower_or_shininess = 100.0f;
-    pSpiderMesh2->alphaTransparency = 0.5f;
-    pSpiderMesh2->position = glm::vec3(20.0f, -10.0f, 0.0f);
-    vec_pMeshesToDraw.push_back(pSpiderMesh2);
-
-    //cMeshObject Galactica;
-    //Galactica.meshName = "assets/models/Battlestar_Galactica_Res_0_(444,087 faces)_xyz_n.ply";
-    //Galactica.colour = glm::vec3(0.4f, 0.4f, 0.5f);
-    //Galactica.isWireframe = true;
-    //Galactica.friendlyName = "Galactica";
-    //Galactica.bDontLight = true;
-    //Galactica.orientation.x = -90.0f;
-    //::g_vecMeshesToDraw.push_back(Galactica);
 
 
     return ! bAnyErrors;

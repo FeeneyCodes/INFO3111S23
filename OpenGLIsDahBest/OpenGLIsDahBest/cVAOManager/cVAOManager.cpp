@@ -85,7 +85,7 @@ bool cVAOManager::LoadModelIntoVAO(
 	glBindBuffer(GL_ARRAY_BUFFER, drawInfo.VertexBufferID);
 	// sVert vertices[3]
 	glBufferData( GL_ARRAY_BUFFER, 
-				  sizeof(sVert) * drawInfo.numberOfVertices,	// ::g_NumberOfVertsToDraw,	// sizeof(vertices), 
+				  sizeof(sVert_xyz_n_uv) * drawInfo.numberOfVertices,	// ::g_NumberOfVertsToDraw,	// sizeof(vertices), 
 				  (GLvoid*) drawInfo.pVertices,							// pVertices,			//vertices, 
 				  GL_STATIC_DRAW );
 
@@ -106,25 +106,34 @@ bool cVAOManager::LoadModelIntoVAO(
 	GLint vpos_location = glGetAttribLocation(shaderProgramID, "vPos");	// program
 	GLint vcol_location = glGetAttribLocation(shaderProgramID, "vCol");	// program;
 	GLint vNormal_location = glGetAttribLocation(shaderProgramID, "vNormal");	// program;
+	// Also the texture coordinates
+	GLint vUV_location = glGetAttribLocation(shaderProgramID, "vUV");	// program;
 
 	// Set the vertex attributes for this shader
 	glEnableVertexAttribArray(vpos_location);	// vPos
 	glVertexAttribPointer( vpos_location, 3,		// vPos
 						   GL_FLOAT, GL_FALSE,
-						   sizeof(sVert), 
-						   ( void* ) offsetof( sVert, x ) );
+						   sizeof(sVert_xyz_n_uv),
+						   ( void* ) offsetof(sVert_xyz_n_uv, x ) );
 
 	glEnableVertexAttribArray(vcol_location);	// vCol
 	glVertexAttribPointer( vcol_location, 3,		// vCol
 						   GL_FLOAT, GL_FALSE,
-						  sizeof(sVert),
-						   ( void* ) offsetof(sVert, r));
+						  sizeof(sVert_xyz_n_uv),
+						   ( void* ) offsetof(sVert_xyz_n_uv, r));
 
 	glEnableVertexAttribArray(vNormal_location);	// vNormal
 	glVertexAttribPointer(vNormal_location, 3,		// vNormal
 						   GL_FLOAT, GL_FALSE,
-						   sizeof(sVert),
-						   ( void* ) offsetof(sVert, nx));
+						   sizeof(sVert_xyz_n_uv),
+						   ( void* ) offsetof(sVert_xyz_n_uv, nx));
+
+
+	glEnableVertexAttribArray(vUV_location);	// vUV
+	glVertexAttribPointer(vUV_location, 2,		// vUV
+						   GL_FLOAT, GL_FALSE,
+						   sizeof(sVert_xyz_n_uv),
+						   ( void* ) offsetof(sVert_xyz_n_uv, u));
 
 	// Now that all the parts are set up, set the VAO to zero
 	glBindVertexArray(0);
@@ -135,6 +144,7 @@ bool cVAOManager::LoadModelIntoVAO(
 	glDisableVertexAttribArray(vpos_location);
 	glDisableVertexAttribArray(vcol_location);
 	glDisableVertexAttribArray(vNormal_location);
+	glDisableVertexAttribArray(vUV_location);
 
 
 	// Store the draw information into the map
@@ -219,16 +229,22 @@ bool cVAOManager::m_LoadTheModel(std::string fileName,
 	
 	// This is set up to match the ply (3d model) file. 
 	// NOT the shader. 
-	struct sVertPly
+//	struct sVertPly
+//	{
+//		glm::vec3 pos;
+////		glm::vec4 colour;
+//		glm::vec3 normal;
+//	};
+	struct sVertPly_n_uv
 	{
 		glm::vec3 pos;
 //		glm::vec4 colour;
 		glm::vec3 normal;
+		float u, v;		// Texture coordinates
 	};
+	std::vector<sVertPly_n_uv> vecTempPlyVerts;
 
-	std::vector<sVertPly> vecTempPlyVerts;
-
-	sVertPly tempVert;
+	sVertPly_n_uv tempVert;
 	// Load the vertices...
 	for ( unsigned int index = 0; index != drawInfo.numberOfVertices; // ::g_NumberOfVertices; 
 		  index++ )
@@ -236,6 +252,9 @@ bool cVAOManager::m_LoadTheModel(std::string fileName,
 		thePlyFile >> tempVert.pos.x >> tempVert.pos.y >> tempVert.pos.z;
 		
 		thePlyFile >> tempVert.normal.x >> tempVert.normal.y >> tempVert.normal.z;
+
+		// Now there's UV (texture coordinates), tooo
+		thePlyFile >> tempVert.u >> tempVert.v;
 
 //		tempVert.pos *= 0.01f;
 //		tempVert.pos.x *= 10.0f;
@@ -261,7 +280,7 @@ bool cVAOManager::m_LoadTheModel(std::string fileName,
 	// - sVertPly was made to match the file format
 	// - sVert was made to match the shader vertex attrib format
 
-	drawInfo.pVertices = new sVert[drawInfo.numberOfVertices];
+	drawInfo.pVertices = new sVert_xyz_n_uv[drawInfo.numberOfVertices];
 
 	// Optional clear array to zero 
 	//memset( drawInfo.pVertices, 0, sizeof(sVert) * drawInfo.numberOfVertices);
@@ -280,13 +299,17 @@ bool cVAOManager::m_LoadTheModel(std::string fileName,
 		drawInfo.pVertices[index].ny = vecTempPlyVerts[index].normal.y;
 		drawInfo.pVertices[index].nz = vecTempPlyVerts[index].normal.z;
 
+		// Copy the UVs to the draw info, too 
+		drawInfo.pVertices[index].u = vecTempPlyVerts[index].u;
+		drawInfo.pVertices[index].v = vecTempPlyVerts[index].v;
+
 	}// for ( unsigned int index...
 
 
 	struct sTriPly
 	{
 		unsigned int vindex[3];		// the 3 indices
-		sVertPly verts[3];			// The actual vertices
+		sVertPly_n_uv verts[3];			// The actual vertices
 	};
 
 	std::vector<sTriPly> vecTempPlyTriangles;

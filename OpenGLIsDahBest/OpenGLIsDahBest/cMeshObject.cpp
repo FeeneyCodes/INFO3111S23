@@ -15,7 +15,7 @@ cMeshObject::cMeshObject()
 	// A little bit shiny = 10
 	// More shiny = 100
 	// REALLY shiny = 1,000 or 10,000 or higher
-	float specularPower_or_shininess = 1.0f;
+	this->specularPower_or_shininess = 1.0f;
 
 	// Default: everything is solid
 	this->alphaTransparency = 1.0f;
@@ -27,6 +27,10 @@ cMeshObject::cMeshObject()
 	this->bDontLight = false;
 	this->scale = 1.0f;
 	this->bIsVisible = true;
+
+	this->m_ID = cMeshObject::m_s_NextID;
+	cMeshObject::m_s_NextID++;
+
 };
 //
 //cMeshObject::cMeshObject(cMeshObject& n)		// Copy constructor
@@ -40,6 +44,17 @@ cMeshObject::cMeshObject()
 //	this->bIsVisible = true;
 //};
 
+
+unsigned int cMeshObject::getUniqueID(void)
+{
+	return this->m_ID;
+}
+
+// Here's how to set a static variable:
+//	static 
+unsigned int cMeshObject::m_s_NextID = cMeshObject::INITIAL_UNIQUE_ID;		// Start IDs at 1
+
+
 void cMeshObject::sMeshState::SaveState(cMeshObject* pTheMesh)
 {
 	this->scale = pTheMesh->scale;
@@ -48,6 +63,7 @@ void cMeshObject::sMeshState::SaveState(cMeshObject* pTheMesh)
 	this->position = pTheMesh->position;
 	this->diffuseColour = pTheMesh->diffuseColour;
 	this->alphaTransparency = pTheMesh->alphaTransparency;
+	this->bIsVisible = pTheMesh->bIsVisible;
 }
 // Loads the above to the mesh...
 void cMeshObject::sMeshState::RestoreState(cMeshObject* pTheMesh)
@@ -58,4 +74,5 @@ void cMeshObject::sMeshState::RestoreState(cMeshObject* pTheMesh)
 	pTheMesh->position = this->position;
 	pTheMesh->diffuseColour = this->diffuseColour;
 	pTheMesh->alphaTransparency = this->alphaTransparency;
+	pTheMesh->bIsVisible = this->bIsVisible;
 }

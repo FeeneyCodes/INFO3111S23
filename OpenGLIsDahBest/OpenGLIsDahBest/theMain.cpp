@@ -23,6 +23,8 @@
 
 #include "cVAOManager/cVAOManager.h"
 #include "cLightManager.h"
+// Now with textures!
+#include "cBasicTextureManager/cBasicTextureManager.h"
 
 #include "cMeshObject.h"
 
@@ -175,7 +177,20 @@ int main(void)
         }
     }//if ( ! LoadModels(...
 
+    // Load the textures
+    cBasicTextureManager* pTheTextures = new cBasicTextureManager();
 
+    // Load some textures
+    pTheTextures->SetBasePath("assets/textures");
+
+    if ( pTheTextures->Create2DTextureFromBMPFile("24taylor-notebook3-superJumbo.bmp", true) )
+    {
+        std::cout << "Loaded Tay Tay" << std::endl;
+    }
+    if ( pTheTextures->Create2DTextureFromBMPFile("parabellumcover.0.bmp", true) )
+    {
+        std::cout << "Loaded John Wick" << std::endl;
+    }    
 
 
     ::g_pTheLights = new cLightManager();
@@ -253,7 +268,7 @@ int main(void)
         mProjection = glm::perspective(0.6f,
                                          ratio,
                                          1.0f,          // Near plane
-                                         1000.0f);      // Far plane
+                                         100000.0f);      // Far plane
 
         GLint matProjection_UL = glGetUniformLocation(shaderProgram_ID, "matProjection");
         glUniformMatrix4fv(matProjection_UL, 1, GL_FALSE, glm::value_ptr(mProjection));
@@ -318,6 +333,19 @@ int main(void)
         }
 
 
+        //cMeshObject* pCharlotte = pFindObjectByFriendlyName("Mrs. Spider");
+
+        //glm::vec3 oldColor = pSpider->diffuseColour;
+        //glm::vec3 oldPosition = pSpider->position;
+
+        //pCharlotte->diffuseColour = glm::vec3(0.0f, 1.0f, 1.0f);
+
+        //for ( float x = -500.0f; x < 600.0f; x += 100.0f)
+        //{
+        //    pCharlotte->position = glm::vec3(x, 50.0f, 0.0f);
+
+        //    DrawObject(pCharlotte, glm::mat4(1.0f), pModelManger, shaderProgram_ID);
+        //}
 
         // Draw all the stuff in the vector
         for ( cMeshObject* pCurrentMesh : ::g_vec_pMeshesToDraw )
@@ -495,6 +523,8 @@ void DrawDebugLightSpheres(cVAOManager* pModelManager, GLuint shaderProgram_ID)
 
     // Restore the old debug sphere state
     oldState.RestoreState(pDebugSphere);
+
+
 
 
     return;

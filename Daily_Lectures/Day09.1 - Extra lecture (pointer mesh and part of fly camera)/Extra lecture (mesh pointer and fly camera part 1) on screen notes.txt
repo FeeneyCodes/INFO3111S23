@@ -1,0 +1,26 @@
+Here's the video I promised where I'l change the vector of stack based items to a vector of pointer based objects. 
+
+Changing the objects from stack based to pointer based will do a few things:
+* Allows a DrawObject() method so we can draw an object whenever we'd like.
+  (so we don't have to place things on the vector to draw them)
+* Allows us to keep the pointer to an object around so when we update or reference an object, we know it's the one and only one object (rather than a copy, or searching for the object)
+* Allows objects to easily have child objects (the basics of a "scene graph")
+
+
+OK, a student mentioned that they'd used chatGPT to make a "flying camera" - one that you can use to fly around the scene, and while I've got one that I use for the GDP1 program, it's got quaternions and other stuff that's outside of the scope of this class.
+
+So.... I thought I'd try it. 
+
+Here's what it spat out...
+
+Someone mentioned that chatGPT is kind of a "compressed internet" and it sure looks like chatGPT found this somewhere and is spitting it back, and that it's likely from a number of years ago. 
+
+Why? 
+
+It's using GLUT, which is from the 90s. 
+
+Anyhow, let's see if it works! :)
+
+(Seriously, I've never done this, so I have NO idea if this will even work)
+
+First, I'm going to push the updated code to git.

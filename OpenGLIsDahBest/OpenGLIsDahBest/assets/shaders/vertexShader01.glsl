@@ -15,11 +15,13 @@ uniform mat4x4 matModel_InvTrans;	// Inverse transpose of the model matrix
 in vec3 vCol;		
 in vec3 vPos;
 in vec3 vNormal;
+in vec2 vUV;		// Texture coordinates
 
 // Going out to the Fragment shader
 out vec3 color;
 out vec3 fNormal;		// 'f' for fun or fromage or fragment
 out vec4 fVertexPosWorld;		// Where this vertex is in 'world space'
+out vec2 fUV;
 
 void main()
 {
@@ -41,6 +43,8 @@ void main()
 	// Note that the mat4 x vec4 is needed,
 	// mat4 * vec4 --> vec4
 	//	then the results have to be changed to a vec3
-	fNormal = ( matModel_InvTrans * vec4(vNormal, 1.0) ).xyz;
+	fNormal = ( matModel_InvTrans * vec4(normalize(vNormal), 1.0) ).xyz;
 	
+	// Pass the UVs along to the fragment shader
+	fUV = vUV;
 }// off to the fragment shader

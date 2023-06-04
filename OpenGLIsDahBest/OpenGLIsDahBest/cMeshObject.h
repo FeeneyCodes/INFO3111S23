@@ -32,10 +32,20 @@ public:
 	bool bDontLight;		
 
 	std::string friendlyName;
-	unsigned int ID;
+	unsigned int getUniqueID(void);
+private:
+	unsigned int m_ID;
+	// Static variables can't be initialized here. 
+	// See the cpp file for how to do it
+	static unsigned int m_s_NextID;// = 1;
+	// Const static CAN be set to something in the header
+	static const unsigned int INITIAL_UNIQUE_ID = 1;
+public:
 	//...
 
+	// Child objects are pointers to objects, not stack copies
 	std::vector< cMeshObject* > vec_pChildMeshes;
+
 	// Can't do this because the linker needs to know
 	//	how big this cMeshObject is, but in order to do that, 
 	//	it needs to know how big this vector will be, but 

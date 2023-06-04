@@ -23,6 +23,9 @@
     <Filter Include="FlyCamera">
       <UniqueIdentifier>{79175b90-301b-4366-97ed-d4c1fc8c0d3f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="cTextureManger">
+      <UniqueIdentifier>{42bc215f-4ae6-4183-b04d-263198b204ad}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="theMain.cpp">
@@ -61,6 +64,15 @@
     <ClCompile Include="cFlyCamera.cpp">
       <Filter>FlyCamera</Filter>
     </ClCompile>
+    <ClCompile Include="cBasicTextureManager\C24BitBMPpixel.cpp">
+      <Filter>cTextureManger</Filter>
+    </ClCompile>
+    <ClCompile Include="cBasicTextureManager\cBasicTextureManager.cpp">
+      <Filter>cTextureManger</Filter>
+    </ClCompile>
+    <ClCompile Include="cBasicTextureManager\CTextureFromBMP.cpp">
+      <Filter>cTextureManger</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cShaderManager\cShaderManager.h">
@@ -83,6 +95,15 @@
     </ClInclude>
     <ClInclude Include="cFlyCamera.h">
       <Filter>FlyCamera</Filter>
+    </ClInclude>
+    <ClInclude Include="cBasicTextureManager\C24BitBMPpixel.h">
+      <Filter>cTextureManger</Filter>
+    </ClInclude>
+    <ClInclude Include="cBasicTextureManager\cBasicTextureManager.h">
+      <Filter>cTextureManger</Filter>
+    </ClInclude>
+    <ClInclude Include="cBasicTextureManager\CTextureFromBMP.h">
+      <Filter>ShaderStuff</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

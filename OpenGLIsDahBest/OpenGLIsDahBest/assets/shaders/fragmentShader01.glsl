@@ -5,6 +5,7 @@
 in vec3 color;
 in vec3 fNormal;	
 in vec4 fVertexPosWorld;
+in vec2 fUV;
 
 // Out to the screen (or back buffer)
 // RGB, A  (a for "alpha")
@@ -44,6 +45,7 @@ const int POINT_LIGHT = 0;					// Default.
 const int SPOT_LIGHT_TYPE = 1;
 const int DIRECTIONAL_LIGHT_TYPE = 2;
 
+uniform sampler2D texture01;		// Tay's Tay's face
 
 
 //vec3 myOneLightPos = vec3(-5.0f, 15.0f, 0.0f);
@@ -88,11 +90,21 @@ void main()
 	}
 	
 //	vec4 objectSpecular = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+
+	vec4 taylorsFacePixel = texture( texture01, fUV );	// Zero cost
 	
+//	finalOutputColour = calcualteLightContrib(taylorsFacePixel.rgb,
 	finalOutputColour = calcualteLightContrib(diffuseColor_OverrideRGB.rgb,
 	                                          fNormal.xyz, 
 											  fVertexPosWorld.xyz, 
 											  specularColourRGB_Power );
+										
+	// Note setting it (=) to 0 (black), but ALMOST black
+//	finalOutputColour.rgb *= 0.0001f;
+
+	// Again, not setting (=), just adding
+//	finalOutputColour.rg += fUV.xy;									  
+											  
 	
 	// Later for transparency.
 //	finalOutputColour.w = 1.0f;

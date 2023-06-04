@@ -14,7 +14,7 @@
 bool DrawObject( cMeshObject* pMeshToDraw, 
                  glm::mat4 matModel, 
                  cVAOManager* pModelManger, 
-                 GLuint shaderProgram_ID)
+                 GLuint shaderProgram_ID )
 {
                 // Copy the mesh (for ease of reading)
 

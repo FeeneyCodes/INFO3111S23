@@ -14,12 +14,14 @@
 // in vec3 vCol;
 // in vec3 vPos;
 // in vec3 vNormal;
-struct sVert
+struct sVert_xyz_n_uv		//  sVert
 {
 	float x, y, z;		// added "z"
 	float r, g, b;
 	// Now with more normals!
 	float nx, ny, nz;
+	// Now with texture coordinates
+	float u, v;
 };
 
 
@@ -46,7 +48,7 @@ struct sModelDrawInfo
 	unsigned int numberOfTriangles;
 
 	// The "local" (i.e. "CPU side" temporary array)
-	sVert* pVertices;	//  = 0;
+	sVert_xyz_n_uv* pVertices;	//  = 0;
 	// The index buffer (CPU side)
 	unsigned int* pIndices;
 };

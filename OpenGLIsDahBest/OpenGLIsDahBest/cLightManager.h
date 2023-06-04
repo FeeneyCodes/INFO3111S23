@@ -7,7 +7,16 @@
 
 struct sLight
 {
-	sLight() {}
+	sLight() 
+	{
+		this->position = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+		this->diffuse = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+		this->specular = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+		this->atten = glm::vec4(0.0f, 0.001f, 0.0001, 1000000.0f);
+		this->diffuse = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
+		this->param1 = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+		this->param2 = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+	}
 	glm::vec4 position;	// xyz, ignoring w (4th parameter)	
 	glm::vec4 diffuse;
 	glm::vec4 specular;	// rgb = highlight colour, w = power
@@ -19,7 +28,8 @@ struct sLight
 						// 2 = directional light
 	glm::vec4 param2;	// x = 0 for off, 1 for on
 
-	void SetLinearAttenuation(float newLinear);
+//	void SetLinearAttenuation(float newLinear);
+
 	void TurnOff(void)
 	{
 		this->param2.x = 0.0f;

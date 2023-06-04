@@ -188,6 +188,26 @@ void handleKeyboardInput(GLFWwindow* window)
             ::g_pTheLights->myLights[g_SelectedLightIndex].atten.z *= (1.0f - LINEAR_ATTEN_CHANGE_PERCENT);
         }
 
+        //glm::vec4 param1;	// x = lightType, y = inner angle, z = outer angle, w = TBD
+        const float SPOT_LIGHT_ANGLE_CHANGE_PERCENT = 0.001f;
+
+        if (glfwGetKey(window, GLFW_KEY_UP))        // Increase inner angle
+        {
+            ::g_pTheLights->myLights[g_SelectedLightIndex].param1.y *= (1.0f + SPOT_LIGHT_ANGLE_CHANGE_PERCENT);
+        }
+        if (glfwGetKey(window, GLFW_KEY_DOWN))      // Decrease inner angle
+        {
+            ::g_pTheLights->myLights[g_SelectedLightIndex].param1.y *= (1.0f - SPOT_LIGHT_ANGLE_CHANGE_PERCENT);
+        }
+        if (glfwGetKey(window, GLFW_KEY_RIGHT))    // Increase outer angle
+        {
+            ::g_pTheLights->myLights[g_SelectedLightIndex].param1.z *= (1.0f + SPOT_LIGHT_ANGLE_CHANGE_PERCENT);
+        }
+        if (glfwGetKey(window, GLFW_KEY_LEFT))      // Decrease outer angle
+        {
+            ::g_pTheLights->myLights[g_SelectedLightIndex].param1.z *= (1.0f - SPOT_LIGHT_ANGLE_CHANGE_PERCENT);
+        }
+
         if (glfwGetKey(window, GLFW_KEY_5))
         {
 //            ::g_pTheLights->myLights[g_SelectedLightIndex].param2.x = 1.0f;
