@@ -31,6 +31,18 @@ cMeshObject::cMeshObject()
 	this->m_ID = cMeshObject::m_s_NextID;
 	cMeshObject::m_s_NextID++;
 
+	// If no texture, make it the dark grey texture
+	this->textureName[0] = "DrakGrey.bmp";
+
+	textureMixingRatio[0] = 0.0f;
+	textureMixingRatio[1] = 0.0f;
+	textureMixingRatio[2] = 0.0f;
+	textureMixingRatio[3] = 0.0f;
+	textureMixingRatio[4] = 0.0f;
+	textureMixingRatio[5] = 0.0f;
+	textureMixingRatio[6] = 0.0f;
+	textureMixingRatio[7] = 0.0f;
+
 };
 //
 //cMeshObject::cMeshObject(cMeshObject& n)		// Copy constructor

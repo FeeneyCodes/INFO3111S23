@@ -84,6 +84,10 @@ bool DrawObject(cMeshObject* pMeshToDraw,
                 cVAOManager* pModelManger,
                 GLuint shaderProgram_ID);
 
+void SetUpTexturesForMesh(cMeshObject* pCurrentMesh, 
+                          GLuint shaderProgram_ID, 
+                          cBasicTextureManager* pTheTextures);
+
 
 //void ChangeLightSphereVisibility(bool bIsOn);
 void DrawDebugLightSpheres(cVAOManager* pModelManager, GLuint shaderProgram_ID);
@@ -199,6 +203,12 @@ int main(void)
     {
         std::cout << "Loaded DrakGrey" << std::endl;
     }    
+
+    if ( pTheTextures->Create2DTextureFromBMPFile("jeuusd992wd41.bmp", true) )
+    {
+        std::cout << "Loaded jeuusd992wd41 (duck)" << std::endl;
+    }    
+
 
     ::g_pTheLights = new cLightManager();
     ::g_pTheLights->LoadUniformLocationsFromShader(shaderProgram_ID);
@@ -340,6 +350,9 @@ int main(void)
         }
 
 
+
+
+
         //cMeshObject* pCharlotte = pFindObjectByFriendlyName("Mrs. Spider");
 
         //glm::vec3 oldColor = pSpider->diffuseColour;
@@ -358,38 +371,8 @@ int main(void)
         // Draw all the stuff in the vector
         for ( cMeshObject* pCurrentMesh : ::g_vec_pMeshesToDraw )
         {
-            // ***********************************************************
-            // We love this, don't we? 
 
-            // Choose texture unit #6. Why? Because. 
-            glActiveTexture(GL_TEXTURE6);	// GL_TEXTURE0 = 33984
-
-//            glActiveTexture(GL_TEXTURE0 + 79);	// GL_TEXTURE0 = 33984
-
-            // Now, we chose the texture that this Texture Unit is reading from.
-            // aka we "bind" to a texture.
-            // Binding: Set this to the "current" texture
-//            GLuint TayTaysTexture_Number = pTheTextures->getTextureIDFromName("24taylor-notebook3-superJumbo.bmp");
-//            GLuint TayTaysTexture_Number = pTheTextures->getTextureIDFromName("parabellumcover.0.bmp");
-
-            GLuint TayTaysTexture_Number = pTheTextures->getTextureIDFromName(pCurrentMesh->textureName[0]);
-            if ( TayTaysTexture_Number == 0 )
-            {
-                // Didn't find that texture
-                // So pick the "default" texture
-//                TayTaysTexture_Number = pTheTextures->getTextureIDFromName("UV_checker_Map_byValle.bmp");
-                TayTaysTexture_Number = pTheTextures->getTextureIDFromName("DrakGrey.bmp");
-            }
-
-            glBindTexture(GL_TEXTURE_2D, TayTaysTexture_Number);
-
-            // In the shader, connect the "sampler" to the active texture unit WE PICKED
-            // uniform sampler2D texture01;
-            GLint texture01_UniformLocation = glGetUniformLocation(shaderProgram_ID, "texture01");
-
-            glUniform1i(texture01_UniformLocation, 6);       // 0x84C6   33990
-            // ***********************************************************
-
+            SetUpTexturesForMesh(pCurrentMesh, shaderProgram_ID, pTheTextures);
 
 
             glm::mat4 matModel = glm::mat4(1.0f);   // Identity matrix
@@ -572,3 +555,72 @@ void DrawDebugLightSpheres(cVAOManager* pModelManager, GLuint shaderProgram_ID)
 
     return;
 }// END OF: Place the sphere where the light #0 was90Percent
+
+
+void SetUpTexturesForMesh(cMeshObject* pCurrentMesh, GLuint shaderProgram_ID, cBasicTextureManager* pTheTextures)
+{
+    // ***********************************************************
+    // We love this, don't we? 
+
+    {// Texture #0
+        GLint textureNumber = 0;
+
+        glActiveTexture(GL_TEXTURE0 + textureNumber);	// GL_TEXTURE0 = 33984
+
+        // Look up the texture
+        GLuint meshTexture00 = pTheTextures->getTextureIDFromName(pCurrentMesh->textureName[0]);
+
+        glBindTexture(GL_TEXTURE_2D, meshTexture00);
+
+        // uniform sampler2D texture01;
+        GLint texture00_UniformLocation = glGetUniformLocation(shaderProgram_ID, "texture00");
+        glUniform1i(texture00_UniformLocation, textureNumber);       // 0x84C6   33990
+    }//Texture #0
+
+
+    {// Texture #1
+        GLint textureNumber = 1;
+
+        glActiveTexture(GL_TEXTURE0 + textureNumber);	// GL_TEXTURE0 = 33984
+
+        // Look up the texture
+        GLuint meshTexture01 = pTheTextures->getTextureIDFromName(pCurrentMesh->textureName[1]);
+        glBindTexture(GL_TEXTURE_2D, meshTexture01);
+
+        // uniform sampler2D texture01;
+        GLint texture01_UniformLocation = glGetUniformLocation(shaderProgram_ID, "texture01");
+        glUniform1i(texture01_UniformLocation, textureNumber);       // 0x84C6   33990
+    }//Texture #0
+
+    {// Texture #2
+        GLint textureNumber = 2;
+
+        glActiveTexture(GL_TEXTURE0 + textureNumber);	// GL_TEXTURE0 = 33984
+
+        // Look up the texture
+        GLuint meshTexture02 = pTheTextures->getTextureIDFromName(pCurrentMesh->textureName[2]);
+        glBindTexture(GL_TEXTURE_2D, meshTexture02);
+
+        // uniform sampler2D texture01;
+        GLint texture02_UniformLocation = glGetUniformLocation(shaderProgram_ID, "texture02");
+        glUniform1i(texture02_UniformLocation, textureNumber);       // 0x84C6   33990
+    }//Texture #0
+
+
+
+
+    // And set the mixing values as well
+    //uniform vec4 textureMix_00_to_03;
+    GLint textureMix_00_to_03_UniformLocation = glGetUniformLocation(shaderProgram_ID, "textureMix_00_to_03");
+    // 
+    glUniform4f(textureMix_00_to_03_UniformLocation,
+                pCurrentMesh->textureMixingRatio[0],
+                pCurrentMesh->textureMixingRatio[1],
+                pCurrentMesh->textureMixingRatio[2],
+                pCurrentMesh->textureMixingRatio[3]);
+
+
+    return;
+}
+ 
+// ***********************************************************

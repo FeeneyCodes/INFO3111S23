@@ -264,6 +264,40 @@ void handleKeyboardInput(GLFWwindow* window)
             // Move "up"
             ::g_cameraEye.y += CAMERA_MOVE_SPEED;
         }
+
+
+        // Change texture blending
+        if (glfwGetKey(window, GLFW_KEY_M))
+        {
+            cMeshObject* pQuad = pFindObjectByFriendlyName("2D Quad Imposter");
+            if (pQuad)
+            {
+                // More Tay Tay
+                pQuad->textureMixingRatio[0] += 0.001f;
+                if ( pQuad->textureMixingRatio[0] > 1.0f )
+                {
+                    pQuad->textureMixingRatio[0] = 1.0f;
+                }
+                // 
+                pQuad->textureMixingRatio[1] = (1.0f - pQuad->textureMixingRatio[0]);
+            }
+        }
+        if (glfwGetKey(window, GLFW_KEY_N))
+        {
+            cMeshObject* pQuad = pFindObjectByFriendlyName("2D Quad Imposter");
+            if (pQuad)
+            {
+                // More John Wick
+                pQuad->textureMixingRatio[1] += 0.001f;
+                if (pQuad->textureMixingRatio[1] > 1.0f)
+                {
+                    pQuad->textureMixingRatio[1] = 1.0f;
+                }
+                // 
+                pQuad->textureMixingRatio[0] = (1.0f - pQuad->textureMixingRatio[1]);
+            }
+        }
+
     }//if (isShiftDown(window)
 
     return;

@@ -45,9 +45,17 @@ const int POINT_LIGHT = 0;					// Default.
 const int SPOT_LIGHT_TYPE = 1;
 const int DIRECTIONAL_LIGHT_TYPE = 2;
 
-uniform sampler2D texture01;		// Tay's Tay's face
+uniform sampler2D texture00;		// Tay's Tay's face
+uniform sampler2D texture01;		// John Wick
 uniform sampler2D texture02;		// John Wick
+uniform sampler2D texture03;		// John Wick
 
+//uniform float texture00mix;// = 1.0f;
+//uniform float texture01mix;// = 0.0f;
+//uniform float texture02mix;// = 0.0f;
+//uniform float texture03mix;// = 0.0f;
+// All registers are vec4
+uniform vec4 textureMix_00_to_03;	//x is #0, y is #1, etc.
 
 //vec3 myOneLightPos = vec3(-5.0f, 15.0f, 0.0f);
 
@@ -90,18 +98,37 @@ void main()
 		return;
 	}
 	
-	vec3 taylorsFacePixel_RGB = texture( texture01, fUV.xy ).rgb;	 
-	vec3 JohnWickPixel_RGB = texture( texture02, fUV.xy ).rgb;	 
+	// Texture sampling cost "noting"
+	vec3 textSample00_RGB = texture( texture00, fUV.xy ).rgb;	 
+	vec3 textSample01_RGB = texture( texture01, fUV.xy ).rgb;	 
+	vec3 textSample02_RGB = texture( texture02, fUV.xy ).rgb;	 
+	vec3 textSample03_RGB = texture( texture03, fUV.xy ).rgb;	 
 
+	// Mix these
+//	float texture00mix = 1.0f;
+//	float texture01mix = 0.0f;
+//	float texture02mix = 0.0f;
+//	float texture03mix = 0.0f;
+	
+	
+//	vec3 finalText_RGB =   (textSample00_RGB * texture00mix) 		
+//	                     + (textSample01_RGB * texture01mix) 
+//	                     + (textSample02_RGB * texture02mix) 
+//	                     + (textSample03_RGB * texture03mix);
+						 
+	vec3 finalText_RGB =   (textSample00_RGB * textureMix_00_to_03.x) 		
+	                     + (textSample01_RGB * textureMix_00_to_03.y) 
+	                     + (textSample02_RGB * textureMix_00_to_03.z) 
+	                     + (textSample03_RGB * textureMix_00_to_03.w);
 	
 //	finalOutputColour = calcualteLightContrib(diffuseColor_OverrideRGB.rgb,
-	finalOutputColour = calcualteLightContrib(taylorsFacePixel_RGB.rgb,
+	finalOutputColour = calcualteLightContrib(finalText_RGB.rgb,
 	                                          fNormal.xyz, 
 											  fVertexPosWorld.xyz, 
 											  specularColourRGB_Power );
 										
 	finalOutputColour.rgb *= 0.00001f;
-	finalOutputColour.rgb += taylorsFacePixel_RGB.rgb;
+	finalOutputColour.rgb += finalText_RGB.rgb;
 										
 	finalOutputColour.w = alphaTransparency;
 }

@@ -219,7 +219,13 @@ bool LoadModels(cVAOManager* pModelManger, GLuint shaderProgram,
     p2DImposterQuad->position.y = 3.0f;
 
     p2DImposterQuad->textureName[0] = "24taylor-notebook3-superJumbo.bmp";
-    //p2DImposterQuad->isWireframe = true;
+    p2DImposterQuad->textureName[1] = "parabellumcover.0.bmp";      // John Wick
+    p2DImposterQuad->textureName[2] = "jeuusd992wd41.bmp";          // Duck with wild hair
+
+    p2DImposterQuad->textureMixingRatio[0] = 1.0f;
+    p2DImposterQuad->textureMixingRatio[1] = 0.0f;
+    p2DImposterQuad->textureMixingRatio[2] = 0.0f;
+   //p2DImposterQuad->isWireframe = true;
     //p2DImposterQuad->bDontLight = true;
     vec_pMeshesToDraw.push_back(p2DImposterQuad);
 

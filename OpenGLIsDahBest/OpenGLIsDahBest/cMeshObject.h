@@ -22,6 +22,7 @@ public:
 
 	static const unsigned int MAX_TEXTURES = 8;
 	std::string textureName[MAX_TEXTURES];
+	float textureMixingRatio[MAX_TEXTURES];
 
 
 	// 0 is completely transparent
