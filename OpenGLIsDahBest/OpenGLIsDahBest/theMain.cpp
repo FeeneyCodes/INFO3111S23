@@ -191,7 +191,14 @@ int main(void)
     {
         std::cout << "Loaded John Wick" << std::endl;
     }    
-
+    if ( pTheTextures->Create2DTextureFromBMPFile("UV_checker_Map_byValle.bmp", true) )
+    {
+        std::cout << "Loaded UV_checker_Map_byValle" << std::endl;
+    }    
+    if ( pTheTextures->Create2DTextureFromBMPFile("DrakGrey.bmp", true) )
+    {
+        std::cout << "Loaded DrakGrey" << std::endl;
+    }    
 
     ::g_pTheLights = new cLightManager();
     ::g_pTheLights->LoadUniformLocationsFromShader(shaderProgram_ID);
@@ -362,8 +369,18 @@ int main(void)
             // Now, we chose the texture that this Texture Unit is reading from.
             // aka we "bind" to a texture.
             // Binding: Set this to the "current" texture
-            GLuint TayTaysTexture_Number = pTheTextures->getTextureIDFromName("24taylor-notebook3-superJumbo.bmp");
+//            GLuint TayTaysTexture_Number = pTheTextures->getTextureIDFromName("24taylor-notebook3-superJumbo.bmp");
 //            GLuint TayTaysTexture_Number = pTheTextures->getTextureIDFromName("parabellumcover.0.bmp");
+
+            GLuint TayTaysTexture_Number = pTheTextures->getTextureIDFromName(pCurrentMesh->textureName[0]);
+            if ( TayTaysTexture_Number == 0 )
+            {
+                // Didn't find that texture
+                // So pick the "default" texture
+//                TayTaysTexture_Number = pTheTextures->getTextureIDFromName("UV_checker_Map_byValle.bmp");
+                TayTaysTexture_Number = pTheTextures->getTextureIDFromName("DrakGrey.bmp");
+            }
+
             glBindTexture(GL_TEXTURE_2D, TayTaysTexture_Number);
 
             // In the shader, connect the "sampler" to the active texture unit WE PICKED

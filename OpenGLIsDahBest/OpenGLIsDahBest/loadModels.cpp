@@ -217,6 +217,8 @@ bool LoadModels(cVAOManager* pModelManger, GLuint shaderProgram,
     p2DImposterQuad->scale = 5.0f;
     p2DImposterQuad->position.x = 3.0f;
     p2DImposterQuad->position.y = 3.0f;
+
+    p2DImposterQuad->textureName[0] = "24taylor-notebook3-superJumbo.bmp";
     //p2DImposterQuad->isWireframe = true;
     //p2DImposterQuad->bDontLight = true;
     vec_pMeshesToDraw.push_back(p2DImposterQuad);

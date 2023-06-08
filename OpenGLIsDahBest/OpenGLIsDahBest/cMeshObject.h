@@ -20,6 +20,10 @@ public:
 	glm::vec3 specularColourRGB;
 	float specularPower_or_shininess;
 
+	static const unsigned int MAX_TEXTURES = 8;
+	std::string textureName[MAX_TEXTURES];
+
+
 	// 0 is completely transparent
 	// 1 is completely solid
 	float alphaTransparency;
