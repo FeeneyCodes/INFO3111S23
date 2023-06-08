@@ -41,6 +41,9 @@ bool LoadModels(cVAOManager* pModelManger, GLuint shaderProgram,
     vecModelsToLoad.push_back("assets/models/SpaceShuttleOrbiter_smallxyz_n_UV.ply");
     vecModelsToLoad.push_back("assets/models/Battlestar_Galactica_x10_(blender_export)_xyz_n_uv.ply");
     vecModelsToLoad.push_back("assets/models/Imposter_Shapes/Quad_2_sided_aligned_on_XY_plane.ply");
+    vecModelsToLoad.push_back("assets/models/Imposter_Shapes/Textured_Cube.ply");
+
+    vecModelsToLoad.push_back("assets/models/Simple_Space_Interiors_SourceFiles/Ply (converted)/SM_Env_PlantWall_01_xyz_n_uv.ply");
 
     for ( std::string modelName : vecModelsToLoad )
     {
@@ -143,6 +146,14 @@ bool LoadModels(cVAOManager* pModelManger, GLuint shaderProgram,
     cMeshObject* pTerrainMesh = new cMeshObject();
     pTerrainMesh->meshName = "assets/models/FractalTerrainFromMeshLab_xyz_n_UV.ply";
     pTerrainMesh->diffuseColour = glm::vec3(0.8f, 0.8f, 0.8f);
+
+    pTerrainMesh->textureName[0] = "24taylor-notebook3-superJumbo.bmp";
+    pTerrainMesh->textureName[1] = "parabellumcover.0.bmp";      // John Wick
+    pTerrainMesh->textureName[2] = "jeuusd992wd41.bmp";          // Duck with wild hair
+
+    pTerrainMesh->textureMixingRatio[0] = 1.0f;
+    pTerrainMesh->textureMixingRatio[1] = 0.0f;
+    pTerrainMesh->textureMixingRatio[2] = 0.0f;
     //    terrainMesh.isWireframe = true;
     // There's a large mountain right at -z location, blocking the camera, 
     //  so I'm rotating it out of the way.
@@ -212,7 +223,11 @@ bool LoadModels(cVAOManager* pModelManger, GLuint shaderProgram,
     // "Imposter" flat quad
     cMeshObject* p2DImposterQuad = new cMeshObject();
     p2DImposterQuad->meshName = "assets/models/Imposter_Shapes/Quad_2_sided_aligned_on_XY_plane.ply";
-    p2DImposterQuad->diffuseColour = glm::vec3(1.0f, 1.0f, 1.0f);
+//    p2DImposterQuad->meshName = "assets/models/Imposter_Shapes/Textured_Cube.ply";
+    p2DImposterQuad->diffuseColour = glm::vec3(0.0f, 0.0f, 0.0f);
+    p2DImposterQuad->specularColourRGB = glm::vec3(1.0f, 1.0f, 1.0f);
+    p2DImposterQuad->specularPower_or_shininess = 1.0f;
+
     p2DImposterQuad->friendlyName = "2D Quad Imposter";
     p2DImposterQuad->scale = 5.0f;
     p2DImposterQuad->position.x = 3.0f;
@@ -229,6 +244,15 @@ bool LoadModels(cVAOManager* pModelManger, GLuint shaderProgram,
     //p2DImposterQuad->bDontLight = true;
     vec_pMeshesToDraw.push_back(p2DImposterQuad);
 
+
+
+    // SPace interiors
+    cMeshObject* pPlantWall = new cMeshObject();
+    pPlantWall->meshName = "assets/models/Simple_Space_Interiors_SourceFiles/Ply (converted)/SM_Env_PlantWall_01_xyz_n_uv.ply";
+    pPlantWall->friendlyName = "2D Quad Imposter";
+    pPlantWall->textureName[0] = "SpaceInteriors_Texture.bmp";
+    pPlantWall->textureMixingRatio[0] = 1.0f;
+    vec_pMeshesToDraw.push_back(pPlantWall);
 
 
 

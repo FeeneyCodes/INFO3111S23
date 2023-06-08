@@ -209,6 +209,11 @@ int main(void)
         std::cout << "Loaded jeuusd992wd41 (duck)" << std::endl;
     }    
 
+    pTheTextures->SetBasePath("assets/models/Simple_Space_Interiors_SourceFiles/Textures");
+    if ( pTheTextures->Create2DTextureFromBMPFile("SpaceInteriors_Texture.bmp", true) )
+    {
+        std::cout << "Loaded SpaceInteriors_Texture.bmp" << std::endl;
+    }    
 
     ::g_pTheLights = new cLightManager();
     ::g_pTheLights->LoadUniformLocationsFromShader(shaderProgram_ID);
@@ -265,6 +270,10 @@ int main(void)
     float heyHeyILoveMath = 0.0f;
     
    // float HACK_FAR_CLIPPING_PLANE = 1000.0f;
+
+    // Turn on back face culling 
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
 
     // When this while exits, your program exits, too
     while (!glfwWindowShouldClose(window))

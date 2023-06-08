@@ -127,8 +127,8 @@ void main()
 											  fVertexPosWorld.xyz, 
 											  specularColourRGB_Power );
 										
-	finalOutputColour.rgb *= 0.00001f;
-	finalOutputColour.rgb += finalText_RGB.rgb;
+//	finalOutputColour.rgb *= 0.00001f;
+//	finalOutputColour.rgb += fNormal.rgb;
 										
 	finalOutputColour.w = alphaTransparency;
 }
