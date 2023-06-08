@@ -46,6 +46,7 @@ const int SPOT_LIGHT_TYPE = 1;
 const int DIRECTIONAL_LIGHT_TYPE = 2;
 
 uniform sampler2D texture01;		// Tay's Tay's face
+uniform sampler2D texture02;		// John Wick
 
 
 //vec3 myOneLightPos = vec3(-5.0f, 15.0f, 0.0f);
@@ -89,25 +90,19 @@ void main()
 		return;
 	}
 	
-//	vec4 objectSpecular = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	vec3 taylorsFacePixel_RGB = texture( texture01, fUV.xy ).rgb;	 
+	vec3 JohnWickPixel_RGB = texture( texture02, fUV.xy ).rgb;	 
 
-	vec4 taylorsFacePixel = texture( texture01, fUV );	// Zero cost
 	
-//	finalOutputColour = calcualteLightContrib(taylorsFacePixel.rgb,
-	finalOutputColour = calcualteLightContrib(diffuseColor_OverrideRGB.rgb,
+//	finalOutputColour = calcualteLightContrib(diffuseColor_OverrideRGB.rgb,
+	finalOutputColour = calcualteLightContrib(taylorsFacePixel_RGB.rgb,
 	                                          fNormal.xyz, 
 											  fVertexPosWorld.xyz, 
 											  specularColourRGB_Power );
 										
-	// Note setting it (=) to 0 (black), but ALMOST black
-//	finalOutputColour.rgb *= 0.0001f;
-
-	// Again, not setting (=), just adding
-//	finalOutputColour.rg += fUV.xy;									  
-											  
-	
-	// Later for transparency.
-//	finalOutputColour.w = 1.0f;
+	finalOutputColour.rgb *= 0.00001f;
+	finalOutputColour.rgb += taylorsFacePixel_RGB.rgb;
+										
 	finalOutputColour.w = alphaTransparency;
 }
 

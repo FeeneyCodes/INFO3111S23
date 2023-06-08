@@ -40,6 +40,7 @@ bool LoadModels(cVAOManager* pModelManger, GLuint shaderProgram,
     vecModelsToLoad.push_back("assets/models/mig29_xyz_n_UV.ply");
     vecModelsToLoad.push_back("assets/models/SpaceShuttleOrbiter_smallxyz_n_UV.ply");
     vecModelsToLoad.push_back("assets/models/Battlestar_Galactica_x10_(blender_export)_xyz_n_uv.ply");
+    vecModelsToLoad.push_back("assets/models/Imposter_Shapes/Quad_2_sided_aligned_on_XY_plane.ply");
 
     for ( std::string modelName : vecModelsToLoad )
     {
@@ -207,6 +208,18 @@ bool LoadModels(cVAOManager* pModelManger, GLuint shaderProgram,
     //pGalactica->bDontLight = true;
     vec_pMeshesToDraw.push_back(pGalactica);
 
+
+    // "Imposter" flat quad
+    cMeshObject* p2DImposterQuad = new cMeshObject();
+    p2DImposterQuad->meshName = "assets/models/Imposter_Shapes/Quad_2_sided_aligned_on_XY_plane.ply";
+    p2DImposterQuad->diffuseColour = glm::vec3(1.0f, 1.0f, 1.0f);
+    p2DImposterQuad->friendlyName = "2D Quad Imposter";
+    p2DImposterQuad->scale = 5.0f;
+    p2DImposterQuad->position.x = 3.0f;
+    p2DImposterQuad->position.y = 3.0f;
+    //p2DImposterQuad->isWireframe = true;
+    //p2DImposterQuad->bDontLight = true;
+    vec_pMeshesToDraw.push_back(p2DImposterQuad);
 
 
 

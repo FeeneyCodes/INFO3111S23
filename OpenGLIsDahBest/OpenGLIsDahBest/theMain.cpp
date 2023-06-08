@@ -347,14 +347,40 @@ int main(void)
         //    DrawObject(pCharlotte, glm::mat4(1.0f), pModelManger, shaderProgram_ID);
         //}
 
+        // *********************************************************
         // Draw all the stuff in the vector
         for ( cMeshObject* pCurrentMesh : ::g_vec_pMeshesToDraw )
         {
+            // ***********************************************************
+            // We love this, don't we? 
+
+            // Choose texture unit #6. Why? Because. 
+            glActiveTexture(GL_TEXTURE6);	// GL_TEXTURE0 = 33984
+
+//            glActiveTexture(GL_TEXTURE0 + 79);	// GL_TEXTURE0 = 33984
+
+            // Now, we chose the texture that this Texture Unit is reading from.
+            // aka we "bind" to a texture.
+            // Binding: Set this to the "current" texture
+            GLuint TayTaysTexture_Number = pTheTextures->getTextureIDFromName("24taylor-notebook3-superJumbo.bmp");
+//            GLuint TayTaysTexture_Number = pTheTextures->getTextureIDFromName("parabellumcover.0.bmp");
+            glBindTexture(GL_TEXTURE_2D, TayTaysTexture_Number);
+
+            // In the shader, connect the "sampler" to the active texture unit WE PICKED
+            // uniform sampler2D texture01;
+            GLint texture01_UniformLocation = glGetUniformLocation(shaderProgram_ID, "texture01");
+
+            glUniform1i(texture01_UniformLocation, 6);       // 0x84C6   33990
+            // ***********************************************************
+
+
+
             glm::mat4 matModel = glm::mat4(1.0f);   // Identity matrix
 
             DrawObject(pCurrentMesh, matModel, pModelManger, shaderProgram_ID);
 
         }//for (std::vector< cMeshObject >
+        // *********************************************************
 
 
         glfwSwapBuffers(window);
