@@ -45,6 +45,9 @@ bool LoadModels(cVAOManager* pModelManger, GLuint shaderProgram,
 
     vecModelsToLoad.push_back("assets/models/Simple_Space_Interiors_SourceFiles/Ply (converted)/SM_Env_PlantWall_01_xyz_n_uv.ply");
 
+    // this is our "skybox" model
+    vecModelsToLoad.push_back("assets/models/Isoshphere_smooth_inverted_normals_xyz_n_uv.ply");
+
     for ( std::string modelName : vecModelsToLoad )
     {
         sModelDrawInfo modelILoadedInfo;
@@ -253,6 +256,16 @@ bool LoadModels(cVAOManager* pModelManger, GLuint shaderProgram,
     pPlantWall->textureName[0] = "SpaceInteriors_Texture.bmp";
     pPlantWall->textureMixingRatio[0] = 1.0f;
     vec_pMeshesToDraw.push_back(pPlantWall);
+
+    // SPace interiors
+    cMeshObject* pSkySphere = new cMeshObject();
+    pSkySphere->meshName = "assets/models/Isoshphere_smooth_inverted_normals_xyz_n_uv.ply";
+    pSkySphere->friendlyName = "Sky Sphere";
+    pSkySphere->textureName[0] = "24taylor-notebook3-superJumbo.bmp";
+    pSkySphere->textureMixingRatio[0] = 1.0f;
+    pSkySphere->scale = 10.0f;
+    pSkySphere->bIsVisible = false;
+    vec_pMeshesToDraw.push_back(pSkySphere);
 
 
 

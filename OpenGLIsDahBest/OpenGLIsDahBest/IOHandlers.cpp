@@ -127,6 +127,7 @@ bool isShiftDown(GLFWwindow* window)
 void handleKeyboardInput(GLFWwindow* window)
 {
     const float CAMERA_MOVE_SPEED = 0.1f;
+//    const float CAMERA_MOVE_SPEED = 10.0f;
     const float LIGHT_MOVE_SPEED = 0.05f;
     //const float CAMERA_MOVE_SPEED = 10.0f;
     //const float LIGHT_MOVE_SPEED = 5.0f;

@@ -215,6 +215,23 @@ int main(void)
         std::cout << "Loaded SpaceInteriors_Texture.bmp" << std::endl;
     }    
 
+
+    std::string errorString;
+    pTheTextures->SetBasePath("assets/Textures/cubemap_textures");
+    if ( pTheTextures->CreateCubeTextureFromBMPFiles("spaceSkybox",
+                                                     "SpaceBox_right1_posX.bmp", "SpaceBox_left2_negX.bmp", 
+                                                     "SpaceBox_top3_posY.bmp" , "SpaceBox_bottom4_negY.bmp",
+                                                     "SpaceBox_front5_posZ.bmp", "SpaceBox_back6_negZ.bmp",
+                                                     true, errorString ) )
+    {
+        std::cout << "Loaded the SpaceBox skybox OK" << std::endl;
+    }
+    else
+    {
+        std::cout << "Error loading the SpaceBox skybox: " << errorString << std::endl;
+    }
+                                                     
+    
     ::g_pTheLights = new cLightManager();
     ::g_pTheLights->LoadUniformLocationsFromShader(shaderProgram_ID);
 
@@ -275,6 +292,10 @@ int main(void)
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
 
+    float nearPlane = 1.0f;          // Near plane
+    float farPlane = 10000.0f;      // Far plane
+
+
     // When this while exits, your program exits, too
     while (!glfwWindowShouldClose(window))
     {
@@ -293,8 +314,8 @@ int main(void)
 
         mProjection = glm::perspective(0.6f,
                                          ratio,
-                                         1.0f,          // Near plane
-                                         100000.0f);      // Far plane
+                                         nearPlane, // 1.0f,          // Near plane
+                                         farPlane); // 100000.0f);      // Far plane
 
         GLint matProjection_UL = glGetUniformLocation(shaderProgram_ID, "matProjection");
         glUniformMatrix4fv(matProjection_UL, 1, GL_FALSE, glm::value_ptr(mProjection));
@@ -359,6 +380,29 @@ int main(void)
         }
 
 
+        // Draw skybox
+        {
+            cMeshObject* pSkyBox = pFindObjectByFriendlyName("Sky Sphere");
+
+            glm::mat4 matModel = glm::mat4(1.0f);   // Identity matrix
+
+            pSkyBox->bIsVisible = true;
+            pSkyBox->isWireframe = true;
+            pSkyBox->diffuseColour = glm::vec3(1.0f, 1.0f, 1.0f);
+            pSkyBox->bDontLight = true;
+
+            // Proportional to the far plane
+            pSkyBox->scale = farPlane * 0.5f;
+
+            // Place this sphere where the camera is
+            pSkyBox->position = ::g_cameraEye;
+
+            DrawObject(pSkyBox, matModel, pModelManger, shaderProgram_ID);
+
+            pSkyBox->bIsVisible = false;
+
+        }
+
 
 
 
@@ -390,6 +434,7 @@ int main(void)
 
         }//for (std::vector< cMeshObject >
         // *********************************************************
+
 
 
         glfwSwapBuffers(window);
