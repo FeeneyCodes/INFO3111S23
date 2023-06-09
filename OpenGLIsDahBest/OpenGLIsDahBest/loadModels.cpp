@@ -49,6 +49,8 @@ bool LoadModels(cVAOManager* pModelManger, GLuint shaderProgram,
     // this is our "skybox" model
     vecModelsToLoad.push_back("assets/models/Isoshphere_smooth_inverted_normals_xyz_n_uv.ply");
 
+    vecModelsToLoad.push_back("assets/models/Big_Flat_Mesh_xyz_n_uv.ply");
+
     for ( std::string modelName : vecModelsToLoad )
     {
         sModelDrawInfo modelILoadedInfo;
@@ -269,6 +271,15 @@ bool LoadModels(cVAOManager* pModelManger, GLuint shaderProgram,
 //    vec_pMeshesToDraw.push_back(pSkySphere);
 
 
+    // Big flat mesh 
+    cMeshObject* pBigMesh = new cMeshObject();
+    pBigMesh->meshName = "assets/models/Big_Flat_Mesh_xyz_n_uv.ply";
+    pBigMesh->friendlyName = "BigFlatMesh";
+    pBigMesh->textureName[0] = "NvF5e_heightMap.bmp";
+    pBigMesh->textureMixingRatio[0] = 1.0f;
+    pBigMesh->position.y = -10.0f;
+    pBigMesh->bIsVisible = false;
+    vec_pMeshesToDraw.push_back(pBigMesh);
 
 
 //    toyTruck2.diffuseColour = glm::vec3(1.0f, 0.0f, 0.0f);

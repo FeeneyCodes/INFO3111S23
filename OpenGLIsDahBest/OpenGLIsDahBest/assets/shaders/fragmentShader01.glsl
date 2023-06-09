@@ -54,6 +54,7 @@ uniform sampler2D texture03;		//
 uniform samplerCube skyBoxTexture;
 uniform bool bIsSkyBoxObject;
 
+//vuniform sampler2D heigthMapTexture;
 
 //uniform float texture00mix;// = 1.0f;
 //uniform float texture01mix;// = 0.0f;

@@ -239,6 +239,14 @@ int main(void)
                                                 "TropicalSunnyDayFront2048.bmp", "TropicalSunnyDayBack2048.bmp",
                                                 true, errorString);
 
+    // this is a height map (grey scale) 
+    pTheTextures->SetBasePath("assets/textures");
+    if ( pTheTextures->Create2DTextureFromBMPFile("NvF5e_heightMap.bmp", true) )
+    {
+        std::cout << "Loaded NvF5e_heightMap.bmp" << std::endl;
+    }    
+
+
     
     ::g_pTheLights = new cLightManager();
     ::g_pTheLights->LoadUniformLocationsFromShader(shaderProgram_ID);
@@ -502,6 +510,48 @@ int main(void)
 
         }//for (std::vector< cMeshObject >
         // *********************************************************
+
+
+
+        // Draw the height map object
+        {
+            cMeshObject* pTerrain = pFindObjectByFriendlyName("BigFlatMesh");
+
+            SetUpTexturesForMesh(pTerrain, shaderProgram_ID, pTheTextures);
+
+            glActiveTexture(GL_TEXTURE24);	// GL_TEXTURE0 = 33984
+            GLuint heigthMap_textureNumber = pTheTextures->getTextureIDFromName("NvF5e_heightMap.bmp");
+
+            glBindTexture(GL_TEXTURE_2D, heigthMap_textureNumber);
+            GLint heigthMap_UniformLocation = glGetUniformLocation(shaderProgram_ID, "heightMapTexture");
+            glUniform1i(heigthMap_UniformLocation, 24);   
+
+            // Turn the maping on
+            // uniform bool bIsHeightMap;
+            // uniform float heightScale;
+            GLint bIsHeightMap_UniformLocation = glGetUniformLocation(shaderProgram_ID, "bIsHeightMap");
+            GLint heightScale_UniformLocation = glGetUniformLocation(shaderProgram_ID, "heightScale");
+            GLint heightMapOffsetUV_UniformLocation = glGetUniformLocation(shaderProgram_ID, "heightMapOffsetUV");
+
+            glUniform1f(bIsHeightMap_UniformLocation, (GLfloat)GL_TRUE);
+            glUniform1f(heightScale_UniformLocation, 10.0f);
+            
+            // I'm using this a as quick-n-dirty "changes over time in frame" value.
+            float offsetU = glm::sin(glfwGetTime() / 10.0f);
+            glUniform2f(heightMapOffsetUV_UniformLocation, offsetU, 0.0f);
+
+            glm::mat4 matModel = glm::mat4(1.0f);   // Identity matrix
+
+            pTerrain->isWireframe = true;
+            pTerrain->bDontLight = true;
+
+            pTerrain->bIsVisible = true;
+            DrawObject(pTerrain, matModel, pModelManger, shaderProgram_ID);
+            pTerrain->bIsVisible = false;
+
+            glUniform1f(bIsHeightMap_UniformLocation, (GLfloat)GL_FALSE);
+        }
+
 
 
 

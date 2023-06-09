@@ -9,6 +9,12 @@ uniform mat4x4 matModel_InvTrans;	// Inverse transpose of the model matrix
 									// Used only for the normal, and strips out
 									// and scaling and translation, leaves only rotation
 
+// This is the grey scale height map texture
+uniform sampler2D heightMapTexture;
+uniform bool bIsHeightMap;
+uniform float heightScale;		
+uniform vec2 heightMapOffsetUV;
+
 //uniform mat4 MVP;
 
 // Coming in from the vertex layout
@@ -26,6 +32,15 @@ out vec2 fUV;
 void main()
 {
 	vec3 position = vPos;
+	
+	if ( bIsHeightMap )
+	{
+		// Values from 0 to 1 (on the greyscale image)
+		vec2 newUV = vUV + heightMapOffsetUV;
+		float heightAdjust = texture( heightMapTexture, newUV.xy ).r;
+		
+		position.y += ( heightAdjust * heightScale );
+	}
 	
 //	vec4 = mat4x4 * vec4;
 // From line 439 of the C++ main file
