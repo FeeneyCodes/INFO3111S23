@@ -47,8 +47,13 @@ const int DIRECTIONAL_LIGHT_TYPE = 2;
 
 uniform sampler2D texture00;		// Tay's Tay's face
 uniform sampler2D texture01;		// John Wick
-uniform sampler2D texture02;		// John Wick
-uniform sampler2D texture03;		// John Wick
+uniform sampler2D texture02;		// Funky duck
+uniform sampler2D texture03;		// 
+// uniform sampler2D textures[8];		Likely won't work
+
+uniform samplerCube skyBoxTexture;
+uniform bool bIsSkyBoxObject;
+
 
 //uniform float texture00mix;// = 1.0f;
 //uniform float texture01mix;// = 0.0f;
@@ -98,7 +103,25 @@ void main()
 		return;
 	}
 	
-	// Texture sampling cost "noting"
+	if ( bIsSkyBoxObject )
+	{
+		// Similar to the 2D samplers...
+		// ...but we need a 3D ray that is cast to intersect with the
+		//	inside of the cube.
+		// The easiest is to just use the normals...
+		// (i.e. cube samplers need xyz instead of just xy (uv)
+		vec3 theNormal = normalize(fNormal);
+		vec3 skyBoxPixelColour_RGB = texture( skyBoxTexture, theNormal.xyz ).rgb;	
+		
+		finalOutputColour.rgb = skyBoxPixelColour_RGB.rgb;
+	
+		finalOutputColour.w = 1.0f;
+		return;
+	}	
+	
+	
+	
+	// Texture sampling cost "nothing"
 	vec3 textSample00_RGB = texture( texture00, fUV.xy ).rgb;	 
 	vec3 textSample01_RGB = texture( texture01, fUV.xy ).rgb;	 
 	vec3 textSample02_RGB = texture( texture02, fUV.xy ).rgb;	 
@@ -126,6 +149,37 @@ void main()
 	                                          fNormal.xyz, 
 											  fVertexPosWorld.xyz, 
 											  specularColourRGB_Power );
+										
+	// Add some ambient light...
+	const float AMBIENT_AMOUNT = 0.25f;	
+	finalOutputColour.rgb += (finalText_RGB.rgb * AMBIENT_AMOUNT);
+	
+	
+//	if ( bMakeItLikeACrystalSkullLikeIndianaJonesGarbageMovieThatTrashedTheFransize )
+//	{
+//		// Make the objects look reflective
+//		vec3 theNormal = normalize(fNormal);
+//		
+//		// angle of incidence
+//		vec3 eyeVector = normalize(eyeLocation.xyz - fVertexPosWorld.xyz);
+//		vec3 reflectionRay = reflect( eyeVector, theNormal );
+//		vec3 refractionRay = refract( eyeVector, theNormal, 1.20f );
+//		
+//		vec3 reflectionColour_RGB = texture( skyBoxTexture, reflectionRay.xyz ).rgb;	
+//		vec3 refractionColour_RGB = texture( skyBoxTexture, refractionRay.xyz ).rgb;	
+//
+//		finalOutputColour.rgb *= 0.0001f;	// clear colour
+//		
+//		// The number ranges from 0 to 1
+//		// I think it's 0 --> all of the left
+//		//              1 --> all of the right
+//		//              0.25 --> 75% of the left, 25% of the right
+//		finalOutputColour.rgb = 
+//				mix( reflectionColour_RGB.rgb, refractionColour_RGB, 0.5f) ;
+//		finalOutputColour.w = 0.75f;			
+//	}
+
+	
 										
 //	finalOutputColour.rgb *= 0.00001f;
 //	finalOutputColour.rgb += fNormal.rgb;

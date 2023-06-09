@@ -6,6 +6,7 @@
 #include "cMeshObject.h"
 #include <iostream>
 
+extern cMeshObject* g_pSkySphere;// = NULL;  
 
 // Returns true if there were no errors.
 // If there are errors, vecErrors has error detail text.
@@ -167,7 +168,7 @@ bool LoadModels(cVAOManager* pModelManger, GLuint shaderProgram,
     //  centre of the terrain being under the camera (so it goes off in the distance
     //  away from where the camera starts)
     pTerrainMesh->position = glm::vec3(0.0f, -100.0f, -650.0f);
-    vec_pMeshesToDraw.push_back(pTerrainMesh);
+//    vec_pMeshesToDraw.push_back(pTerrainMesh);
 
 
     cMeshObject* pAppartmentBuildingMesh = new cMeshObject();
@@ -258,14 +259,14 @@ bool LoadModels(cVAOManager* pModelManger, GLuint shaderProgram,
     vec_pMeshesToDraw.push_back(pPlantWall);
 
     // SPace interiors
-    cMeshObject* pSkySphere = new cMeshObject();
-    pSkySphere->meshName = "assets/models/Isoshphere_smooth_inverted_normals_xyz_n_uv.ply";
-    pSkySphere->friendlyName = "Sky Sphere";
-    pSkySphere->textureName[0] = "24taylor-notebook3-superJumbo.bmp";
-    pSkySphere->textureMixingRatio[0] = 1.0f;
-    pSkySphere->scale = 10.0f;
-    pSkySphere->bIsVisible = false;
-    vec_pMeshesToDraw.push_back(pSkySphere);
+    ::g_pSkySphere = new cMeshObject();
+    ::g_pSkySphere->meshName = "assets/models/Isoshphere_smooth_inverted_normals_xyz_n_uv.ply";
+    ::g_pSkySphere->friendlyName = "Sky Sphere";
+    ::g_pSkySphere->textureName[0] = "24taylor-notebook3-superJumbo.bmp";
+    ::g_pSkySphere->textureMixingRatio[0] = 1.0f;
+    ::g_pSkySphere->scale = 10.0f;
+//    pSkySphere->bIsVisible = false;
+//    vec_pMeshesToDraw.push_back(pSkySphere);
 
 
 

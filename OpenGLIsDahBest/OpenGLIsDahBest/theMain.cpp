@@ -56,6 +56,7 @@ struct sVertexXYZ_RGB
 // Will allocate this in a moment...
 sVertexXYZ_RGB* pVertexArray = NULL;    
 
+cMeshObject* g_pSkySphere = NULL;   // new cMeshObject();
 
 glm::vec3 g_cameraEye = glm::vec3(0.0, 5.0, 12.0f);
 glm::vec3 g_cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -231,6 +232,13 @@ int main(void)
         std::cout << "Error loading the SpaceBox skybox: " << errorString << std::endl;
     }
                                                      
+    pTheTextures->SetBasePath("assets/Textures/cubemap_textures");
+    pTheTextures->CreateCubeTextureFromBMPFiles("tropicalDay",
+                                                "TropicalSunnyDayRight2048.bmp", "TropicalSunnyDayLeft2048.bmp",
+                                                "TropicalSunnyDayDown2048.bmp", "TropicalSunnyDayUp2048.bmp", // Up and down revered in this cube map (is DirectX or Unreal format)
+                                                "TropicalSunnyDayFront2048.bmp", "TropicalSunnyDayBack2048.bmp",
+                                                true, errorString);
+
     
     ::g_pTheLights = new cLightManager();
     ::g_pTheLights->LoadUniformLocationsFromShader(shaderProgram_ID);
@@ -295,10 +303,37 @@ int main(void)
     float nearPlane = 1.0f;          // Near plane
     float farPlane = 10000.0f;      // Far plane
 
+    // Time right now
+    double previousTime = glfwGetTime();
+
+
 
     // When this while exits, your program exits, too
     while (!glfwWindowShouldClose(window))
     {
+        {   // how do you get the frame time? 
+            // Get delta or frame time
+            double currentTime = glfwGetTime();
+
+            // currentTime is always more than previous time;
+            double deltaTime = currentTime - previousTime;
+            // Check to see if it's REALLY big. 
+            if (deltaTime > 0.01) {
+                deltaTime = 0.01;   // Some minimum
+            }
+            // You might also want to save the last X frames in a vector, then get the 
+            // average, so any variation is evened out.
+
+            // Save the last time
+            previousTime = currentTime;
+
+            // Move something 10 units per second.
+            //cTheMeshIMove.position.x += (10.0f * deltaTime);
+
+ //           std::cout << deltaTime << " " << deltaTime * 1000.0f << " ms" << std::endl;
+        }
+
+
 
         float ratio;
         int width, height;
@@ -380,28 +415,61 @@ int main(void)
         }
 
 
-        // Draw skybox
-        {
-            cMeshObject* pSkyBox = pFindObjectByFriendlyName("Sky Sphere");
+        
+        {// Draw skybox
+//            cMeshObject* pSkyBox = pFindObjectByFriendlyName("Sky Sphere");
 
             glm::mat4 matModel = glm::mat4(1.0f);   // Identity matrix
 
-            pSkyBox->bIsVisible = true;
-            pSkyBox->isWireframe = true;
-            pSkyBox->diffuseColour = glm::vec3(1.0f, 1.0f, 1.0f);
-            pSkyBox->bDontLight = true;
-
+//            pSkyBox->bIsVisible = true;
+//           pSkyBox->isWireframe = true;
+//           pSkyBox->diffuseColour = glm::vec3(1.0f, 1.0f, 1.0f);
+//           pSkyBox->bDontLight = true;
+//
             // Proportional to the far plane
-            pSkyBox->scale = farPlane * 0.5f;
+            // i.e. "big enough" that it's "far away" from the camera
+            //      but not "too big" - parts of it are past the far plane.
+            //      (if they are, then they won't be rendered)
+            ::g_pSkySphere->scale = farPlane * 0.5f;
 
             // Place this sphere where the camera is
-            pSkyBox->position = ::g_cameraEye;
+            ::g_pSkySphere->position = ::g_cameraEye;
 
-            DrawObject(pSkyBox, matModel, pModelManger, shaderProgram_ID);
+            // Assign the cube map texture to the skybox
+            
+            {// We'll use texture unit #20 (because we aren't using that for the 2D ones)
+                GLint textureUnitNumber = 20;
 
-            pSkyBox->bIsVisible = false;
+                // Pick a texture unit (any one you want, up to 80)
+                glActiveTexture(GL_TEXTURE0 + textureUnitNumber);	// GL_TEXTURE0 = 33984
 
-        }
+                // Look up the texture
+//                GLuint skyboxTexure_number = pTheTextures->getTextureIDFromName("spaceSkybox");
+                GLuint skyboxTexure_number = pTheTextures->getTextureIDFromName("tropicalDay");
+
+//                glBindTexture(GL_TEXTURE_2D, meshTexture00);
+// 
+                // Note it's a CUBE not 2D
+                glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexure_number);
+
+                // uniform samplerCube skyBoxTexture;
+                GLint skyBoxTexture_UniformLocation = glGetUniformLocation(shaderProgram_ID, "skyBoxTexture");
+                glUniform1i(skyBoxTexture_UniformLocation, textureUnitNumber);       // 0x84C6   33990
+            }//Texture #0
+
+            //uniform bool bIsSkyBoxObject;
+            GLint bIsSkyBoxObject_UniformLocation = glGetUniformLocation(shaderProgram_ID, "bIsSkyBoxObject");
+            glUniform1f(bIsSkyBoxObject_UniformLocation, (GLfloat)GL_TRUE);       
+
+
+            DrawObject(::g_pSkySphere, matModel, pModelManger, shaderProgram_ID);
+
+            //uniform bool bIsSkyBoxObject;
+            glUniform1f(bIsSkyBoxObject_UniformLocation, (GLfloat)GL_FALSE);   
+
+//            pSkyBox->bIsVisible = false;
+
+        }// Draw skybox
 
 
 
@@ -619,6 +687,7 @@ void SetUpTexturesForMesh(cMeshObject* pCurrentMesh, GLuint shaderProgram_ID, cB
     {// Texture #0
         GLint textureNumber = 0;
 
+        // Pick a texture unit (any one you want, up to 80)
         glActiveTexture(GL_TEXTURE0 + textureNumber);	// GL_TEXTURE0 = 33984
 
         // Look up the texture
