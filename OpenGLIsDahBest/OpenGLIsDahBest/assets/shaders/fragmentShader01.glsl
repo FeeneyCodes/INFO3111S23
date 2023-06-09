@@ -56,6 +56,9 @@ uniform bool bIsSkyBoxObject;
 
 //vuniform sampler2D heigthMapTexture;
 
+uniform sampler2D discardTexture;
+uniform bool bUseDiscard;
+
 //uniform float texture00mix;// = 1.0f;
 //uniform float texture01mix;// = 0.0f;
 //uniform float texture02mix;// = 0.0f;
@@ -95,6 +98,17 @@ void main()
 //	brightness *= 10.0f;
 //	
 //	finalOutputColour.rgba = vec4((colorOverrideRGB * brightness), 1.0);
+
+	if ( bUseDiscard )
+	{
+		float discardColour = texture( discardTexture, fUV.xy ).r;	
+		//
+		if ( discardColour > 0.5f )
+		{
+			// Don't draw this pixel
+			discard;
+		}
+	}
 
 	if ( bDontLight )
 	{

@@ -246,6 +246,10 @@ int main(void)
         std::cout << "Loaded NvF5e_heightMap.bmp" << std::endl;
     }    
 
+    if ( pTheTextures->Create2DTextureFromBMPFile("discardTexture.bmp", true) )
+    {
+        std::cout << "Loaded discardTexture.bmp" << std::endl;
+    }    
 
     
     ::g_pTheLights = new cLightManager();
@@ -542,8 +546,8 @@ int main(void)
 
             glm::mat4 matModel = glm::mat4(1.0f);   // Identity matrix
 
-            pTerrain->isWireframe = true;
-            pTerrain->bDontLight = true;
+//            pTerrain->isWireframe = true;
+//            pTerrain->bDontLight = true;
 
             pTerrain->bIsVisible = true;
             DrawObject(pTerrain, matModel, pModelManger, shaderProgram_ID);
@@ -552,6 +556,34 @@ int main(void)
             glUniform1f(bIsHeightMap_UniformLocation, (GLfloat)GL_FALSE);
         }
 
+        {// Discard transparency
+//            uniform sampler2D discardTexture;
+//            uniform bool bUseDiscard;
+
+            glActiveTexture(GL_TEXTURE25);	// GL_TEXTURE0 = 33984
+            GLuint discard_textureNumber = pTheTextures->getTextureIDFromName("discardTexture.bmp");
+
+            glBindTexture(GL_TEXTURE_2D, discard_textureNumber);
+            GLint discard_UniformLocation = glGetUniformLocation(shaderProgram_ID, "discardTexture");
+            glUniform1i(discard_UniformLocation, 25);
+
+            // Turn the maping on
+            // uniform bool bIsHeightMap;
+            // uniform float heightScale;
+            GLint bUseDiscard_UniformLocation = glGetUniformLocation(shaderProgram_ID, "bUseDiscard");
+            glUniform1f(bUseDiscard_UniformLocation, (GLfloat)GL_TRUE);
+
+            glm::mat4 matModel = glm::mat4(1.0f);   // Identity matrix
+
+            cMeshObject* pQuad = pFindObjectByFriendlyName("2D Quad Imposter");
+            pQuad->bIsVisible = true;
+
+            DrawObject(pQuad, matModel, pModelManger, shaderProgram_ID);
+
+            glUniform1f(bUseDiscard_UniformLocation, (GLfloat)GL_FALSE);
+
+            pQuad->bIsVisible = false;
+        }
 
 
 

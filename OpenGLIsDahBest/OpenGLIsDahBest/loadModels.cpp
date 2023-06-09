@@ -235,7 +235,7 @@ bool LoadModels(cVAOManager* pModelManger, GLuint shaderProgram,
     p2DImposterQuad->specularPower_or_shininess = 1.0f;
 
     p2DImposterQuad->friendlyName = "2D Quad Imposter";
-    p2DImposterQuad->scale = 5.0f;
+    p2DImposterQuad->scale = 20.0f;
     p2DImposterQuad->position.x = 3.0f;
     p2DImposterQuad->position.y = 3.0f;
 
@@ -248,6 +248,9 @@ bool LoadModels(cVAOManager* pModelManger, GLuint shaderProgram,
     p2DImposterQuad->textureMixingRatio[2] = 0.0f;
    //p2DImposterQuad->isWireframe = true;
     //p2DImposterQuad->bDontLight = true;
+
+    p2DImposterQuad->bIsVisible = false;
+
     vec_pMeshesToDraw.push_back(p2DImposterQuad);
 
 
