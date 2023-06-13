@@ -30,6 +30,8 @@
 
 #include "cLightHelper.h"
 
+#include "cFlyCamera.h"
+
 //#include "../AssimpFileLoaderHelper/AssimpFileLoaderHelper.h"
 
 
@@ -62,6 +64,10 @@ glm::vec3 g_cameraEye = glm::vec3(0.0, 5.0, 12.0f);
 glm::vec3 g_cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
 glm::vec3 g_upVector = glm::vec3(0.0f, +1.0f, 0.0f);
 
+// In IOHandlers.cpp
+void cursor_position_callback(GLFWwindow* window, double xpos, double ypos);
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
 static void error_callback(int error, const char* description)
 {
@@ -101,6 +107,8 @@ cMeshObject* pFindObjectByFriendlyName(std::string theName);
 cLightManager* g_pTheLights = NULL;
 bool g_bShowDebugLightSpheres = true;
 
+cFlyCamera* g_pFlyCamera = NULL;
+
 
 int main(void)
 {
@@ -130,8 +138,15 @@ int main(void)
         return -1;
     }
 
+    ::g_pFlyCamera = new cFlyCamera();
+
     // More for "typing" style stuff
     glfwSetKeyCallback(window, key_callback);
+
+    // Mouse callbacks
+    glfwSetCursorPosCallback(window, cursor_position_callback);
+    glfwSetMouseButtonCallback(window, mouse_button_callback);
+    glfwSetScrollCallback(window, scroll_callback);
 
     glfwMakeContextCurrent(window);
     gladLoadGLLoader( (GLADloadproc)glfwGetProcAddress );
@@ -234,7 +249,7 @@ int main(void)
                                                      
     pTheTextures->SetBasePath("assets/Textures/cubemap_textures");
     pTheTextures->CreateCubeTextureFromBMPFiles("tropicalDay",
-                                                "TropicalSunnyDayRight2048.bmp", "TropicalSunnyDayLeft2048.bmp",
+                                                "TropicalSunnyDayLeft2048.bmp","TropicalSunnyDayRight2048.bmp",
                                                 "TropicalSunnyDayDown2048.bmp", "TropicalSunnyDayUp2048.bmp", // Up and down revered in this cube map (is DirectX or Unreal format)
                                                 "TropicalSunnyDayFront2048.bmp", "TropicalSunnyDayBack2048.bmp",
                                                 true, errorString);
@@ -390,6 +405,13 @@ int main(void)
 
 
 //        ::g_cameraTarget = pSpider->position;
+
+        // Is there a fly camera?
+        if (::g_pFlyCamera)
+        {
+            ::g_cameraEye = ::g_pFlyCamera->getEye();
+            ::g_cameraTarget = ::g_pFlyCamera->getAt();
+        }
 
         mView = glm::lookAt(::g_cameraEye,
                             ::g_cameraTarget,  // newTarget
@@ -613,6 +635,7 @@ int main(void)
     }
 
     // STARTOF: Clean up...
+    delete ::g_pFlyCamera;
     delete ::g_pTheLights;
     delete pModelManger;
 

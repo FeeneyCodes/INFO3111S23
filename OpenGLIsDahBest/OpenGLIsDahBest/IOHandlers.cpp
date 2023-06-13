@@ -1,6 +1,7 @@
 #include "globalStuff.h"
 
 #include "cLightManager.h"
+#include "cFlyCamera.h"
 
 #include "cMeshObject.h"
 #include <string>
@@ -14,6 +15,94 @@ unsigned int g_SelectedLightIndex = 0;
 // Defined in theMain.cpp
 cMeshObject* pFindObjectByFriendlyName(std::string theName);
 
+extern cFlyCamera* g_pFlyCamera;
+
+bool g_MouseLeftButtonDown = false;
+float g_MouseLastWheelPosition = 0.0f;
+bool g_InitialMousePositionSampled = false;
+glm::vec2 g_MouseLastPosition = glm::vec2(0.0f, 0.0f);
+
+// Called when the mouse moves over the window
+// Can also get this with:
+//        double xpos, ypos;
+//        glfwGetCursorPos(window, &xpos, &ypos);
+void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
+{
+    // The mouse positions aren't zero at start up, 
+    //  so wait until the 1st callback to set the initial values
+    if ( ! ::g_InitialMousePositionSampled )
+    {
+        ::g_MouseLastPosition.x = (float)xpos;
+        ::g_MouseLastPosition.y = (float)ypos;
+        ::g_InitialMousePositionSampled = true;
+    }
+
+    if ( ::g_MouseLeftButtonDown )
+    {
+        float deltaX = (float)xpos - ::g_MouseLastPosition.x;
+        float deltaY = (float)ypos - ::g_MouseLastPosition.y;
+
+        if (deltaX > 0.0f)
+        {
+            ::g_pFlyCamera->RotateOrYawLeft(deltaX);
+        }
+        if (deltaX < 0.0f)
+        {
+            ::g_pFlyCamera->RotateOrYawRight(-deltaX);
+        }
+
+        if (deltaY > 0.0f)
+        {
+            ::g_pFlyCamera->PitchUp(deltaY);
+        }
+        if (deltaY < 0.0f)
+        {
+            ::g_pFlyCamera->PitchDown(-deltaY);
+        }
+    }//if ( ::g_MouseLeftButtonDown )
+
+    ::g_MouseLastPosition.x = xpos;
+    ::g_MouseLastPosition.y = ypos;
+
+    return;
+}
+
+// Called when the mouse buttons are pressed (or relased) over the window
+// Can also get this with:
+//        int state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
+//        if (state == GLFW_PRESS)
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+    {
+        ::g_MouseLeftButtonDown = true;
+    }
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE)
+    {
+        ::g_MouseLeftButtonDown = false;
+    }
+
+    return;
+}
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+    float movementSpeed = ::g_pFlyCamera->getMovementSpeed();
+
+    const float MOUSE_WHEEL_CHANGE_SENSITIVITY = 0.1f;
+
+    movementSpeed += ((float)yoffset * MOUSE_WHEEL_CHANGE_SENSITIVITY);
+
+    if ( movementSpeed < 0.0f )
+    {
+        movementSpeed = 0.0f;
+    }
+
+    ::g_pFlyCamera->setMovementSpeed(movementSpeed);
+
+    return;
+}
 
 //    void function_name(GLFWwindow* window, int key, int scancode, int action, int mods)
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -231,40 +320,82 @@ void handleKeyboardInput(GLFWwindow* window)
     }
     else   // Do camera stuff
     {
-        // Do camera stuff
-        if (glfwGetKey(window, GLFW_KEY_A))
+        // Use fly camera?
+        if (::g_pFlyCamera)
         {
-            // Move "left"
-            ::g_cameraEye.x += CAMERA_MOVE_SPEED;
-        }
+            // Do camera stuff
+            if (glfwGetKey(window, GLFW_KEY_A))
+            {
+                // Strafe left
+                ::g_pFlyCamera->StrafeLeft();
+            }
 
-        if (glfwGetKey(window, GLFW_KEY_D))
-        {
-            // Move "right"
-            ::g_cameraEye.x -= CAMERA_MOVE_SPEED;
-        }
+            if (glfwGetKey(window, GLFW_KEY_D))
+            {
+                // Strafe right
+                ::g_pFlyCamera->StrafeRight();
+            }
 
-        if (glfwGetKey(window, GLFW_KEY_W))
-        {
-            // Move "forward"
-            ::g_cameraEye.z += CAMERA_MOVE_SPEED;
-        }
-        if (glfwGetKey(window, GLFW_KEY_S))
-        {
-            // Move "backwards"
-            ::g_cameraEye.z -= CAMERA_MOVE_SPEED;
-        }
+            if (glfwGetKey(window, GLFW_KEY_W))
+            {
+                // Move "forward"
+                ::g_pFlyCamera->MoveBackwards();
+            }
+            if (glfwGetKey(window, GLFW_KEY_S))
+            {
+                // Move "backwards"
+                ::g_pFlyCamera->MoveForwards();
+            }
 
-        if (glfwGetKey(window, GLFW_KEY_Q))
-        {
-            // Move "down"
-            ::g_cameraEye.y -= CAMERA_MOVE_SPEED;
+            if (glfwGetKey(window, GLFW_KEY_Q))
+            {
+                // Move "down"
+                ::g_pFlyCamera->MoveDown();
+            }
+            if (glfwGetKey(window, GLFW_KEY_E))
+            {
+                // Move "up"
+                ::g_pFlyCamera->MoveUp();
+            }
         }
-        if (glfwGetKey(window, GLFW_KEY_E))
+        else
         {
-            // Move "up"
-            ::g_cameraEye.y += CAMERA_MOVE_SPEED;
-        }
+            // Do camera stuff
+            if (glfwGetKey(window, GLFW_KEY_A))
+            {
+                // Move "left"
+                ::g_cameraEye.x += CAMERA_MOVE_SPEED;
+            }
+
+            if (glfwGetKey(window, GLFW_KEY_D))
+            {
+                // Move "right"
+                ::g_cameraEye.x -= CAMERA_MOVE_SPEED;
+            }
+
+            if (glfwGetKey(window, GLFW_KEY_W))
+            {
+                // Move "forward"
+                ::g_cameraEye.z += CAMERA_MOVE_SPEED;
+            }
+            if (glfwGetKey(window, GLFW_KEY_S))
+            {
+                // Move "backwards"
+                ::g_cameraEye.z -= CAMERA_MOVE_SPEED;
+            }
+
+            if (glfwGetKey(window, GLFW_KEY_Q))
+            {
+                // Move "down"
+                ::g_cameraEye.y -= CAMERA_MOVE_SPEED;
+            }
+            if (glfwGetKey(window, GLFW_KEY_E))
+            {
+                // Move "up"
+                ::g_cameraEye.y += CAMERA_MOVE_SPEED;
+            }
+        }// if (::g_pFlyCamera)
+
 
 
         // Change texture blending

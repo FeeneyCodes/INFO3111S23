@@ -40,15 +40,15 @@ float cFlyCamera::getMovementSpeed(void)
 	return this->m_movementSpeed;
 }
 
-void cFlyCamera::setTurnSpeed(float newSpeed)
+void cFlyCamera::setTurnSensitivity(float newTurnSensitivity)
 {
-	this->m_rotationSpeed = newSpeed;
+	this->m_turnSensitivity = newTurnSensitivity;
 	return;
 }
 
-float cFlyCamera::getTurnSpeed(void)
+float cFlyCamera::getTurnSensitivity(void)
 {
-	return this->m_rotationSpeed;
+	return this->m_turnSensitivity;
 }
 
 glm::vec3 cFlyCamera::getAt(void)
@@ -109,8 +109,8 @@ void cFlyCamera::StrafeRight(void)
 	//			cameraZ -= movementSpeed * cos(cameraYaw + 3.14 / 2);
 	//			break;
 
-	this->m_Eye.x += this->m_movementSpeed * glm::sin( glm::radians(this->m_cameraYaw_in_degrees + glm::pi<float>() / 2.0f) );
-	this->m_Eye.z -= this->m_movementSpeed * glm::cos( glm::radians(this->m_cameraYaw_in_degrees + glm::pi<float>() / 2.0f) );
+	this->m_Eye.x += this->m_movementSpeed * glm::sin( glm::radians(this->m_cameraYaw_in_degrees + 90.0f) );
+	this->m_Eye.z -= this->m_movementSpeed * glm::cos( glm::radians(this->m_cameraYaw_in_degrees + 90.0f) );
 
 	return;
 }
@@ -125,65 +125,71 @@ void cFlyCamera::StrafeLeft(void)
 	//			cameraZ += movementSpeed * cos(cameraYaw + 3.14 / 2);
 	//			break;
 
-	this->m_Eye.x -= this->m_movementSpeed * glm::sin( glm::radians(this->m_cameraYaw_in_degrees + glm::pi<float>() / 2.0f) );
-	this->m_Eye.z += this->m_movementSpeed * glm::cos( glm::radians(this->m_cameraYaw_in_degrees + glm::pi<float>() / 2.0f) );
+	this->m_Eye.x -= this->m_movementSpeed * glm::sin( glm::radians(this->m_cameraYaw_in_degrees + 90.0f) );
+	this->m_Eye.z += this->m_movementSpeed * glm::cos( glm::radians(this->m_cameraYaw_in_degrees + 90.0f) );
 
 	return;
 }
 //void cFlyCamera::StrafeLeft(float amount);
 
-void cFlyCamera::RotateOrYawLeft(void)
+void cFlyCamera::RotateOrYawLeft(float angleChangeInDegrees)
 {
 	// Original code:
 	//			// Rotate left
 	//        case 'j':
 	//			cameraYaw -= rotationSpeed;
 	//			break;
-	this->m_cameraYaw_in_degrees -= this->m_rotationSpeed;
-
+	this->m_cameraYaw_in_degrees -= (this->m_turnSensitivity * angleChangeInDegrees);
 
 	return;
 }
-//void cFlyCamera::RotateOrYawLeft(float amount);
 
-void cFlyCamera::RotateOrYawRight(void)
+
+void cFlyCamera::RotateOrYawRight(float angleChangeInDegrees)
 {
 	// Original code:
 	//		// Rotate right
 	//		case 'l':
 	//			cameraYaw += rotationSpeed;
 	//			break;
-	this->m_cameraYaw_in_degrees += this->m_rotationSpeed;
+	this->m_cameraYaw_in_degrees += (this->m_turnSensitivity * angleChangeInDegrees);
 
 	return;
 }
-//void cFlyCamera::RotateOrYawRight(float amount);
 
-void cFlyCamera::PitchUp(void)
+void cFlyCamera::PitchUp(float angleChangeInDegrees)
 {
 	// Original code:
 	//		// Rotate up
 	//		case 'i':
 	//			cameraPitch -= rotationSpeed;
 	//			break;
-	this->m_cameraPitch_in_degrees -= this->m_rotationSpeed;
+	this->m_cameraPitch_in_degrees -= (this->m_turnSensitivity * angleChangeInDegrees);
 
 	return;
 }
-//void cFlyCamera::PitchUp(float amount);
 
-void cFlyCamera::PitchDown(void)
+void cFlyCamera::PitchDown(float angleChangeInDegrees)
 {
 	// Original code:
 //		// Rotate down
 //		case 'k':
 //			cameraPitch += rotationSpeed;
 //			break;
-	this->m_cameraPitch_in_degrees += this->m_rotationSpeed;
+	this->m_cameraPitch_in_degrees += (this->m_turnSensitivity * angleChangeInDegrees);
 
 	return;
 }
-//void cFlyCamera::PitchDown(float amount);
 
+void cFlyCamera::MoveUp(void)
+{
+	this->m_Eye.y += this->m_movementSpeed;
+	return;
+}
 
+void cFlyCamera::MoveDown(void)
+{
+	this->m_Eye.y -= this->m_movementSpeed;
+	return;
+}
 

@@ -3,6 +3,8 @@
 #include <glm/glm.hpp>
 #include <glm/vec3.hpp> // glm::vec3
 #include <glm/vec4.hpp> // glm::vec4
+#include <glm/gtc/constants.hpp>		// For PI
+
 
 // The starter code I got from chatGPT is below...
 // (also in the 'Fly camera for OpenGL that Michael got from chatGPT.txt' file)
@@ -23,8 +25,8 @@ public:
 
     // These are in degrees... sort of
     // (i.e. they are being converted to radians when calculating)  
-    void setTurnSpeed(float newSpeed);
-    float getTurnSpeed(void);
+    void setTurnSensitivity(float newTurnSensitivity);
+    float getTurnSensitivity(void);
 
     // This returns the "at" or "target" value for the "look at" projection.
     // Watch that you don't look DIRECTLY up or down, or the screen will go
@@ -37,10 +39,13 @@ public:
     void StrafeRight(void);         void StrafeRight(float amount);
     void StrafeLeft(void);          void StrafeLeft(float amount);
 
-    void RotateOrYawLeft(void);     void RotateOrYawLeft(float amount);
-    void RotateOrYawRight(void);    void RotateOrYawRight(float amount);
-    void PitchUp(void);             void PitchUp(float amount);
-    void PitchDown(void);           void PitchDown(float amount);
+    void MoveUp(void);
+    void MoveDown(void);
+
+    void RotateOrYawLeft(float angleChangeInDegrees);
+    void RotateOrYawRight(float angleChangeInDegrees);
+    void PitchUp(float angleChangeInDegrees);
+    void PitchDown(float angleChangeInDegrees);
 
 private:
     glm::vec3 m_Eye;
@@ -52,7 +57,7 @@ private:
 
 	// Camera movement speed
 	float m_movementSpeed = 0.1f;
-	float m_rotationSpeed = 0.1f;
+	float m_turnSensitivity = 0.1f;
 
 
 };
