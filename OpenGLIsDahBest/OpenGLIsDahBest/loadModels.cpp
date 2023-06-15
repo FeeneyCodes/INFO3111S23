@@ -115,7 +115,8 @@ bool LoadModels(cVAOManager* pModelManger, GLuint shaderProgram,
 //    pSpiderMesh2->meshName = "assets/models/spider_mastermind.bmd6model.fbx.ascii_Y_up.ply";
     pSpiderMesh2->friendlyName = "Mrs. Spider";
     pSpiderMesh2->diffuseColour = glm::vec3(0.0f, 1.0f, 0.0f);
-    pSpiderMesh2->specularColourRGB = glm::vec3(1.0f, 1.0f, 1.0f);
+    pSpiderMesh2->specularColourRGB = glm::vec3(1.0f, 1.0f, 0.0f);
+    pSpiderMesh2->bDontLight = true;
     pSpiderMesh2->specularPower_or_shininess = 100.0f;
 //    pSpiderMesh2->alphaTransparency = 0.5f;
     pSpiderMesh2->position = glm::vec3(20.0f, -10.0f, 0.0f);

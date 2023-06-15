@@ -29,6 +29,8 @@ out vec3 fNormal;		// 'f' for fun or fromage or fragment
 out vec4 fVertexPosWorld;		// Where this vertex is in 'world space'
 out vec2 fUV;
 
+uniform float normOffset;
+
 void main()
 {
 	vec3 position = vPos;
@@ -45,6 +47,8 @@ void main()
 //	vec4 = mat4x4 * vec4;
 // From line 439 of the C++ main file
 // mvp = p * v * m;
+
+	position.xyz += (vNormal * normOffset);
 	
 	mat4 matMVP = matProjection * matView * matModel;
 	

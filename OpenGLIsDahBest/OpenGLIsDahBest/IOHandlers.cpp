@@ -112,6 +112,25 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         glfwSetWindowShouldClose(window, GLFW_TRUE);
     }
 
+    // Press "P" to turn towards the spider
+    if ( key == GLFW_KEY_P && action == GLFW_PRESS )
+    {
+        cMeshObject* pSpiderMesh2 = pFindObjectByFriendlyName("Mrs. Spider");
+
+//        if ( pSpiderMesh2 )
+//        {
+//            ::g_pFlyCamera->TurnToLookAt(pSpiderMesh2->position,
+//                                         2.0f,      // 1 degree per second
+//                                         1.0f);     // Within 2.0 units, stop turning
+//        }
+
+        if ( pSpiderMesh2 )
+        {
+            // Point camera to spider to withing a 1.0 unit target
+            ::g_pFlyCamera->LookAtImmediate(pSpiderMesh2->position, 1.0f);    
+        }   
+    }
+
     // Turns off and on the "debug spheres"
     if (key == GLFW_KEY_0 && action == GLFW_PRESS)
     {

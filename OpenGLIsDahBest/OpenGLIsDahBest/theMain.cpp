@@ -109,6 +109,11 @@ bool g_bShowDebugLightSpheres = true;
 
 cFlyCamera* g_pFlyCamera = NULL;
 
+void UpdateScene(void)
+{
+    // Do stuff
+    return;
+}
 
 int main(void)
 {
@@ -139,6 +144,9 @@ int main(void)
     }
 
     ::g_pFlyCamera = new cFlyCamera();
+
+    // Place the eye of the camera
+    ::g_pFlyCamera->setEye(glm::vec3(75.0f, 40.0f, 60.0f));
 
     // More for "typing" style stuff
     glfwSetKeyCallback(window, key_callback);
@@ -278,8 +286,8 @@ int main(void)
 
     // To change the "brightness" or the "throw" of the light
     ::g_pTheLights->myLights[0].atten.x = 1.0f;     // Constant;
-    ::g_pTheLights->myLights[0].atten.y = 0.2f;     // Linear attenuation  
-    ::g_pTheLights->myLights[0].atten.z = 0.01f;    // quadratic attenuation  
+    ::g_pTheLights->myLights[0].atten.y = 0.003f;     // Linear attenuation  
+    ::g_pTheLights->myLights[0].atten.z = 0.0002f;    // quadratic attenuation  
 
     //::g_pTheLights->myLights[0].direction 
 
@@ -333,7 +341,9 @@ int main(void)
     // Time right now
     double previousTime = glfwGetTime();
 
+    double timeSinceLastUpdate = 0;
 
+    float HACK_normalOffset = 0.0f;
 
     // When this while exits, your program exits, too
     while (!glfwWindowShouldClose(window))
@@ -354,12 +364,29 @@ int main(void)
             // Save the last time
             previousTime = currentTime;
 
-            // Move something 10 units per second.
+            // Update the fly camera this step
+            ::g_pFlyCamera->Update(deltaTime);
+
+            // Has delta time gone more than 30 Hz
+            timeSinceLastUpdate += deltaTime;
+            const float thirtyHz = 1.0f / 30.0f;
+            if (timeSinceLastUpdate > thirtyHz )
+            {
+                UpdateScene();
+            }
+
+            // uniform float normOffset;
+            GLint normOffset_UL = glGetUniformLocation(shaderProgram_ID, "normOffset");
+            glUniform1f(normOffset_UL, HACK_normalOffset);
+
+//            HACK_normalOffset += 0.0001f;
+
+
+                // Move something 10 units per second.
             //cTheMeshIMove.position.x += (10.0f * deltaTime);
 
  //           std::cout << deltaTime << " " << deltaTime * 1000.0f << " ms" << std::endl;
         }
-
 
 
         float ratio;

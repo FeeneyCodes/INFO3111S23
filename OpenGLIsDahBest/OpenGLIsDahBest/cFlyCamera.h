@@ -47,6 +47,18 @@ public:
     void PitchUp(float angleChangeInDegrees);
     void PitchDown(float angleChangeInDegrees);
 
+    // Give it a new location, and a 'speed' to turn
+    // TurnToLookAt( (10, 20, 15), 0.1f )
+    // Each step takes a max of 0.1 locations per frame
+    // At 60 Hz, that's about 6 units per second
+    void TurnToLookAt(glm::vec3 newTarget, float maxDeltaAngleChangePerStepDegrees,
+                      float minimumCloseEnoughDistance);
+
+    void LookAtImmediate(glm::vec3 newTarget, float minimumCloseEnoughDistance);
+
+
+    // called every frame. 
+    void Update(double deltaTime);
 private:
     glm::vec3 m_Eye;
 	//float cameraX = 0.0f;
@@ -59,7 +71,12 @@ private:
 	float m_movementSpeed = 0.1f;
 	float m_turnSensitivity = 0.1f;
 
-
+    bool m_bIsTurning = false;
+    float m_maxmaxAngleChangePerSecondPerSecond = 0.1f;
+    glm::vec3 m_newTarget;
+    float m_CloseEnoughToTargetEpsilon = 1.0f;  // 1 unit away by default
+    // Used to test for a possible new target
+    glm::vec3 m_getAtTestNormalizedDirection(float yaw, float pitch);
 };
 
 
