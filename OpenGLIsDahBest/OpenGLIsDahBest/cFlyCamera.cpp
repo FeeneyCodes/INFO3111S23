@@ -70,6 +70,16 @@ glm::vec3 cFlyCamera::getAt(void)
 }
 
 
+glm::vec3 cFlyCamera::getAtDirection(void)
+{
+	glm::vec3 cameraDirection;
+	cameraDirection.x = +sin( glm::radians(this->m_cameraYaw_in_degrees) );
+	cameraDirection.y = +sin( glm::radians(this->m_cameraPitch_in_degrees) );
+	cameraDirection.z = -cos( glm::radians(this->m_cameraYaw_in_degrees) );
+
+	return cameraDirection;
+}
+
 void cFlyCamera::MoveForwards(void)
 {
 	// Original code:
@@ -214,101 +224,188 @@ void cFlyCamera::Update(double deltaTime)
 		deltaTime = MAX_DELTA_TIME;
 	}
 
+
 	// Are we truning to face something? 
 	if ( this->m_bIsTurning )
 	{
-		// Get the distance from the object we want and the current camera
-		float distanceToTarget = glm::distance(this->m_newTarget, this->m_Eye);
 
-		// Where would our current "at" be if extended to that location?
-		glm::vec3 currentCameraViewVector = this->getAt() - this->m_Eye;
+		// Are we close enough? 
+		float distanceToNewTarget = glm::distance(this->m_newTarget, this->m_Eye);
+		// Determine a point that far away, in the direction we're looking
+		glm::vec3 virtualCurrentTargetXYZ = this->m_Eye + (this->getAtDirection() * distanceToNewTarget);
+		// Get the distance between this virtual location and the new target
+		float distanceBetweenTargets = glm::distance(this->m_newTarget, virtualCurrentTargetXYZ);
 
-		// Extend this the length of where our new target is
-		glm::vec3 currentTargetLocationYXZ = currentCameraViewVector * distanceToTarget;
-		// Correct for eye placement
-		currentTargetLocationYXZ += this->m_Eye;
-
-		// get the distance between the desired target and our current "at"
-		// this is always positive.
-		float distanceFromCurrentAtToDesiredTarget = glm::distance(currentTargetLocationYXZ, this->m_newTarget);
-
-		std::cout << "Turning: Distance to target: " << distanceFromCurrentAtToDesiredTarget << std::endl;
-
-		// See if we are "close enough" to stop turning
-		if ( distanceFromCurrentAtToDesiredTarget <= this->m_CloseEnoughToTargetEpsilon )
+		if (distanceBetweenTargets <= this->m_CloseEnoughToTargetEpsilon)
 		{
-			// Yup, we're close enough
-			// Stop turning
+			// Yes, so stop turning
 			this->m_bIsTurning = false;
 			return;
 		}
 
-		// We aren't looking at the target, yet
 
-		// Slightly update the current angle so that it's "closer" to the new target
-		// First, let's update the yaw (y axis angle)
-		// One direction will get us closer...
 		float deltaAngleChangeThisFrame = this->m_maxmaxAngleChangePerSecondPerSecond * deltaTime;
 
-		{ // Yaw first, do the yaw angle
-			// Check if turning +ve moves us "closer"
-			float newTestYawValue = this->m_cameraYaw_in_degrees + deltaAngleChangeThisFrame;
-			// With this new angle, this is what I'd be looking at...
-			// ... but this is only one unit away
-			glm::vec3 testTarget = this->m_getAtTestNormalizedDirection(newTestYawValue, this->m_cameraPitch_in_degrees);
-			// Move this test target to the distance of our desired target
-			glm::vec3 testTargetWorldXYZ = testTarget * distanceToTarget;
-			// Adjust for eye
-			testTargetWorldXYZ += this->m_Eye;
 
-			// Get the new test distance from this test location to the actual thing we want to look at 
-			float distanceTestAtToTarget = glm::distance(testTargetWorldXYZ, this->m_newTarget);
+		// Now we will compare yaw, then pitch
 
-			// Is this larger or smaller than the current distance
-			// distanceFromCurrentAtToDesiredTarget : current distance
-			// distanceTestAtToTarget : test distance with new angle
-			if ( distanceTestAtToTarget < distanceFromCurrentAtToDesiredTarget )
+		{ // Yaw first, limiting to the XZ plane (i.e. igonring Y)
+			
+			glm::vec3 newTargetXZ = glm::vec3(this->m_newTarget.x, 0.0f, this->m_newTarget.z);
+			glm::vec3 eyeXZ = glm::vec3(this->m_Eye.x, 0.0f, this->m_Eye.z);
+			glm::vec3 currentAtXZ = this->getAt();
+			currentAtXZ.y = 0.0f;
+			
+			float distanceToNewTargetXZ = glm::distance(newTargetXZ, currentAtXZ);
+
+
+			glm::vec3 currentCameraViewVectorXZ = currentAtXZ - eyeXZ;
+			
+			glm::vec3 currentAtLocationXZ = eyeXZ + (currentCameraViewVectorXZ * distanceToNewTargetXZ);
+
+			// Calculate the distance between the current "at" and the desired target
+			float distanceFromDesiredTargetXZ = glm::distance(currentAtLocationXZ, newTargetXZ);
+
+			std::cout << "Yaw: " << distanceFromDesiredTargetXZ << "  ";
+
+			// Close enough (this is just on the XZ plane)
+			if (distanceFromDesiredTargetXZ > this->m_CloseEnoughToTargetEpsilon)
 			{
-				// Yes, this is closer, so we want to turn this way 
-				// Update the yaw angle
-				this->m_cameraYaw_in_degrees = newTestYawValue;
-			}
-			else 
-			{
-				// We need to turn the other way -ve
-				this->m_cameraYaw_in_degrees = this->m_cameraYaw_in_degrees - deltaAngleChangeThisFrame;
-			}
-		}// Yaw first, do the yaw angle
+				// Still too far away...
 
-		{ // Now Pitch
-			// Check if turning +ve moves us "closer"
-			float newTestPitchValue = this->m_cameraYaw_in_degrees + deltaAngleChangeThisFrame;
-			// With this new angle, this is what I'd be looking at...
-			// ... but this is only one unit away
-			glm::vec3 testTarget = this->m_getAtTestNormalizedDirection(newTestPitchValue, this->m_cameraPitch_in_degrees);
-			// Move this test target to the distance of our desired target
-			glm::vec3 testTargetWorldXYZ = testTarget * distanceToTarget;
-			// Adjust for eye
-			testTargetWorldXYZ += this->m_Eye;
+				// Try an angle slightly +ve from where we're looking at...
+				float newTestYawValue = this->m_cameraYaw_in_degrees + deltaAngleChangeThisFrame;
+				glm::vec3 testAtXZ = this->m_getAtTestNormalizedDirection(newTestYawValue, this->m_cameraYaw_in_degrees);
+				testAtXZ.y = 0.0f;
+				testAtXZ = eyeXZ + (testAtXZ * distanceToNewTargetXZ);
 
-			// Get the new test distance from this test location to the actual thing we want to look at 
-			float distanceTestAtToTarget = glm::distance(testTargetWorldXYZ, this->m_newTarget);
+				float testDistanceBetweenTargets = glm::distance(testAtXZ, newTargetXZ);
 
-			// Is this larger or smaller than the current distance
-			// distanceFromCurrentAtToDesiredTarget : current distance
-			// distanceTestAtToTarget : test distance with new angle
-			if (distanceTestAtToTarget < distanceFromCurrentAtToDesiredTarget)
-			{
-				// Yes, this is closer, so we want to turn this way 
-				// Update the yaw angle
-				this->m_cameraPitch_in_degrees = newTestPitchValue;
+				// Is this larger or smaller than the current distance?
+				// (i.e. are we turning the right way, getting closer to the desired target)
+				if (testDistanceBetweenTargets < distanceFromDesiredTargetXZ)
+				{
+					// Yes, this is closer, so we want to turn this way 
+					// Update the yaw angle
+					this->m_cameraYaw_in_degrees = newTestYawValue;
+				}
+				else
+				{
+					// We need to turn the other way -ve
+					this->m_cameraYaw_in_degrees = this->m_cameraYaw_in_degrees - deltaAngleChangeThisFrame;
+				}
 			}
-			else
+		}// End of Yaw update
+
+
+		{ // Now Pitch... 
+
+			// The angle may have been updated above, so calculate it again...
+
+			virtualCurrentTargetXYZ = this->m_Eye + (this->getAtDirection() * distanceToNewTarget);
+
+			// Get the distance between this virtual location and the new target
+			distanceBetweenTargets = glm::distance(this->m_newTarget, virtualCurrentTargetXYZ);
+
+			std::cout << "Pitch: " << distanceBetweenTargets << std::endl;
+
+			if (distanceBetweenTargets > this->m_CloseEnoughToTargetEpsilon)
 			{
-				// We need to turn the other way -ve
-				this->m_cameraPitch_in_degrees = this->m_cameraPitch_in_degrees - deltaAngleChangeThisFrame;
+				// Still too far away...
+				// 
+				// Try an angle slightly +ve from where we're looking at...
+				float newTestPitchValue = this->m_cameraPitch_in_degrees + deltaAngleChangeThisFrame;
+				glm::vec3 testAtXYZ = this->m_getAtTestNormalizedDirection(this->m_cameraYaw_in_degrees, newTestPitchValue);
+				testAtXYZ = this->m_Eye + (testAtXYZ * distanceToNewTarget);
+
+				float testDistanceBetweenTargets = glm::distance(testAtXYZ, this->m_newTarget);
+
+				// Is this larger or smaller than the current distance?
+				// (i.e. are we turning the right way, getting closer to the desired target)
+				if (testDistanceBetweenTargets < distanceBetweenTargets)
+				{
+					// Yes, this is closer, so we want to turn this way 
+					// Update the yaw angle
+					this->m_cameraPitch_in_degrees = newTestPitchValue;
+				}
+				else
+				{
+					// We need to turn the other way -ve
+					this->m_cameraPitch_in_degrees = this->m_cameraPitch_in_degrees - deltaAngleChangeThisFrame;
+				}
+
+
 			}
-		}// Yaw first, do the yaw angle
+
+		}// End of Pitch update
+
+
+		//// We aren't looking at the target, yet
+
+		//// Slightly update the current angle so that it's "closer" to the new target
+		//// First, let's update the yaw (y axis angle)
+		//// One direction will get us closer...
+		//float deltaAngleChangeThisFrame = this->m_maxmaxAngleChangePerSecondPerSecond * deltaTime;
+
+		//{ // Yaw first, do the yaw angle
+		//	// Check if turning +ve moves us "closer"
+		//	float newTestYawValue = this->m_cameraYaw_in_degrees + deltaAngleChangeThisFrame;
+		//	// With this new angle, this is what I'd be looking at...
+		//	// ... but this is only one unit away
+		//	glm::vec3 testTarget = this->m_getAtTestNormalizedDirection(newTestYawValue, this->m_cameraPitch_in_degrees);
+		//	// Move this test target to the distance of our desired target
+		//	glm::vec3 testTargetWorldXYZ = testTarget * distanceToTarget;
+		//	// Adjust for eye
+		//	testTargetWorldXYZ += this->m_Eye;
+
+		//	// Get the new test distance from this test location to the actual thing we want to look at 
+		//	float distanceTestAtToTarget = glm::distance(testTargetWorldXYZ, this->m_newTarget);
+
+		//	// Is this larger or smaller than the current distance
+		//	// distanceFromCurrentAtToDesiredTarget : current distance
+		//	// distanceTestAtToTarget : test distance with new angle
+		//	if ( distanceTestAtToTarget < distanceFromCurrentAtToDesiredTarget )
+		//	{
+		//		// Yes, this is closer, so we want to turn this way 
+		//		// Update the yaw angle
+		//		this->m_cameraYaw_in_degrees = newTestYawValue;
+		//	}
+		//	else 
+		//	{
+		//		// We need to turn the other way -ve
+		//		this->m_cameraYaw_in_degrees = this->m_cameraYaw_in_degrees - deltaAngleChangeThisFrame;
+		//	}
+		//}// Yaw first, do the yaw angle
+
+		//{ // Now Pitch
+		//	// Check if turning +ve moves us "closer"
+		//	float newTestPitchValue = this->m_cameraYaw_in_degrees + deltaAngleChangeThisFrame;
+		//	// With this new angle, this is what I'd be looking at...
+		//	// ... but this is only one unit away
+		//	glm::vec3 testTarget = this->m_getAtTestNormalizedDirection(newTestPitchValue, this->m_cameraPitch_in_degrees);
+		//	// Move this test target to the distance of our desired target
+		//	glm::vec3 testTargetWorldXYZ = testTarget * distanceToTarget;
+		//	// Adjust for eye
+		//	testTargetWorldXYZ += this->m_Eye;
+
+		//	// Get the new test distance from this test location to the actual thing we want to look at 
+		//	float distanceTestAtToTarget = glm::distance(testTargetWorldXYZ, this->m_newTarget);
+
+		//	// Is this larger or smaller than the current distance
+		//	// distanceFromCurrentAtToDesiredTarget : current distance
+		//	// distanceTestAtToTarget : test distance with new angle
+		//	if (distanceTestAtToTarget < distanceFromCurrentAtToDesiredTarget)
+		//	{
+		//		// Yes, this is closer, so we want to turn this way 
+		//		// Update the yaw angle
+		//		this->m_cameraPitch_in_degrees = newTestPitchValue;
+		//	}
+		//	else
+		//	{
+		//		// We need to turn the other way -ve
+		//		this->m_cameraPitch_in_degrees = this->m_cameraPitch_in_degrees - deltaAngleChangeThisFrame;
+		//	}
+		//}// Yaw first, do the yaw angle
 
 	}//	if ( this->m_bIsTurning )
 
@@ -446,11 +543,12 @@ glm::vec3 cFlyCamera::m_getAtTestNormalizedDirection(float testYaw, float testPi
 	//		0.0f, 1.0f, 0.0f		<--- Looks like it's using Y as "up"
 	//	);
 	glm::vec3 cameraTarget;
-	// Assume the eye is at the origin for this test 
-	glm::vec3 origin = glm::vec3(0.0f, 0.0f, 0.f);
-	cameraTarget.x = origin.x + sin(glm::radians(testYaw));
-	cameraTarget.y = origin.y + sin(glm::radians(testPitch));
-	cameraTarget.z = origin.z - cos(glm::radians(testYaw));
+	cameraTarget.x = +sin(glm::radians(testYaw));
+	cameraTarget.y = +sin(glm::radians(testPitch));
+	cameraTarget.z = -cos(glm::radians(testYaw));
 
 	return cameraTarget;
 }
+
+
+

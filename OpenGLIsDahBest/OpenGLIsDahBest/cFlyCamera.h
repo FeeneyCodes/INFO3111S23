@@ -32,6 +32,8 @@ public:
     // Watch that you don't look DIRECTLY up or down, or the screen will go
     //  black since the matrix calculation generates a divide by zero error. :)
     glm::vec3 getAt(void);
+    // Just returns normalized direction from eye
+    glm::vec3 getAtDirection(void);
 
     void MoveForwards(void);        void MoveForwards(float amount);
     void MoveBackwards(void);       void MoveBackwards(float amount);
