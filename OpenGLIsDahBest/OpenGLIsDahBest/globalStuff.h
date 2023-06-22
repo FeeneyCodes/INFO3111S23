@@ -21,3 +21,9 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 void handleKeyboardInput(GLFWwindow* window);
 
 extern unsigned int g_SelectedLightIndex;
+
+template <class T>
+T getRandBetween0and1(void)
+{
+	return (T)((double)rand() / (RAND_MAX));
+}

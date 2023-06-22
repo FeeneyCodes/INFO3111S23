@@ -47,6 +47,10 @@ struct sModelDrawInfo
 	unsigned int numberOfIndices;
 	unsigned int numberOfTriangles;
 
+	float minExtents[3];
+	float maxExtents[3];
+	float maxExtent;
+
 	// The "local" (i.e. "CPU side" temporary array)
 	sVert_xyz_n_uv* pVertices;	//  = 0;
 	// The index buffer (CPU side)
@@ -68,6 +72,9 @@ public:
 
 	std::string getLastError(bool bAndClear = true);
 
+	void setBasePath(std::string newBasePath);
+	std::string getBasePath(void);
+
 private:
 
 	std::map< std::string /*model name*/,
@@ -80,6 +87,8 @@ private:
 
 	std::string m_lastErrorString;
 	void m_AppendTextToLastError(std::string text, bool addNewLineBefore = true);
+
+	std::string m_basePath;
 };
 
 #endif	// _cVAOManager_HG_

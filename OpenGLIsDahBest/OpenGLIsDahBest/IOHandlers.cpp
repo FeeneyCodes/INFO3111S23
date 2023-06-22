@@ -61,8 +61,8 @@ void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
         }
     }//if ( ::g_MouseLeftButtonDown )
 
-    ::g_MouseLastPosition.x = xpos;
-    ::g_MouseLastPosition.y = ypos;
+    ::g_MouseLastPosition.x = (float)xpos;
+    ::g_MouseLastPosition.y = (float)ypos;
 
     return;
 }

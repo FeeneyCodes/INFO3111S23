@@ -3,7 +3,7 @@
 
 // In from the vertex shader
 in vec3 color;
-in vec3 fNormal;	
+in /*flat*/ vec3 fNormal;	
 in vec4 fVertexPosWorld;
 in vec2 fUV;
 

@@ -109,6 +109,9 @@ bool g_bShowDebugLightSpheres = true;
 
 cFlyCamera* g_pFlyCamera = NULL;
 
+cBasicTextureManager* pTheTextures = NULL;
+
+
 void UpdateScene(void)
 {
     // Do stuff
@@ -194,6 +197,7 @@ int main(void)
     // Load the models into the VAO Manager
 
     cVAOManager* pModelManger = new cVAOManager();
+    /*cBasicTextureManager* */pTheTextures = new cBasicTextureManager();
 
     std::vector<std::string> vecErrors;
     if ( ! LoadModels(pModelManger, shaderProgram_ID, ::g_vec_pMeshesToDraw, vecErrors, true ) )
@@ -206,7 +210,6 @@ int main(void)
     }//if ( ! LoadModels(...
 
     // Load the textures
-    cBasicTextureManager* pTheTextures = new cBasicTextureManager();
 
     // Load some textures
     pTheTextures->SetBasePath("assets/textures");
@@ -316,15 +319,15 @@ int main(void)
 
     ::g_pTheLights->myLights[1].TurnOn();
  
-    // Look at the spider with a spot light
-    cMeshObject* pSpider = pFindObjectByFriendlyName("Mr. Spider");
-    // Direction is normalized vector from light to target
-    glm::vec3 rayToTarget = glm::vec3(::g_pTheLights->myLights[1].position) - pSpider->position;
-    // Normlize makes the ray 1 unit long
-    rayToTarget = glm::normalize(rayToTarget);  // Also can divide by length of ray
-
-    // The direction is 4 floats because I used vec4 because the registers are all vec4s.
-    ::g_pTheLights->myLights[1].direction = glm::vec4(rayToTarget, 1.0f);
+//    // Look at the spider with a spot light
+//    cMeshObject* pSpider = pFindObjectByFriendlyName("Mr. Spider");
+//    // Direction is normalized vector from light to target
+//    glm::vec3 rayToTarget = glm::vec3(::g_pTheLights->myLights[1].position) - pSpider->position;
+//    // Normlize makes the ray 1 unit long
+//    rayToTarget = glm::normalize(rayToTarget);  // Also can divide by length of ray
+//
+//    // The direction is 4 floats because I used vec4 because the registers are all vec4s.
+//    ::g_pTheLights->myLights[1].direction = glm::vec4(rayToTarget, 1.0f);
 
 
     float heyHeyILoveMath = 0.0f;
@@ -417,12 +420,12 @@ int main(void)
 
         // Look at the spider with a spot light
         // Direction is normalized vector from light to target
-        glm::vec3 rayToTarget = pSpider->position - glm::vec3(::g_pTheLights->myLights[1].position);
+//        glm::vec3 rayToTarget = pSpider->position - glm::vec3(::g_pTheLights->myLights[1].position);
         // Normlize makes the ray 1 unit long
-        rayToTarget = glm::normalize(rayToTarget);  // Also can divide by length of ray
+//        rayToTarget = glm::normalize(rayToTarget);  // Also can divide by length of ray
 
         // The direction is 4 floats because I used vec4 because the registers are all vec4s.
-        ::g_pTheLights->myLights[1].direction = glm::vec4(rayToTarget, 1.0f);
+//       ::g_pTheLights->myLights[1].direction = glm::vec4(rayToTarget, 1.0f);
 
 
         // Turn on "alpha transparency"
@@ -505,8 +508,8 @@ int main(void)
                 glActiveTexture(GL_TEXTURE0 + textureUnitNumber);	// GL_TEXTURE0 = 33984
 
                 // Look up the texture
-//                GLuint skyboxTexure_number = pTheTextures->getTextureIDFromName("spaceSkybox");
-                GLuint skyboxTexure_number = pTheTextures->getTextureIDFromName("tropicalDay");
+                GLuint skyboxTexure_number = pTheTextures->getTextureIDFromName("spaceSkybox");
+//                GLuint skyboxTexure_number = pTheTextures->getTextureIDFromName("tropicalDay");
 
 //                glBindTexture(GL_TEXTURE_2D, meshTexture00);
 // 
@@ -567,72 +570,72 @@ int main(void)
 
 
         // Draw the height map object
-        {
-            cMeshObject* pTerrain = pFindObjectByFriendlyName("BigFlatMesh");
+//        {
+//            cMeshObject* pTerrain = pFindObjectByFriendlyName("BigFlatMesh");
+//
+//            SetUpTexturesForMesh(pTerrain, shaderProgram_ID, pTheTextures);
+//
+//            glActiveTexture(GL_TEXTURE24);	// GL_TEXTURE0 = 33984
+//            GLuint heigthMap_textureNumber = pTheTextures->getTextureIDFromName("NvF5e_heightMap.bmp");
+//
+//            glBindTexture(GL_TEXTURE_2D, heigthMap_textureNumber);
+//            GLint heigthMap_UniformLocation = glGetUniformLocation(shaderProgram_ID, "heightMapTexture");
+//            glUniform1i(heigthMap_UniformLocation, 24);   
+//
+//            // Turn the maping on
+//            // uniform bool bIsHeightMap;
+//            // uniform float heightScale;
+//            GLint bIsHeightMap_UniformLocation = glGetUniformLocation(shaderProgram_ID, "bIsHeightMap");
+//            GLint heightScale_UniformLocation = glGetUniformLocation(shaderProgram_ID, "heightScale");
+//            GLint heightMapOffsetUV_UniformLocation = glGetUniformLocation(shaderProgram_ID, "heightMapOffsetUV");
+//
+//            glUniform1f(bIsHeightMap_UniformLocation, (GLfloat)GL_TRUE);
+//            glUniform1f(heightScale_UniformLocation, 10.0f);
+//            
+//            // I'm using this a as quick-n-dirty "changes over time in frame" value.
+//            float offsetU = glm::sin(glfwGetTime() / 10.0f);
+//            glUniform2f(heightMapOffsetUV_UniformLocation, offsetU, 0.0f);
+//
+//            glm::mat4 matModel = glm::mat4(1.0f);   // Identity matrix
+//
+////            pTerrain->isWireframe = true;
+////            pTerrain->bDontLight = true;
+//
+//            pTerrain->bIsVisible = true;
+//            DrawObject(pTerrain, matModel, pModelManger, shaderProgram_ID);
+//            pTerrain->bIsVisible = false;
+//
+//            glUniform1f(bIsHeightMap_UniformLocation, (GLfloat)GL_FALSE);
+//        }
 
-            SetUpTexturesForMesh(pTerrain, shaderProgram_ID, pTheTextures);
-
-            glActiveTexture(GL_TEXTURE24);	// GL_TEXTURE0 = 33984
-            GLuint heigthMap_textureNumber = pTheTextures->getTextureIDFromName("NvF5e_heightMap.bmp");
-
-            glBindTexture(GL_TEXTURE_2D, heigthMap_textureNumber);
-            GLint heigthMap_UniformLocation = glGetUniformLocation(shaderProgram_ID, "heightMapTexture");
-            glUniform1i(heigthMap_UniformLocation, 24);   
-
-            // Turn the maping on
-            // uniform bool bIsHeightMap;
-            // uniform float heightScale;
-            GLint bIsHeightMap_UniformLocation = glGetUniformLocation(shaderProgram_ID, "bIsHeightMap");
-            GLint heightScale_UniformLocation = glGetUniformLocation(shaderProgram_ID, "heightScale");
-            GLint heightMapOffsetUV_UniformLocation = glGetUniformLocation(shaderProgram_ID, "heightMapOffsetUV");
-
-            glUniform1f(bIsHeightMap_UniformLocation, (GLfloat)GL_TRUE);
-            glUniform1f(heightScale_UniformLocation, 10.0f);
-            
-            // I'm using this a as quick-n-dirty "changes over time in frame" value.
-            float offsetU = glm::sin(glfwGetTime() / 10.0f);
-            glUniform2f(heightMapOffsetUV_UniformLocation, offsetU, 0.0f);
-
-            glm::mat4 matModel = glm::mat4(1.0f);   // Identity matrix
-
-//            pTerrain->isWireframe = true;
-//            pTerrain->bDontLight = true;
-
-            pTerrain->bIsVisible = true;
-            DrawObject(pTerrain, matModel, pModelManger, shaderProgram_ID);
-            pTerrain->bIsVisible = false;
-
-            glUniform1f(bIsHeightMap_UniformLocation, (GLfloat)GL_FALSE);
-        }
-
-        {// Discard transparency
+//        {// Discard transparency
 //            uniform sampler2D discardTexture;
 //            uniform bool bUseDiscard;
-
-            glActiveTexture(GL_TEXTURE25);	// GL_TEXTURE0 = 33984
-            GLuint discard_textureNumber = pTheTextures->getTextureIDFromName("discardTexture.bmp");
-
-            glBindTexture(GL_TEXTURE_2D, discard_textureNumber);
-            GLint discard_UniformLocation = glGetUniformLocation(shaderProgram_ID, "discardTexture");
-            glUniform1i(discard_UniformLocation, 25);
-
-            // Turn the maping on
-            // uniform bool bIsHeightMap;
-            // uniform float heightScale;
-            GLint bUseDiscard_UniformLocation = glGetUniformLocation(shaderProgram_ID, "bUseDiscard");
-            glUniform1f(bUseDiscard_UniformLocation, (GLfloat)GL_TRUE);
-
-            glm::mat4 matModel = glm::mat4(1.0f);   // Identity matrix
-
-            cMeshObject* pQuad = pFindObjectByFriendlyName("2D Quad Imposter");
-            pQuad->bIsVisible = true;
-
-            DrawObject(pQuad, matModel, pModelManger, shaderProgram_ID);
-
-            glUniform1f(bUseDiscard_UniformLocation, (GLfloat)GL_FALSE);
-
-            pQuad->bIsVisible = false;
-        }
+//
+//            glActiveTexture(GL_TEXTURE25);	// GL_TEXTURE0 = 33984
+//            GLuint discard_textureNumber = pTheTextures->getTextureIDFromName("discardTexture.bmp");
+//
+//            glBindTexture(GL_TEXTURE_2D, discard_textureNumber);
+//            GLint discard_UniformLocation = glGetUniformLocation(shaderProgram_ID, "discardTexture");
+//            glUniform1i(discard_UniformLocation, 25);
+//
+//            // Turn the maping on
+//            // uniform bool bIsHeightMap;
+//            // uniform float heightScale;
+//            GLint bUseDiscard_UniformLocation = glGetUniformLocation(shaderProgram_ID, "bUseDiscard");
+//            glUniform1f(bUseDiscard_UniformLocation, (GLfloat)GL_TRUE);
+//
+//            glm::mat4 matModel = glm::mat4(1.0f);   // Identity matrix
+//
+//            cMeshObject* pQuad = pFindObjectByFriendlyName("2D Quad Imposter");
+//            pQuad->bIsVisible = true;
+//
+//            DrawObject(pQuad, matModel, pModelManger, shaderProgram_ID);
+//
+//            glUniform1f(bUseDiscard_UniformLocation, (GLfloat)GL_FALSE);
+//
+//            pQuad->bIsVisible = false;
+//        }
 
 
 

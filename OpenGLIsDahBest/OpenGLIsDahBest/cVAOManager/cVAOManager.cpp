@@ -28,13 +28,15 @@ sModelDrawInfo::sModelDrawInfo()
 	this->pVertices = 0;	// or NULL
 	this->pIndices = 0;		// or NULL
 
-	// You could store the max and min values of the 
-	//  vertices here (determined when you load them):
-	glm::vec3 maxValues;
-	glm::vec3 minValues;
+	this->minExtents[0] = 0.0f;
+	this->minExtents[1] = 0.0f;
+	this->minExtents[2] = 0.0f;
 
-//	scale = 5.0/maxExtent;		-> 5x5x5
-	float maxExtent;
+	this->maxExtents[0] = 0.0f;
+	this->maxExtents[1] = 0.0f;
+	this->maxExtents[2] = 0.0f;
+
+	this->maxExtent = 0.0f;
 
 	return;
 }
@@ -186,11 +188,13 @@ bool cVAOManager::m_LoadTheModel(std::string fileName,
 	// Read until we hit the word "face"
 	// Read until we hit the word "end_header"
 
-	std::ifstream thePlyFile( fileName.c_str() );
+	std::string fileAndPath = this->m_basePath + '/' + fileName;
+
+	std::ifstream thePlyFile(fileAndPath.c_str() );
 	if ( ! thePlyFile.is_open() )
 	{	// Something is wrong...
 		std::stringstream ssError;
-		ssError << "Can't open >" << fileName << "< file." << std::endl;
+		ssError << "Can't open >" << fileAndPath << "< file." << std::endl;
 		this->m_AppendTextToLastError(ssError.str());
 		return false;
 	}
@@ -203,11 +207,24 @@ bool cVAOManager::m_LoadTheModel(std::string fileName,
 			break;
 		}
 	}; 
+
+
+	// Stores the header parameters (the "property float x" or "property char red", etc.
+	std::vector< std::string > vecHeaderProperties;
+
+
 	// read the number of vertices...
 	thePlyFile >> drawInfo.numberOfVertices;	//::g_NumberOfVertices;
 
 	while ( thePlyFile >> temp )
 	{
+		if ( temp == "property" )
+		{
+			thePlyFile >> temp;	
+			thePlyFile >> temp;
+			vecHeaderProperties.push_back(temp);
+		}
+
 		if ( temp == "face" ) 
 		{
 			break;
@@ -235,16 +252,18 @@ bool cVAOManager::m_LoadTheModel(std::string fileName,
 ////		glm::vec4 colour;
 //		glm::vec3 normal;
 //	};
-	struct sVertPly_n_uv
+	struct sVertPly_n_rgba_uv
 	{
 		glm::vec3 pos;
-//		glm::vec4 colour;
+		glm::vec4 colourRGBA;
 		glm::vec3 normal;
 		float u, v;		// Texture coordinates
 	};
-	std::vector<sVertPly_n_uv> vecTempPlyVerts;
+	std::vector<sVertPly_n_rgba_uv> vecTempPlyVerts;
 
-	sVertPly_n_uv tempVert;
+
+
+	sVertPly_n_rgba_uv tempVert;
 	// Load the vertices...
 	for ( unsigned int index = 0; index != drawInfo.numberOfVertices; // ::g_NumberOfVertices; 
 		  index++ )
@@ -253,7 +272,8 @@ bool cVAOManager::m_LoadTheModel(std::string fileName,
 		
 		thePlyFile >> tempVert.normal.x >> tempVert.normal.y >> tempVert.normal.z;
 
-		// Now there's UV (texture coordinates), tooo
+		thePlyFile >> tempVert.colourRGBA.r >> tempVert.colourRGBA.g >> tempVert.colourRGBA.b >> tempVert.colourRGBA.a;
+
 		thePlyFile >> tempVert.u >> tempVert.v;
 
 //		tempVert.pos *= 0.01f;
@@ -285,6 +305,10 @@ bool cVAOManager::m_LoadTheModel(std::string fileName,
 	// Optional clear array to zero 
 	//memset( drawInfo.pVertices, 0, sizeof(sVert) * drawInfo.numberOfVertices);
 
+	drawInfo.maxExtents[0] = drawInfo.minExtents[0] = vecTempPlyVerts[0].pos.x;
+	drawInfo.maxExtents[1] = drawInfo.minExtents[1] = vecTempPlyVerts[0].pos.y;
+	drawInfo.maxExtents[2] = drawInfo.minExtents[2] = vecTempPlyVerts[0].pos.z;
+
 	for ( unsigned int index = 0; index != drawInfo.numberOfVertices; index++ )
 	{
 		drawInfo.pVertices[index].x = vecTempPlyVerts[index].pos.x;
@@ -303,13 +327,25 @@ bool cVAOManager::m_LoadTheModel(std::string fileName,
 		drawInfo.pVertices[index].u = vecTempPlyVerts[index].u;
 		drawInfo.pVertices[index].v = vecTempPlyVerts[index].v;
 
+		if (vecTempPlyVerts[index].pos.x > drawInfo.maxExtents[0]) { drawInfo.maxExtents[0] = vecTempPlyVerts[index].pos.x; }
+		if (vecTempPlyVerts[index].pos.y > drawInfo.maxExtents[1]) { drawInfo.maxExtents[1] = vecTempPlyVerts[index].pos.y; }
+		if (vecTempPlyVerts[index].pos.z > drawInfo.maxExtents[2]) { drawInfo.maxExtents[2] = vecTempPlyVerts[index].pos.z; }
+
+		if (vecTempPlyVerts[index].pos.x < drawInfo.minExtents[0]) { drawInfo.minExtents[0] = vecTempPlyVerts[index].pos.x; }
+		if (vecTempPlyVerts[index].pos.y < drawInfo.minExtents[1]) { drawInfo.minExtents[1] = vecTempPlyVerts[index].pos.y; }
+		if (vecTempPlyVerts[index].pos.z < drawInfo.minExtents[2]) { drawInfo.minExtents[2] = vecTempPlyVerts[index].pos.z; }
+
 	}// for ( unsigned int index...
+
+	drawInfo.maxExtent = drawInfo.maxExtents[0];
+	if (drawInfo.maxExtent < drawInfo.maxExtents[1]) { drawInfo.maxExtent = drawInfo.maxExtents[1]; }
+	if (drawInfo.maxExtent < drawInfo.maxExtents[2]) { drawInfo.maxExtent = drawInfo.maxExtents[2]; }
 
 
 	struct sTriPly
 	{
 		unsigned int vindex[3];		// the 3 indices
-		sVertPly_n_uv verts[3];			// The actual vertices
+		sVertPly_n_rgba_uv verts[3];			// The actual vertices
 	};
 
 	std::vector<sTriPly> vecTempPlyTriangles;
@@ -422,3 +458,15 @@ void cVAOManager::m_AppendTextToLastError(std::string text, bool addNewLineBefor
 	return;
 
 }
+
+
+void cVAOManager::setBasePath(std::string newBasePath)
+{
+	this->m_basePath = newBasePath;
+}
+
+std::string cVAOManager::getBasePath(void)
+{
+	return this->m_basePath;
+}
+

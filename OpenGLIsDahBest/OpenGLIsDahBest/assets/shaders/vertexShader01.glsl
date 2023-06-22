@@ -25,7 +25,7 @@ in vec2 vUV;		// Texture coordinates
 
 // Going out to the Fragment shader
 out vec3 color;
-out vec3 fNormal;		// 'f' for fun or fromage or fragment
+out /*flat*/ vec3 fNormal;		// 'f' for fun or fromage or fragment
 out vec4 fVertexPosWorld;		// Where this vertex is in 'world space'
 out vec2 fUV;
 
